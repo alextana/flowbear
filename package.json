@@ -7,10 +7,45 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "migration:generate": "drizzle-kit generate:pg",
+    "migration:push": "drizzle-kit push:pg",
+    "migrate": "tsx ./db/migrate.ts"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "nuxt": "^3.7.3"
+    "@types/uuid": "^9.0.4",
+    "daisyui": "latest",
+    "drizzle-kit": "^0.19.13",
+    "nuxt": "^3.7.3",
+    "sass": "^1.68.0"
+  },
+  "dependencies": {
+    "@auth/drizzle-adapter": "^0.3.2",
+    "@auth/pg-adapter": "^0.2.0",
+    "@auth/supabase-adapter": "^0.1.2",
+    "@nuxtjs/supabase": "^1.1.2",
+    "@nuxtjs/tailwindcss": "^6.8.0",
+    "@sidebase/nuxt-auth": "^0.6.0-beta.6",
+    "@supabase/supabase-js": "^2.36.0",
+    "@tailwindcss/typography": "^0.5.10",
+    "@tiptap/extension-highlight": "^2.1.11",
+    "@tiptap/extension-placeholder": "^2.1.11",
+    "@tiptap/extension-typography": "^2.1.11",
+    "@tiptap/pm": "^2.1.11",
+    "@tiptap/starter-kit": "^2.1.11",
+    "@tiptap/vue-3": "^2.1.11",
+    "@vueuse/nuxt": "^10.4.1",
+    "date-fns": "^2.30.0",
+    "drizzle-orm": "^0.28.6",
+    "luxon": "^3.4.3",
+    "next-auth": "4.21.1",
+    "nuxt-icon": "^0.5.0",
+    "nuxt-storage": "^1.2.2",
+    "pg": "^8.11.3",
+    "postgres": "^3.3.5",
+    "tsx": "^3.13.0",
+    "uuid": "^9.0.1",
+    "yarn": "^1.22.19"
   }
 }
