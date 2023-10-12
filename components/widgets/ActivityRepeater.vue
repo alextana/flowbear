@@ -23,12 +23,16 @@
             <div
               @mouseover="handleShowOptions(i)"
               @mouseleave="handleShowOptions(null)"
-              class="activity-container w-full relative"
+              class="activity-container w-full relative activity prose border-l-2 border-dotted transition-all pl-3 pr-5 mb-2 border-l-transparent hover:border-l-white/30"
             >
-              <div
-                class="activity prose border-l-2 border-dotted transition-all pl-3 pr-5 mb-2 border-l-transparent hover:border-l-white/30"
-                v-html="activity.content"
+              <InputTipTap
+                v-if="editingIndex === i"
+                v-model="activity.content"
+                autoFocus="end"
+                @update:modelValue="handleEditing(activity)"
               />
+
+              <div v-else @click="editingIndex = i" v-html="activity.content" />
 
               <div
                 class="edit-actions absolute right-0 top-0"
@@ -48,34 +52,25 @@
     </div>
   </div>
 
-  <!-- TODO make it a component -->
-  <dialog id="delete_modal" class="modal">
-    <div class="modal-box">
-      <form method="dialog">
-        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-          ✕
-        </button>
-      </form>
-      <h3 class="font-bold text-lg">Deleting activity</h3>
-      <p class="py-4">The activity will be lost, are you sure?</p>
-      <div class="buttons flex gap-2 justify-end">
-        <button @click="closeModal" class="btn btn-sm btn-ghost">cancel</button>
-        <button class="btn btn-sm btn-error" @click="deleteActivity">
-          Delete Activity
-        </button>
-      </div>
-    </div>
-    <form method="dialog" class="modal-backdrop">
-      <button>close</button>
-    </form>
-  </dialog>
+  <UiModal>
+    <template #title> Deleting activity </template>
+    <template #body> The activity will be lost, are you sure? </template>
+    <template #buttons>
+      <button @click="closeModal" class="btn btn-sm btn-ghost">cancel</button>
+      <button class="btn btn-sm btn-error" @click="deleteActivity">
+        Delete Activity
+      </button>
+    </template>
+  </UiModal>
 </template>
 
 <script setup>
 import { DateTime } from 'luxon'
 import { getLang } from '~/helpers/getLang'
+import { useDebounceFn } from '@vueuse/core'
 
 const editIconsIndex = ref(null)
+const editingIndex = ref(null)
 const selectedActivity = ref(null)
 
 const { data, pending, error } = useFetch('/api/activities/getActivities', {
@@ -151,7 +146,29 @@ const deleteActivity = () => {
   })
 }
 
+// TODO - add optimisations to persist text
+// debounce is cool but too many requests atm
+// need to do things like check window blur, save when that happens (?)
+// or if we detect too many requests happening slow them down
+// by artificially upping debounce time?
+
+const handleEditing = useDebounceFn((activity) => {
+  $fetch('/api/activities/updateActivity', {
+    method: 'POST',
+    body: JSON.stringify(activity),
+    onResponseError() {
+      // TODO negate optimistic update
+    },
+  })
+}, 800)
+
 const closeModal = () => {
   delete_modal.close()
 }
 </script>
+
+<style>
+.activity-container .tiptap {
+  padding: 0;
+}
+</style>
