@@ -1,5 +1,5 @@
 import { db } from '~/db'
-import { activities } from '~/db/schema'
+import { goals } from '~/db/schema'
 import { desc } from 'drizzle-orm'
 import { getServerSession } from '#auth'
 
@@ -13,23 +13,16 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // TODO add params to do more with this, filtering etc
   const data = await db
     .select()
-    .from(activities)
-    .orderBy(desc(activities.created_at))
+    .from(goals)
+    .orderBy(desc(goals.created_at))
     .limit(10)
-
-  // const data = await db.query.activities.findMany({
-  //   with: {
-  //     goals: true,
-  //   },
-  // })
 
   if (!data) {
     throw createError({
       statusCode: 404,
-      statusMessage: 'No activities were found',
+      statusMessage: 'No goals were found',
     })
   }
 

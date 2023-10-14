@@ -1,6 +1,8 @@
 <template>
   <header class="w-full py-4 px-4 flex justify-between items-center">
-    <div class="logo text-2xl italic font-extrabold">flowbear</div>
+    <NuxtLink to="/">
+      <div class="logo text-2xl italic font-extrabold">flowbear</div>
+    </NuxtLink>
     <div class="user-options ml-auto">
       <!-- st: {{ status }} data: {{ data }} -->
       <div v-if="status === 'unauthenticated'">

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full">
+  <div class="container mx-auto">
     <WidgetsAddActivity />
     <UiSeparator class="my-8" />
 

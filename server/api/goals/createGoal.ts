@@ -1,5 +1,5 @@
 import { db } from '~/db'
-import { activities } from '~/db/schema'
+import { goals } from '~/db/schema'
 import { getServerSession } from '#auth'
 
 export default defineEventHandler(async (event) => {
@@ -14,15 +14,17 @@ export default defineEventHandler(async (event) => {
 
   const body = await readBody(event)
 
-  if (!body.content) {
+  if (!body.title) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Cannot add empty activity',
+      statusMessage: 'Cannot add empty goal',
     })
   }
 
-  await db.insert(activities).values({
+  await db.insert(goals).values({
+    title: body.title,
     userId: session.id,
+    description: body.description,
     content: body.content,
   })
 

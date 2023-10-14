@@ -1,5 +1,5 @@
 <template>
-  <dialog id="delete_modal" class="modal">
+  <dialog :id="props.id" class="modal">
     <div class="modal-box">
       <form method="dialog">
         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
@@ -11,7 +11,7 @@
         <slot name="title"></slot>
       </h3>
       <p class="py-4">
-        <slot name="body"></slot>
+        <slot></slot>
       </p>
       <div class="buttons flex gap-2 justify-end">
         <slot name="buttons"></slot>
@@ -22,3 +22,13 @@
     </form>
   </dialog>
 </template>
+
+<script setup>
+const props = defineProps({
+  id: {
+    type: String,
+    default: '',
+    required: true,
+  },
+})
+</script>

@@ -6,7 +6,7 @@
   <div v-if="data" class="dates-activities-container">
     <div class="dates flex gap-4 mb-4" v-for="date in getDates(data.dates)">
       <div
-        class="date-block text-center border border-white/50 h-max py-2 px-3 rounded-2xl"
+        class="date-block min-w-[65px] min-h-[65px] text-center border border-white/50 h-max py-2 px-3 rounded-2xl"
       >
         <ClientOnly>
           <span class="day block text-2xl font-bold">
@@ -23,7 +23,7 @@
             <div
               @mouseover="handleShowOptions(i)"
               @mouseleave="handleShowOptions(null)"
-              class="activity-container w-full relative activity prose border-l-2 border-dotted transition-all pl-3 pr-5 mb-2 border-l-transparent hover:border-l-white/30"
+              class="activity-container w-full relative activity prose border-l-2 border-dotted transition-all pl-3 pr-5 mb-2 border-l-transparent hover:border-l-white/20"
             >
               <InputTipTap
                 v-if="editingIndex === i"
@@ -45,6 +45,15 @@
                   size="18"
                 />
               </div>
+
+              <div
+                class="time-edit-container flex items-center justify-between"
+              >
+                <div class="px-4 py-1 text-xs rounded-full bg-black">goal</div>
+                <span class="w-full text-right text-xs text-white/40"
+                  >at {{ getTime(activity.created_at) }}</span
+                >
+              </div>
             </div>
           </template>
         </template>
@@ -52,9 +61,9 @@
     </div>
   </div>
 
-  <UiModal>
+  <UiModal id="delete_modal">
     <template #title> Deleting activity </template>
-    <template #body> The activity will be lost, are you sure? </template>
+    <template #default> The activity will be lost, are you sure? </template>
     <template #buttons>
       <button @click="closeModal" class="btn btn-sm btn-ghost">cancel</button>
       <button class="btn btn-sm btn-error" @click="deleteActivity">
@@ -100,6 +109,14 @@ const getDates = (dates) => {
       })
     ),
   ]
+}
+
+const getTime = (date) => {
+  if (!date) return ''
+
+  const formatted = DateTime.fromISO(date).toFormat('HH:mm')
+
+  return formatted
 }
 
 const shouldShowDate = (activity, date) => {
@@ -153,14 +170,16 @@ const deleteActivity = () => {
 // by artificially upping debounce time?
 
 const handleEditing = useDebounceFn((activity) => {
+  // add a saving indicator
   $fetch('/api/activities/updateActivity', {
     method: 'POST',
     body: JSON.stringify(activity),
     onResponseError() {
       // TODO negate optimistic update
     },
+    onResponse() {},
   })
-}, 800)
+}, 1000)
 
 const closeModal = () => {
   delete_modal.close()

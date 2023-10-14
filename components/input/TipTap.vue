@@ -8,7 +8,8 @@ import { Editor, EditorContent } from '@tiptap/vue-3'
 import Placeholder from '@tiptap/extension-placeholder'
 import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
-
+import Image from '@tiptap/extension-image'
+import { handlePaste } from './utils'
 export default {
   components: {
     EditorContent,
@@ -24,6 +25,10 @@ export default {
       default: '',
     },
     modelValue: {
+      type: String,
+      default: '',
+    },
+    placeHolder: {
       type: String,
       default: '',
     },
@@ -54,6 +59,7 @@ export default {
     this.editor = new Editor({
       autofocus: this.autoFocus,
       editorProps: {
+        handlePaste: handlePaste(this.editor),
         attributes: {
           class: this.classProps || '',
         },
@@ -62,8 +68,11 @@ export default {
         StarterKit,
         Highlight,
         Typography,
+        Image.configure({
+          allowBase64: true,
+        }),
         Placeholder.configure({
-          placeholder: 'Today I...',
+          placeholder: this.placeHolder || 'Today I...',
         }),
       ],
       content: this.modelValue,

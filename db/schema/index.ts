@@ -58,37 +58,43 @@ export const verificationTokens = pgTable(
   })
 )
 
-// export const milestones = pgTable('milestone', {
-//   id: serial('id').primaryKey(),
-//   title: text('title').notNull(),
-//   description: text('description'),
-//   content: text('content'),
-//   userId: text('userId').references(() => users.id),
-//   created_at: timestamp('created_at', {
-//     precision: 6,
-//     withTimezone: true,
-//   }).defaultNow(),
-// })
-
-// export const goals = pgTable('goal', {
-//   id: serial('id').primaryKey(),
-//   title: text('title').notNull(),
-//   description: text('description'),
-//   content: text('content'),
-//   userId: text('userId').references(() => users.id),
-//   created_at: timestamp('created_at', {
-//     precision: 6,
-//     withTimezone: true,
-//   }).defaultNow(),
-// })
+export const goals = pgTable('goal', {
+  goalId: serial('goalId').primaryKey(),
+  title: text('title').notNull(),
+  description: text('description'),
+  content: text('content'),
+  userId: text('userId').references(() => users.id),
+  created_at: timestamp('created_at', {
+    precision: 6,
+    withTimezone: true,
+    mode: 'string',
+  }).defaultNow(),
+})
 
 export const activities = pgTable('activity', {
-  id: serial('id').primaryKey(),
+  id: serial('id').primaryKey().notNull(),
   description: text('description'),
   userId: text('userId').references(() => users.id),
+  goalId: serial('goalId'),
   content: text('content').notNull(),
   created_at: timestamp('created_at', {
     precision: 6,
     withTimezone: true,
+    mode: 'string',
   }).defaultNow(),
 })
+
+export const activitiesToGoals = pgTable(
+  'activity_to_goal',
+  {
+    activityId: serial('activity_id')
+      .notNull()
+      .references(() => activities.id),
+    goalId: serial('goal_id')
+      .notNull()
+      .references(() => goals.goalId),
+  },
+  (t) => ({
+    pk: primaryKey(t.activityId, t.goalId),
+  })
+)

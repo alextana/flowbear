@@ -29,12 +29,12 @@ const props = defineProps({
     validator(value) {
       // The value must match one of these strings
       return [
-        'btn-neutral',
-        'btn-primary',
-        'btn-secondary',
-        'btn-accent',
-        'btn-ghost',
-        'btn-link',
+        'neutral',
+        'primary',
+        'secondary',
+        'accent',
+        'ghost',
+        'link',
       ].includes(value)
     },
   },
