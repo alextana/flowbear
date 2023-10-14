@@ -24,7 +24,10 @@
   <div v-if="goals" class="ml-2 goals-display flex items-center gap-2">
     <template v-for="goal in getGoals()">
       <div class="w-max px-2 py-1 bg-black rounded-full text-xs">
-        {{ goal.title }}
+        <div v-if="goal?.title" class="flex gap-1 items-center">
+          <span class="block">{{ goal.title }}</span>
+          <Icon @click="handleDeleteGoal(goal)" name="mdi:remove" size="16" />
+        </div>
       </div>
     </template>
   </div>
@@ -63,6 +66,10 @@ const getGoals = () => {
   }
 
   return props.goals
+}
+
+const handleDeleteGoal = (goal) => {
+  console.log(goal)
 }
 
 const handleAddGoal = (goal) => {

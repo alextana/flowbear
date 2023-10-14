@@ -29,9 +29,8 @@ export default defineEventHandler(async (event) => {
       activitiesToGoals,
       eq(activities.id, activitiesToGoals.activityId)
     )
-    .orderBy(desc(activities.created_at))
     .leftJoin(goals, eq(activitiesToGoals.goalId, goals.goalId))
-    .limit(20)
+    .orderBy(desc(activities.created_at))
 
   if (!data) {
     throw createError({
@@ -40,37 +39,44 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const groupedDataMap = data.reduce((result, item) => {
-    const { activity, activity_to_goal, goal } = item
-
-    interface GroupedData {
-      [key: string]: {
-        activity: typeof activity
-        activity_to_goal: typeof activity_to_goal
-        goals: Array<typeof goal>
-      }
+  type GroupedType = Record<
+    string,
+    {
+      activity: (typeof data)[0]['activity']
+      activity_to_goal: (typeof data)[0]['activity_to_goal']
+      goals: Array<(typeof data)[0]['goal']>
     }
+  >
 
-    const resultData: GroupedData = result
-    const existingEntry = resultData[activity.id]
+  // Maintain the order of activities
+  const activityOrder: number[] = []
+  const groupedDataMap: GroupedType = data.reduce(
+    (result: GroupedType, item) => {
+      const { activity, activity_to_goal, goal } = item
 
-    if (existingEntry) {
-      // If an entry exists, add the goal to the goals array
-      existingEntry.goals.push(goal)
-    } else {
-      // If no entry exists, create a new entry with the activity and the goal in an array
-      resultData[activity.id] = {
-        activity,
-        activity_to_goal,
-        goals: [goal],
+      if (!activityOrder.includes(activity.id)) {
+        activityOrder.push(activity.id)
       }
-    }
 
-    return result
-  }, {})
+      const existingEntry = result[activity.id]
 
-  // Convert the map values to an array
-  const groupedData = Object.values(groupedDataMap)
+      if (existingEntry) {
+        existingEntry.goals.push(goal)
+      } else {
+        result[activity.id] = {
+          activity,
+          activity_to_goal,
+          goals: [goal],
+        }
+      }
+
+      return result
+    },
+    {}
+  )
+  const groupedData = activityOrder.map(
+    (activityId) => groupedDataMap[activityId]
+  )
 
   return groupedData
 })
