@@ -18,8 +18,8 @@
         </ClientOnly>
       </div>
       <div class="activities w-[65ch]">
-        <template v-for="(activity, i) in data.activities">
-          <template v-if="shouldShowDate(activity, date)">
+        <template v-for="(data, i) in data.activities">
+          <template v-if="shouldShowDate(data.activity, date)">
             <div
               @mouseover="handleShowOptions(i)"
               @mouseleave="handleShowOptions(null)"
@@ -27,19 +27,23 @@
             >
               <InputTipTap
                 v-if="editingIndex === i"
-                v-model="activity.content"
+                v-model="data.activity.content"
                 autoFocus="end"
-                @update:modelValue="handleEditing(activity)"
+                @update:modelValue="handleEditing(data.activity)"
               />
 
-              <div v-else @click="editingIndex = i" v-html="activity.content" />
+              <div
+                v-else
+                @click="editingIndex = i"
+                v-html="data.activity.content"
+              />
 
               <div
                 class="edit-actions absolute right-0 top-0"
                 v-if="editIconsIndex === i"
               >
                 <Icon
-                  @click="handleDelete(activity)"
+                  @click="handleDelete(data.activity)"
                   class="hover:text-purple-500 cursor-pointer"
                   name="mingcute:delete-line"
                   size="18"
@@ -49,9 +53,10 @@
               <div
                 class="time-edit-container flex items-center justify-between"
               >
-                <div class="px-4 py-1 text-xs rounded-full bg-black">goal</div>
+                <UiGoalSelector :activity="data.activity" :goals="data.goals" />
+
                 <span class="w-full text-right text-xs text-white/40"
-                  >at {{ getTime(activity.created_at) }}</span
+                  >at {{ getTime(data.activity.created_at) }}</span
                 >
               </div>
             </div>
@@ -85,8 +90,7 @@ const selectedActivity = ref(null)
 const { data, pending, error } = useFetch('/api/activities/getActivities', {
   key: 'activities',
   transform(data) {
-    const dates = data.map((d) => d.created_at)
-
+    const dates = data.map((d) => d.activity.created_at)
     return {
       activities: data,
       dates: dates,

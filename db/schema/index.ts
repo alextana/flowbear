@@ -75,7 +75,6 @@ export const activities = pgTable('activity', {
   id: serial('id').primaryKey().notNull(),
   description: text('description'),
   userId: text('userId').references(() => users.id),
-  goalId: serial('goalId'),
   content: text('content').notNull(),
   created_at: timestamp('created_at', {
     precision: 6,
