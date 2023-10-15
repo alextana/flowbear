@@ -11,10 +11,12 @@
 
       <div v-else>
         <UiButton kind="primary" @click="handleCreate">Create goal</UiButton>
-
-        <div class="goals flex items-center gap-4">
+        <UiSeparator class="my-8" />
+        <div
+          class="goals grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center gap-4"
+        >
           <div class="goal" v-for="goal in data">
-            <div class="card w-96 bg-base-100 shadow-xl">
+            <div class="card w-full bg-base-100 border border-base-300">
               <div class="card-body">
                 <h2 class="card-title">{{ goal.title }}</h2>
                 <p>{{ goal.description }}</p>
