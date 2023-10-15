@@ -5,6 +5,7 @@ import { getServerSession } from '#auth'
 
 export default defineEventHandler(async (event) => {
   const session = (await getServerSession(event)) as any
+  const query = getQuery(event)
 
   if (!session?.id) {
     throw createError({
@@ -13,16 +14,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // ONLY GETS MATCHING
-  // const data = await db
-  //   .select()
-  //   .from(activitiesToGoals)
-  //   .leftJoin(activities, eq(activitiesToGoals.activityId, activities.id))
-  //   .leftJoin(goals, eq(activitiesToGoals.goalId, goals.goalId))
-  //   .limit(20)
-
-  // GETS ALL
-  const data = await db
+  const baseQuery = db
     .select()
     .from(activities)
     .leftJoin(
@@ -31,6 +23,12 @@ export default defineEventHandler(async (event) => {
     )
     .leftJoin(goals, eq(activitiesToGoals.goalId, goals.goalId))
     .orderBy(desc(activities.created_at))
+
+  const goalId = query.goalId as number
+
+  const data = goalId
+    ? await baseQuery.where(eq(goals.goalId, goalId))
+    : await baseQuery
 
   if (!data) {
     throw createError({

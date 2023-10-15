@@ -5,14 +5,19 @@
     </label>
     <ul
       tabindex="0"
-      class="dropdown-content z-[1] menu bg-base-300 p-2 shadow rounded-box w-52"
+      class="dropdown-content z-[1] menu border border-base-300 bg-base p-2 shadow-xl rounded-box w-52"
     >
-      <template v-if="data" v-for="goal in data">
+      <template v-if="data?.length" v-for="goal in data">
         <li @click="handleAddGoal(goal)">
           <a class="no-underline">
             {{ goal.title }}
           </a>
         </li>
+      </template>
+      <template v-else>
+        <NuxtLink to="/goals"
+          ><li><a>Create goal</a></li></NuxtLink
+        >
       </template>
     </ul>
   </div>
@@ -22,7 +27,9 @@
     class="ml-2 goals-display flex items-center gap-2 text-neutral-content"
   >
     <template v-for="goal in getGoals()">
-      <div class="w-max px-2 py-1 bg-neutral rounded-full text-xs">
+      <div
+        class="w-max px-2 py-1 bg-neutral hover:bg-primary rounded-full text-xs"
+      >
         <div v-if="goal?.title" class="flex gap-1 items-center">
           <span class="block">{{ goal.title }}</span>
           <Icon
@@ -38,7 +45,6 @@
 </template>
 
 <script setup>
-import { onClickOutside } from '@vueuse/core'
 const props = defineProps({
   activity: {
     type: Object,

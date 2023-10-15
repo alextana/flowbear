@@ -1,7 +1,10 @@
 <template>
   <header class="w-full py-4 px-4 flex justify-between items-center">
     <NuxtLink to="/">
-      <div class="logo text-2xl italic font-extrabold">flowbear</div>
+      <div class="logo flex gap-2 items-center">
+        <UiLogo />
+        <div class="text-2xl italic font-extrabold">flowbear</div>
+      </div>
     </NuxtLink>
     <div class="user-options ml-auto">
       <!-- st: {{ status }} data: {{ data }} -->

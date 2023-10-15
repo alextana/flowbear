@@ -1,9 +1,9 @@
 <template>
-  <nav>
+  <nav class="min-w-[200px]">
     <div class="py-2" v-for="entry in menuEntries">
       <component v-if="entry.component" :is="entry.component" />
       <NuxtLink :to="entry.link" v-else>
-        <div class="flex gap-2 items-center">
+        <div :class="`flex gap-2 items-center ${shouldHighlight(entry)}`">
           <Icon :name="entry.icon" size="20" />
           <span class="block">
             {{ entry.name }}
@@ -15,6 +15,8 @@
 </template>
 
 <script setup>
+const route = useRoute()
+
 const search = resolveComponent('UiSearch')
 const menuEntries = [
   {
@@ -22,12 +24,6 @@ const menuEntries = [
     name: 'Search',
     component: search,
   },
-  // {
-  //   id: 1,
-  //   name: 'Milestones',
-  //   icon: 'octicon:milestone-16',
-  //   link: '/milestones',
-  // },
   {
     id: 2,
     name: 'Goals',
@@ -35,4 +31,10 @@ const menuEntries = [
     link: '/goals',
   },
 ]
+
+const shouldHighlight = (entry) => {
+  if (route.path.indexOf(entry.link) > -1) {
+    return 'font-bold text-primary'
+  }
+}
 </script>

@@ -3,7 +3,7 @@
     <h1 class="text-lg font-normal">Hello, what did you do today?</h1>
     <InputTipTap
       v-model="activityContent"
-      class-props="mt-8 prose prose-slate w-full min-w-full mx-auto prose-base"
+      classProps="mt-8 border border-base-300 prose prose-slate w-full min-w-full mx-auto prose-base"
     />
     <UiSeparator class="mb-4" />
     <div class="flex actions">

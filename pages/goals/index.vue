@@ -1,6 +1,8 @@
 <template>
   <div class="goals container mx-auto">
-    <div v-if="pending">loading...</div>
+    <div v-if="pending" class="grid place-content-center">
+      <span class="loading loading-ring loading-md"></span>
+    </div>
     <div v-if="error">error...</div>
     <div v-if="data">
       <div v-if="!data.length">
@@ -21,7 +23,9 @@
                 <h2 class="card-title">{{ goal.title }}</h2>
                 <p>{{ goal.description }}</p>
                 <div class="card-actions justify-end">
-                  <UiButton kind="primary" size="sm">View</UiButton>
+                  <NuxtLink :to="`/goals/${goal.goalId}`">
+                    <UiButton kind="primary" size="sm">View</UiButton>
+                  </NuxtLink>
                 </div>
               </div>
             </div>
