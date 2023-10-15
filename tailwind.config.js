@@ -2,9 +2,7 @@
 export default {
   daisyui: {
     themes: [
-      "synthwave",
-      "dark",
-      "cupcake",
+      "light",
     ],
   },
   theme: {

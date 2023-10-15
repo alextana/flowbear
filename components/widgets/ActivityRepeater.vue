@@ -4,9 +4,9 @@
   <div v-if="error">Error fetching activities</div>
 
   <div v-if="data" class="dates-activities-container">
-    <div class="dates flex gap-4 mb-4" v-for="date in getDates(data.dates)">
+    <div class="dates mb-4 flex gap-4" v-for="date in getDates(data.dates)">
       <div
-        class="date-block min-w-[65px] min-h-[65px] text-center border border-white/50 h-max py-2 px-3 rounded-2xl"
+        class="date-block h-max min-h-[65px] min-w-[65px] rounded-2xl border border-neutral-content px-3 py-2 text-center"
       >
         <ClientOnly>
           <span class="day block text-2xl font-bold">
@@ -23,7 +23,7 @@
             <div
               @mouseover="handleShowOptions(i)"
               @mouseleave="handleShowOptions(null)"
-              class="activity-container w-full relative activity prose border-l-2 border-dotted transition-all pl-3 pr-5 mb-2 border-l-transparent hover:border-l-white/20"
+              class="activity-container activity prose relative mb-2 w-full border-l-2 border-dotted border-l-transparent pl-3 pr-5 transition-all hover:border-l-neutral-content"
             >
               <InputTipTap
                 v-if="editingIndex === i"
@@ -44,7 +44,7 @@
               >
                 <Icon
                   @click="handleDelete(data.activity)"
-                  class="hover:text-purple-500 cursor-pointer"
+                  class="cursor-pointer hover:text-accent"
                   name="mingcute:delete-line"
                   size="18"
                 />
@@ -55,7 +55,7 @@
               >
                 <UiGoalSelector :activity="data.activity" :goals="data.goals" />
 
-                <span class="w-full text-right text-xs text-white/40"
+                <span class="w-full text-right text-xs text-base-content"
                   >at {{ getTime(data.activity.created_at) }}</span
                 >
               </div>
@@ -70,8 +70,8 @@
     <template #title> Deleting activity </template>
     <template #default> The activity will be lost, are you sure? </template>
     <template #buttons>
-      <button @click="closeModal" class="btn btn-sm btn-ghost">cancel</button>
-      <button class="btn btn-sm btn-error" @click="deleteActivity">
+      <button @click="closeModal" class="btn btn-ghost btn-sm">cancel</button>
+      <button class="btn btn-error btn-sm" @click="deleteActivity">
         Delete Activity
       </button>
     </template>

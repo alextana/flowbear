@@ -1,32 +1,36 @@
 <template>
-  <div class="button-container relative">
-    <button
-      class="bg-neutral-900 rounded-full m-0 p-0 w-6 h-6 hover:bg-purple-800 grid place-content-center"
-      @click="toggleDropdown"
-    >
+  <div class="dropdown">
+    <label tabindex="0" class="btn btn-circle btn-xs btn-outline m-1">
       <Icon name="material-symbols:add" size="18" />
-    </button>
-    <div
-      ref="target"
-      v-if="showDropdown"
-      class="dropdown min-w-max max-w-[250px] absolute bottom-0 bg-black rounded-2xl p-4"
+    </label>
+    <ul
+      tabindex="0"
+      class="dropdown-content z-[1] menu bg-base-300 p-2 shadow rounded-box w-52"
     >
       <template v-if="data" v-for="goal in data">
-        <div
-          @click="handleAddGoal(goal)"
-          class="goal w-full hover:bg-neutral-900 px-3 cursor-pointer"
-        >
-          {{ goal.title }}
-        </div>
+        <li @click="handleAddGoal(goal)">
+          <a class="no-underline">
+            {{ goal.title }}
+          </a>
+        </li>
       </template>
-    </div>
+    </ul>
   </div>
-  <div v-if="goals" class="ml-2 goals-display flex items-center gap-2">
+
+  <div
+    v-if="hasGoals()"
+    class="ml-2 goals-display flex items-center gap-2 text-neutral-content"
+  >
     <template v-for="goal in getGoals()">
-      <div class="w-max px-2 py-1 bg-black rounded-full text-xs">
+      <div class="w-max px-2 py-1 bg-neutral rounded-full text-xs">
         <div v-if="goal?.title" class="flex gap-1 items-center">
           <span class="block">{{ goal.title }}</span>
-          <Icon @click="handleDeleteGoal(goal)" name="mdi:remove" size="16" />
+          <Icon
+            class="cursor-pointer"
+            @click="handleRemoveGoal(goal)"
+            name="mdi:remove"
+            size="16"
+          />
         </div>
       </div>
     </template>
@@ -35,8 +39,6 @@
 
 <script setup>
 import { onClickOutside } from '@vueuse/core'
-const target = ref(null)
-const showDropdown = ref(false)
 const props = defineProps({
   activity: {
     type: Object,
@@ -52,12 +54,6 @@ const { data, pending, error } = useFetch('/api/goals/getGoals', {
   key: 'goals',
 })
 
-onClickOutside(target, () => (showDropdown.value = false))
-
-const toggleDropdown = () => {
-  showDropdown.value = !showDropdown.value
-}
-
 const getGoals = () => {
   if (!props.goals) return []
 
@@ -68,8 +64,31 @@ const getGoals = () => {
   return props.goals
 }
 
-const handleDeleteGoal = (goal) => {
-  console.log(goal)
+const hasGoals = () => {
+  if (!props.goals) return false
+
+  if (Array.isArray(props.goals)) {
+    if (!props.goals.length) return false
+  }
+
+  if (!Object.values(props.goals)[0]) {
+    return false
+  }
+
+  return true
+}
+
+const handleRemoveGoal = (goal) => {
+  $fetch('/api/goals/removeGoal', {
+    method: 'POST',
+    body: JSON.stringify({
+      goalId: goal.goalId,
+      activityId: props.activity.id,
+    }),
+    onResponse() {
+      refreshNuxtData('activities')
+    },
+  })
 }
 
 const handleAddGoal = (goal) => {
@@ -81,6 +100,8 @@ const handleAddGoal = (goal) => {
     }),
     onResponse() {
       refreshNuxtData('activities')
+      // toggles dropdown
+      document.activeElement.blur()
     },
   })
 }
