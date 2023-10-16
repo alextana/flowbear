@@ -1,9 +1,9 @@
 <template>
-  <div class="w-full prose">
+  <div class="w-full min-w-[71ch] prose">
     <h1 class="text-lg font-normal">Hello, what did you do today?</h1>
     <InputTipTap
       v-model="activityContent"
-      classProps="mt-8 border border-base-300 prose prose-slate w-full min-w-full mx-auto prose-base"
+      classProps="mt-8 min-h-[125px] border border-base-300 prose prose-slate w-full min-w-full mx-auto prose-base"
     />
     <UiSeparator class="mb-4" />
     <div class="flex actions">

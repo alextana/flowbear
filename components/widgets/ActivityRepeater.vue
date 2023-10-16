@@ -66,6 +66,8 @@
     </div>
   </div>
 
+  <div v-if="!data.activities?.length && !pending">No activities found</div>
+
   <UiModal id="delete_modal">
     <template #title> Deleting activity </template>
     <template #default> The activity will be lost, are you sure? </template>
@@ -83,12 +85,16 @@ import { DateTime } from 'luxon'
 import { getLang } from '~/helpers/getLang'
 import { useDebounceFn } from '@vueuse/core'
 
+const route = useRoute()
 const editIconsIndex = ref(null)
 const editingIndex = ref(null)
 const selectedActivity = ref(null)
 
 const { data, pending, error } = useFetch('/api/activities/getActivities', {
   key: 'activities',
+  params: {
+    goalId: route.params.id || null,
+  },
   transform(data) {
     const dates = data.map((d) => d.activity.created_at)
     return {

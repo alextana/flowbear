@@ -1,18 +1,10 @@
 <template>
-  <div>
-    {{ route.params.id }}
-
-    {{ data }}
+  <div class="goals prose">
+    <h1>{{ route.query.name }}</h1>
+    <WidgetsActivityRepeater />
   </div>
 </template>
 
 <script setup>
 const route = useRoute()
-
-const { data, pending, error } = useFetch('/api/activities/getActivities', {
-  params: {
-    goalId: route.params.id,
-  },
-  key: 'goalActivities',
-})
 </script>

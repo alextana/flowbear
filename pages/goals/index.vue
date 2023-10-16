@@ -23,7 +23,7 @@
                 <h2 class="card-title">{{ goal.title }}</h2>
                 <p>{{ goal.description }}</p>
                 <div class="card-actions justify-end">
-                  <NuxtLink :to="`/goals/${goal.goalId}`">
+                  <NuxtLink :to="`/goals/${goal.goalId}?name=${goal.title}`">
                     <UiButton kind="primary" size="sm">View</UiButton>
                   </NuxtLink>
                 </div>
