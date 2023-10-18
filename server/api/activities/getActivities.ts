@@ -1,6 +1,6 @@
 import { db } from '~/db'
 import { activities, goals, activitiesToGoals } from '~/db/schema'
-import { desc, eq } from 'drizzle-orm'
+import { desc, eq, sql, gte } from 'drizzle-orm'
 import { getServerSession } from '#auth'
 
 export default defineEventHandler(async (event) => {
@@ -12,6 +12,17 @@ export default defineEventHandler(async (event) => {
       statusCode: 401,
       statusMessage: 'Unauthorised',
     })
+  }
+
+  if (query.count) {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const data = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(activities)
+      .where(gte(activities.created_at, today.toISOString()))
+
+    return data
   }
 
   const baseQuery = db

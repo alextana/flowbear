@@ -66,6 +66,7 @@ const handleAdd = () => {
     onResponse() {
       activityContent.value = ''
       refreshNuxtData('activities')
+      refreshNuxtData('activityCount')
       goalPreview.value = null
       toast.add({
         severity: 'success',

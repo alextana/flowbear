@@ -1,12 +1,25 @@
 <template>
   <div class="w-full bg-base-100 rounded-2xl p-4">
     <h4 class="text-xl font-bold tracking-tight">Today so far..</h4>
-    <div
-      class="w-[180px] h-[180px] text-center grid place-content-center mx-auto"
-    >
+    <UiSeparator class="my-4" />
+    <div class="grid place-content-center text-center">
       <!-- TODO get actual count -->
-      <span class="font-extrabold text-6xl">3</span>
+      <span
+        v-if="data && data.length"
+        class="font-extrabold text-primary text-6xl"
+        >{{ data[0]?.count }}</span
+      >
       <span>Activities added</span>
     </div>
+    <UiSeparator class="my-4" />
   </div>
 </template>
+
+<script setup>
+const { data, pending, error } = useFetch('/api/activities/getActivities', {
+  query: {
+    count: true,
+  },
+  key: 'activityCount',
+})
+</script>
