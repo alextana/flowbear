@@ -8,7 +8,13 @@ export default defineNuxtConfig({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
   },
-  css: ['~/assets/css/main.css'],
+  build: {
+    transpile: ['primevue'],
+  },
+  css: [
+    '~/assets/css/main.css',
+    'primevue/resources/themes/lara-light-blue/theme.css',
+  ],
   tailwindcss: {
     config: {
       plugins: [tailwindTypography],

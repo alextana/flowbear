@@ -5,8 +5,9 @@
     </label>
     <ul
       tabindex="0"
-      class="dropdown-content z-[1] menu border border-base-300 bg-base p-2 shadow-xl rounded-box w-52"
+      class="dropdown-content z-[1] menu border border-base-300 bg-base-100 p-2 shadow-xl rounded-box w-52"
     >
+      <li class="text-xs border-b pb-2">Select a goal</li>
       <template v-if="data?.length" v-for="goal in data">
         <li @click="handleAddGoal(goal)">
           <a class="no-underline">

@@ -1,6 +1,6 @@
 <template>
   <div class="avatar">
-    <div class="w-12 mask mask-squircle">
+    <div class="w-10 mask mask-squircle">
       <img :src="props.url" />
     </div>
   </div>

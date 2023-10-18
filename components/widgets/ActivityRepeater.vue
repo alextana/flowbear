@@ -6,7 +6,7 @@
   <div v-if="data" class="dates-activities-container">
     <div class="dates mb-4 flex gap-4" v-for="date in getDates(data.dates)">
       <div
-        class="date-block h-max min-h-[65px] min-w-[65px] rounded-2xl border border-neutral-content px-3 py-2 text-center"
+        class="date-block h-max min-h-[65px] bg-base-100 min-w-[65px] rounded-2xl border border-neutral-content px-3 py-2 text-center"
       >
         <ClientOnly>
           <span class="day block text-2xl font-bold">
@@ -23,13 +23,14 @@
             <div
               @mouseover="handleShowOptions(i)"
               @mouseleave="handleShowOptions(null)"
-              class="activity-container activity prose relative mb-2 w-full border-l-2 border-dotted border-l-transparent pl-3 pr-5 transition-all hover:border-l-neutral-content"
+              class="activity-container p-4 rounded-2xl bg-base-100 activity prose relative mb-2 w-full border border-neutral-content transition-all hover:border-l-neutral-content"
             >
               <InputTipTap
                 v-if="editingIndex === i"
                 v-model="data.activity.content"
                 autoFocus="end"
                 @update:modelValue="handleEditing(data.activity)"
+                classProps="border-0 outline-0 focus:outline-0 focus:border-0"
               />
 
               <div
@@ -39,7 +40,7 @@
               />
 
               <div
-                class="edit-actions absolute right-0 top-0"
+                class="edit-actions absolute right-4 top-2"
                 v-if="editIconsIndex === i"
               >
                 <Icon
@@ -66,7 +67,7 @@
     </div>
   </div>
 
-  <div v-if="!data.activities?.length && !pending">No activities found</div>
+  <div v-if="!data?.activities?.length && !pending">No activities found</div>
 
   <UiModal id="delete_modal">
     <template #title> Deleting activity </template>

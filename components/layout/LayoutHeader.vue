@@ -1,9 +1,13 @@
 <template>
-  <header class="w-full py-4 px-4 flex justify-between items-center">
+  <header class="w-full py-2 px-4 flex justify-between items-center">
     <NuxtLink to="/">
-      <div class="logo flex gap-2 items-center">
+      <div
+        class="logo transform transition-all hover:scale-105 hover:rotate-2 flex gap-2 items-center"
+      >
         <UiLogo />
-        <div class="text-2xl italic font-extrabold">flowbear</div>
+        <div class="text-lg font-semibold">
+          flow<span class="font-extrabold">bear</span>
+        </div>
       </div>
     </NuxtLink>
     <div class="user-options ml-auto">
@@ -15,7 +19,7 @@
       </div>
       <div v-if="status === 'loading'">loading..</div>
       <div class="flex items-center gap-2" v-else-if="data">
-        <UiAvatar :url="data.user.image" width="40" />
+        <UiAvatar :url="data.user.image" width="30" />
         <button @click="signOut()">
           <Icon name="mdi:logout" size="24" class="hover:text-green-500" />
         </button>

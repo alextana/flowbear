@@ -99,7 +99,7 @@ export default {
   padding: 1rem;
 
   /* border: 1px solid rgba(255, 255, 255, 0.3); */
-  border-radius: 0.3rem;
+  /* border-radius: 0.3rem; */
 }
 .tiptap p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);

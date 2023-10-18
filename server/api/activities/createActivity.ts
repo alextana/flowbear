@@ -1,5 +1,5 @@
 import { db } from '~/db'
-import { activities } from '~/db/schema'
+import { activities, activitiesToGoals } from '~/db/schema'
 import { getServerSession } from '#auth'
 
 export default defineEventHandler(async (event) => {
@@ -21,12 +21,31 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  await db.insert(activities).values({
-    userId: session.id,
-    content: body.content,
-  })
+  let activity = null
+
+  try {
+    activity = await db
+      .insert(activities)
+      .values({
+        userId: session.id,
+        content: body.content,
+      })
+      .returning()
+  } catch (error) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Cannot add activity',
+    })
+  }
+
+  if (body.goalId && activity[0].id) {
+    await db.insert(activitiesToGoals).values({
+      activityId: activity[0].id,
+      goalId: body.goalId,
+    })
+  }
 
   return {
-    body,
+    activity,
   }
 })
