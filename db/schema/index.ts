@@ -5,6 +5,7 @@ import {
   primaryKey,
   integer,
   serial,
+  boolean,
 } from 'drizzle-orm/pg-core'
 import type { AdapterAccount } from '@auth/core/adapters'
 
@@ -95,5 +96,33 @@ export const activitiesToGoals = pgTable(
   },
   (t) => ({
     pk: primaryKey(t.activityId, t.goalId),
+  })
+)
+
+export const todos = pgTable('todos', {
+  id: serial('id').primaryKey().notNull(),
+  title: text('title').notNull(),
+  description: text('description'),
+  userId: text('userId').references(() => users.id),
+  completed: boolean('completed').default(false),
+  created_at: timestamp('created_at', {
+    precision: 6,
+    withTimezone: true,
+    mode: 'string',
+  }).defaultNow(),
+})
+
+export const todosToGoals = pgTable(
+  'todo_to_goal',
+  {
+    todoId: serial('todo_id')
+      .notNull()
+      .references(() => todos.id),
+    goalId: serial('goal_id')
+      .notNull()
+      .references(() => goals.goalId),
+  },
+  (t) => ({
+    pk: primaryKey(t.todoId, t.goalId),
   })
 )

@@ -47,6 +47,10 @@ const props = defineProps({
       return ['xs', 'sm', 'lg', '', 'wide'].includes(value)
     },
   },
+  extraClasses: {
+    type: String,
+    default: '',
+  },
   state: {
     type: String,
     validator(value) {
@@ -88,6 +92,8 @@ const computedClasses = computed(() => {
     prop ? classes.push(buttonVariants[prop.key][prop.value]) : ''
   })
 
-  return classes.join(' ')
+  return (
+    classes.join(' ') + (props.extraClasses ? ' ' + props.extraClasses : '')
+  )
 })
 </script>

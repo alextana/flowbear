@@ -4,7 +4,9 @@
       Hey
       <span v-if="data?.user?.name">{{ data.user.name.split(' ')[0] }}</span>
     </h1>
-    <p class="text-neutral/50 text-lg">what have you been up to?</p>
+    <p class="text-neutral/50 dark:text-neutral-content/50 text-lg">
+      what have you been up to?
+    </p>
     <UiSeparator class="my-4" />
     <InputTipTap
       v-model="activityContent"
@@ -62,7 +64,7 @@ const handleAdd = () => {
       content: activityContent.value,
       goalId: goalPreview?.value?.goalId,
     },
-    method: 'PUT',
+    method: 'POST',
     onResponse() {
       activityContent.value = ''
       refreshNuxtData('activities')

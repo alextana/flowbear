@@ -6,7 +6,7 @@
   <div v-if="data" class="dates-activities-container">
     <div class="dates mb-4 flex gap-4" v-for="date in getDates(data.dates)">
       <div
-        class="date-block h-max min-h-[65px] bg-base-100 min-w-[65px] rounded-2xl border border-neutral-content px-3 py-2 text-center"
+        class="date-block h-max min-h-[65px] bg-base-100 min-w-[65px] rounded-2xl border border-neutral-content dark:border-neutral px-3 py-2 text-center"
       >
         <ClientOnly>
           <span class="day block text-2xl font-bold">
@@ -23,7 +23,7 @@
             <div
               @mouseover="handleShowOptions(i)"
               @mouseleave="handleShowOptions(null)"
-              class="activity-container p-4 rounded-2xl bg-base-100 activity prose relative mb-2 w-full border border-neutral-content transition-all hover:border-l-neutral-content"
+              class="activity-container p-4 rounded-2xl bg-base-100 activity prose relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all hover:border-l-neutral-content"
             >
               <InputTipTap
                 v-if="editingIndex === i"

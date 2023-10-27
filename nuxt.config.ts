@@ -25,5 +25,6 @@ export default defineNuxtConfig({
     '@sidebase/nuxt-auth',
     'nuxt-icon',
     '@vueuse/nuxt',
+    '@formkit/auto-animate/nuxt',
   ],
 })

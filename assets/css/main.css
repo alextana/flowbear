@@ -5,3 +5,16 @@
 .btn {
   @apply rounded-3xl;
 }
+
+@media (prefers-color-scheme: dark) {
+  .p-datepicker {
+    color: hsl(var(--bc));
+    background: hsl(var(--b2));
+  }
+
+  .p-datepicker .p-datepicker-header {
+    color: hsl(var(--bc));
+
+    background: hsl(var(--b2));
+  }
+}

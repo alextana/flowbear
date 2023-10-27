@@ -1,15 +1,13 @@
 <template>
-  <nav class="min-w-[200px]">
+  <nav class="min-w-[200px] sticky top-0">
     <ul class="py-2">
       <template v-for="entry in menuEntries">
         <li
-          :class="`hover:bg-base-200 hover:text-base-content px-4 py-4 mb-2 rounded-2xl ${shouldHighlight(
+          :class="`transition-all hover:bg-base-200 hover:text-base-content px-4 py-4 mb-2 rounded-2xl ${shouldHighlight(
             entry
           )}`"
         >
-          <component v-if="entry.component" :is="entry.component" />
-
-          <NuxtLink :to="entry.link" v-else>
+          <NuxtLink :to="entry.link">
             <a class="flex gap-2 items-center">
               <Icon :name="entry.icon" size="20" />
               <span class="block">
@@ -26,12 +24,12 @@
 <script setup>
 const route = useRoute()
 
-const search = resolveComponent('UiSearch')
 const menuEntries = [
   {
     id: 0,
-    name: 'Search',
-    component: search,
+    name: 'Home',
+    icon: 'iconamoon:home-bold',
+    link: '/',
   },
   {
     id: 1,
@@ -40,7 +38,7 @@ const menuEntries = [
     link: '/activities',
   },
   {
-    id: 2,
+    id: 1,
     name: 'Goals',
     icon: 'octicon:goal-16',
     link: '/goals',
@@ -48,6 +46,14 @@ const menuEntries = [
 ]
 
 const shouldHighlight = (entry) => {
+  if (entry.link === '/') {
+    if (route.path === entry.link) {
+      return 'font-bold bg-primary text-primary-content hover:bg-primary-focus hover:text-primary-content focus:ring focus:ring-violet-300'
+    } else {
+      return
+    }
+  }
+
   if (route.path.indexOf(entry.link) > -1) {
     return 'font-bold bg-primary text-primary-content hover:bg-primary-focus hover:text-primary-content focus:ring focus:ring-violet-300'
   }

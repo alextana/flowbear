@@ -12,7 +12,8 @@
     "migration:push": "drizzle-kit push:pg",
     "migrate": "tsx ./db/migrate.ts",
     "migration:drop": "drizzle-kit drop",
-    "migration:introspect": "drizzle-kit introspect:pg"
+    "migration:introspect": "drizzle-kit introspect:pg",
+    "studio": "drizzle-kit studio"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
@@ -28,6 +29,7 @@
     "@auth/drizzle-adapter": "^0.3.2",
     "@auth/pg-adapter": "^0.2.0",
     "@auth/supabase-adapter": "^0.1.2",
+    "@formkit/auto-animate": "^0.8.0",
     "@nuxtjs/supabase": "^1.1.2",
     "@nuxtjs/tailwindcss": "^6.8.0",
     "@sidebase/nuxt-auth": "^0.6.0-beta.6",
@@ -42,6 +44,7 @@
     "@tiptap/vue-3": "^2.1.11",
     "@vueuse/nuxt": "^10.4.1",
     "date-fns": "^2.30.0",
+    "dotenv": "^16.3.1",
     "drizzle-orm": "^0.28.6",
     "luxon": "^3.4.3",
     "next-auth": "4.21.1",
