@@ -26,7 +26,11 @@
           tabindex="0"
           class="dropdown-content z-[1] mt-4 menu border border-base-300 bg-base-100 p-2 shadow-xl rounded-box w-52"
         >
-          <li class="text-xs border-b p-2 mb-2 font-semibold">Select a goal</li>
+          <li
+            class="text-xs border-b dark:border-neutral p-2 mb-2 font-semibold"
+          >
+            Select a goal
+          </li>
           <template v-if="goalsData?.length" v-for="goal in goalsData">
             <li @click="handleGoal(goal)">
               <a class="no-underline">
@@ -68,6 +72,7 @@ const handleAdd = () => {
     onResponse() {
       activityContent.value = ''
       refreshNuxtData('activities')
+      refreshNuxtData('dailyActivities')
       refreshNuxtData('activityCount')
       goalPreview.value = null
       toast.add({

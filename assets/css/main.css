@@ -6,6 +6,22 @@
   @apply rounded-3xl;
 }
 
+.p-calendar {
+  width: 100%;
+}
+
+.p-datepicker {
+  border-radius: 1rem;
+}
+
+/* .p-datepicker td { */
+/* border: 1px solid hsl(var(--a)); */
+/* } */
+
+.p-datepicker-today > span {
+  background: hsl(var(--p));
+  color: hsl(var(--pc));
+}
 @media (prefers-color-scheme: dark) {
   .p-datepicker {
     color: hsl(var(--bc));
@@ -17,4 +33,8 @@
 
     background: hsl(var(--b2));
   }
+}
+
+.logo-circle {
+  fill: transparent;
 }

@@ -1,27 +1,9 @@
 <template>
-  <div class="dropdown">
+  <UiGoalDropdown @addGoal="handleAddGoal($event)">
     <label tabindex="0" class="btn btn-circle btn-xs btn-outline m-1">
       <Icon name="material-symbols:add" size="18" />
     </label>
-    <ul
-      tabindex="0"
-      class="dropdown-content z-[1] menu border border-base-300 bg-base-100 p-2 shadow-xl rounded-box w-52"
-    >
-      <li class="text-xs border-b pb-2">Select a goal</li>
-      <template v-if="data?.length" v-for="goal in data">
-        <li @click="handleAddGoal(goal)">
-          <a class="no-underline">
-            {{ goal.title }}
-          </a>
-        </li>
-      </template>
-      <template v-else>
-        <NuxtLink to="/goals"
-          ><li><a>Create goal</a></li></NuxtLink
-        >
-      </template>
-    </ul>
-  </div>
+  </UiGoalDropdown>
 
   <div
     v-if="hasGoals()"

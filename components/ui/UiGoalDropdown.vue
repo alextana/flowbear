@@ -1,0 +1,29 @@
+<template>
+  <div class="dropdown">
+    <slot />
+    <ul
+      tabindex="0"
+      class="dropdown-content z-[1] menu border border-base-300 bg-base-100 p-2 shadow-xl rounded-box w-52"
+    >
+      <li class="text-xs border-b dark:border-neutral pb-2">Select a goal</li>
+      <template v-if="data?.length" v-for="goal in data">
+        <li @click="$emit('addGoal', goal)">
+          <a class="no-underline">
+            {{ goal.title }}
+          </a>
+        </li>
+      </template>
+      <template v-else>
+        <NuxtLink to="/goals"
+          ><li><a>Create goal</a></li></NuxtLink
+        >
+      </template>
+    </ul>
+  </div>
+</template>
+
+<script setup>
+const { data, pending, error } = useFetch('/api/goals/getGoals', {
+  key: 'goals',
+})
+</script>

@@ -6,7 +6,7 @@
       >
         <UiLogo />
         <div class="text-lg font-semibold">
-          flow<span class="font-extrabold">bear</span>
+          name<span class="font-extrabold">tbc</span>
         </div>
       </div>
     </NuxtLink>

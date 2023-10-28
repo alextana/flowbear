@@ -1,19 +1,18 @@
 <template>
-  <nav class="min-w-[200px] sticky top-0">
+  <nav class="min-w-[200px] sticky top-5">
     <ul class="py-2">
       <template v-for="entry in menuEntries">
         <li
-          :class="`transition-all hover:bg-base-200 hover:text-base-content px-4 py-4 mb-2 rounded-2xl ${shouldHighlight(
-            entry
-          )}`"
+          :class="`transition-all hover:bg-base-200 hover:text-base-content
+          px-4 py-4 mb-2 rounded-2xl ${shouldHighlight(entry)}`"
         >
           <NuxtLink :to="entry.link">
-            <a class="flex gap-2 items-center">
+            <span class="flex gap-2 items-center">
               <Icon :name="entry.icon" size="20" />
               <span class="block">
                 {{ entry.name }}
               </span>
-            </a>
+            </span>
           </NuxtLink>
         </li>
       </template>
@@ -38,10 +37,15 @@ const menuEntries = [
     link: '/activities',
   },
   {
-    id: 1,
+    id: 2,
     name: 'Goals',
     icon: 'octicon:goal-16',
     link: '/goals',
+  },
+  {
+    id: 3,
+    name: 'Todos',
+    icon: 'lucide:list-todo',
   },
 ]
 

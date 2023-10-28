@@ -17,13 +17,13 @@
           </span>
         </ClientOnly>
       </div>
-      <div class="activities w-[65ch]">
+      <div class="activities">
         <template v-for="(data, i) in data.activities">
           <template v-if="shouldShowDate(data.activity, date)">
             <div
               @mouseover="handleShowOptions(i)"
               @mouseleave="handleShowOptions(null)"
-              class="activity-container p-4 rounded-2xl bg-base-100 activity prose relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all hover:border-l-neutral-content"
+              class="activity-container p-4 rounded-2xl bg-base-100 activity prose max-w-none relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all hover:border-l-neutral-content"
             >
               <InputTipTap
                 v-if="editingIndex === i"
@@ -92,9 +92,10 @@ const editingIndex = ref(null)
 const selectedActivity = ref(null)
 
 const { data, pending, error } = useFetch('/api/activities/getActivities', {
-  key: 'activities',
+  key: props.queryKey,
   params: {
     goalId: route.params.id || null,
+    date: props.date,
   },
   transform(data) {
     const dates = data.map((d) => d.activity.created_at)
@@ -109,6 +110,14 @@ const props = defineProps({
   limit: {
     type: Number,
     default: null,
+  },
+  queryKey: {
+    type: String,
+    default: 'activities',
+  },
+  date: {
+    type: String,
+    default: '',
   },
 })
 
@@ -168,7 +177,8 @@ const deleteActivity = () => {
     method: 'POST',
     body: JSON.stringify(selectedActivity.value),
     onResponse() {
-      refreshNuxtData('activities')
+      refreshNuxtData(props.queryKey)
+      refreshNuxtData('activityCount')
       closeModal()
     },
   })

@@ -1,6 +1,6 @@
 import { db } from '~/db'
 import { activities, goals, activitiesToGoals } from '~/db/schema'
-import { desc, eq, sql, gte } from 'drizzle-orm'
+import { desc, eq, sql, gte, lte } from 'drizzle-orm'
 import { getServerSession } from '#auth'
 
 export default defineEventHandler(async (event) => {
@@ -36,6 +36,13 @@ export default defineEventHandler(async (event) => {
     .orderBy(desc(activities.created_at))
 
   const goalId = query.goalId as number
+
+  if (query.date && typeof query.date === 'string') {
+    const d = new Date(query.date)
+    d.setHours(0, 0, 0, 0)
+    // Add filter for a specific date
+    baseQuery.where(gte(activities.created_at, d.toISOString() as string))
+  }
 
   const data = goalId
     ? await baseQuery.where(eq(goals.goalId, goalId))

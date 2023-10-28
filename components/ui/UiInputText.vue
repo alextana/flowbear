@@ -1,5 +1,5 @@
 <template>
-  <div class="form-control w-full max-w-xs">
+  <div class="form-control relative w-full">
     <label v-if="props.label" class="label">
       <span class="label-text">{{ props.label }}</span>
     </label>
@@ -9,10 +9,11 @@
       type="text"
       :autofocus="props.autoFocus || null"
       :placeholder="props.placeHolder"
-      :class="`${props.classes || 'input input-bordered w-full max-w-xs'}`"
+      :class="`${props.classes || 'input input-bordered w-full'}`"
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
     />
+    <slot />
   </div>
 </template>
 
