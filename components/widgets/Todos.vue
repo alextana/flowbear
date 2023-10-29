@@ -41,8 +41,8 @@
           /></UiButton>
         </div>
       </template>
-      <template v-if="pending && !data?.length">
-        <div class="w-[370px] h-[276px] grid place-content-center">
+      <template v-if="shouldShowLoading && !data?.length">
+        <div class="grid place-content-center">
           <span class="loading loading-ball loading-lg"></span>
         </div>
       </template>
@@ -51,7 +51,7 @@
           <WidgetsTodoItem :todo="todo.todos" @deleteTodo="handleDeleteTodo" />
         </template>
       </template>
-      <template v-if="!data?.length && !error && !pending">
+      <template v-if="!data?.length && !error && !shouldShowLoading">
         <WidgetsTodosEmpty
           @adding="addingTodo = true"
           :addingTodo="addingTodo"
@@ -66,17 +66,46 @@
 </template>
 
 <script setup>
+import { useSelectedDate } from '#imports'
+
 import { useToast } from 'primevue/usetoast'
 const toast = useToast()
+const dateStore = useSelectedDate()
+const shouldShowLoading = ref(true)
 
-const { data, pending, error } = useFetch('/api/todos/getTodos', {
-  key: 'dailyTodos',
-})
+const { data, pending, error } = useAsyncData(
+  'dailyTodos',
+  () =>
+    $fetch('/api/todos/getTodos', {
+      params: {
+        date: dateStore?.currentDate || null,
+      },
+    }),
+  {
+    watch: [dateStore],
+    server: false,
+    lazy: true,
+  }
+)
 
 const shouldShow = ref(false)
 
 onMounted(() => {
   shouldShow.value = true
+})
+
+// only add loading state
+// if it's taking long (500ms +)
+watch(pending, (prev) => {
+  if (!pending.value) {
+    shouldShowLoading.value = false
+    return
+  }
+  setTimeout(() => {
+    if (pending.value === prev) {
+      shouldShowLoading.value = true
+    }
+  }, 500)
 })
 
 const addingTodo = ref(false)
