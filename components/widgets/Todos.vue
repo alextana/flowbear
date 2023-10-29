@@ -62,6 +62,7 @@
       </template>
     </div>
   </div>
+  {{ dateStore.currentDate }}
   <Toast position="bottom-left" group="bl" />
 </template>
 
@@ -71,7 +72,6 @@ import { useSelectedDate } from '#imports'
 import { useToast } from 'primevue/usetoast'
 const toast = useToast()
 const dateStore = useSelectedDate()
-const shouldShowLoading = ref(true)
 
 const { data, pending, error } = useAsyncData(
   'dailyTodos',
@@ -96,17 +96,7 @@ onMounted(() => {
 
 // only add loading state
 // if it's taking long (500ms +)
-watch(pending, (prev) => {
-  if (!pending.value) {
-    shouldShowLoading.value = false
-    return
-  }
-  setTimeout(() => {
-    if (pending.value === prev) {
-      shouldShowLoading.value = true
-    }
-  }, 500)
-})
+const { shouldShowLoading } = useLoading(pending, 750)
 
 const addingTodo = ref(false)
 const newTodo = ref({
