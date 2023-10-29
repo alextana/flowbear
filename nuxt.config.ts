@@ -24,6 +24,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@sidebase/nuxt-auth',
     'nuxt-icon',
+    '@pinia/nuxt',
     '@vueuse/nuxt',
     '@formkit/auto-animate/nuxt',
   ],

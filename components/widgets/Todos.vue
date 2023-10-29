@@ -41,7 +41,7 @@
           /></UiButton>
         </div>
       </template>
-      <template v-if="pending && !data">
+      <template v-if="pending && !data?.length">
         <div class="w-[370px] h-[276px] grid place-content-center">
           <span class="loading loading-ball loading-lg"></span>
         </div>
