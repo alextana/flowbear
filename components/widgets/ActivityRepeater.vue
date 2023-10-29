@@ -17,7 +17,7 @@
           </span>
         </ClientOnly>
       </div>
-      <div class="activities">
+      <div class="activities w-full">
         <template v-for="(data, i) in data.activities">
           <template v-if="shouldShowDate(data.activity, date)">
             <div
@@ -179,6 +179,7 @@ const deleteActivity = () => {
     onResponse() {
       refreshNuxtData(props.queryKey)
       refreshNuxtData('activityCount')
+      refreshNuxtData('dailyActivities')
       closeModal()
     },
   })
