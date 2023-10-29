@@ -1,73 +1,89 @@
 <template>
-  <div v-if="pending">loading..</div>
-
-  <div v-if="error">Error fetching activities</div>
-
-  <div v-if="data" class="dates-activities-container">
-    <div class="dates mb-4 flex gap-4" v-for="date in getDates(data.dates)">
+  <Transition name="fade" mode="out-in">
+    <div v-if="pending">
       <div
-        class="date-block h-max min-h-[65px] bg-base-100 min-w-[65px] rounded-2xl border border-neutral-content dark:border-neutral px-3 py-2 text-center"
+        class="w-full h-[350px] prose max-w-none grid place-content-center text-center relative"
       >
-        <ClientOnly>
-          <span class="day block text-2xl font-bold">
-            {{ formatDate(date, 'day') }}
-          </span>
-          <span class="month block text-xs uppercase">
-            {{ formatDate(date, 'month') }}
-          </span>
-        </ClientOnly>
-      </div>
-      <div class="activities w-full">
-        <template v-for="(data, i) in data.activities">
-          <template v-if="shouldShowDate(data.activity, date)">
-            <div
-              @mouseover="handleShowOptions(i)"
-              @mouseleave="handleShowOptions(null)"
-              class="activity-container p-4 rounded-2xl bg-base-100 activity prose max-w-none relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all hover:border-l-neutral-content"
-            >
-              <InputTipTap
-                v-if="editingIndex === i"
-                v-model="data.activity.content"
-                autoFocus="end"
-                @update:modelValue="handleEditing(data.activity)"
-                classProps="border-0 outline-0 focus:outline-0 focus:border-0"
-              />
-
-              <div
-                v-else
-                @click="editingIndex = i"
-                v-html="data.activity.content"
-              />
-
-              <div
-                class="edit-actions absolute right-4 top-2"
-                v-if="editIconsIndex === i"
-              >
-                <Icon
-                  @click="handleDelete(data.activity)"
-                  class="cursor-pointer hover:text-accent"
-                  name="mingcute:delete-line"
-                  size="18"
-                />
-              </div>
-
-              <div
-                class="time-edit-container flex items-center justify-between"
-              >
-                <UiGoalSelector :activity="data.activity" :goals="data.goals" />
-
-                <span class="w-full text-right text-xs text-base-content"
-                  >at {{ getTime(data.activity.created_at) }}</span
-                >
-              </div>
-            </div>
-          </template>
-        </template>
+        <span class="loading loading-dots loading-lg"></span>
       </div>
     </div>
-  </div>
 
-  <div v-if="!data?.activities?.length && !pending">No activities found</div>
+    <div v-else-if="error">Error fetching activities</div>
+
+    <div
+      v-else-if="data && data?.activities?.length"
+      class="dates-activities-container"
+    >
+      <div class="dates mb-4 flex gap-4" v-for="date in getDates(data.dates)">
+        <div
+          class="date-block h-max min-h-[65px] bg-base-100 min-w-[65px] rounded-2xl border border-neutral-content dark:border-neutral px-3 py-2 text-center"
+        >
+          <ClientOnly>
+            <span class="day block text-2xl font-bold">
+              {{ formatDate(date, 'day') }}
+            </span>
+            <span class="month block text-xs uppercase">
+              {{ formatDate(date, 'month') }}
+            </span>
+          </ClientOnly>
+        </div>
+        <div class="activities w-full">
+          <template v-for="(data, i) in data.activities">
+            <template v-if="shouldShowDate(data.activity, date)">
+              <div
+                @mouseover="handleShowOptions(i)"
+                @mouseleave="handleShowOptions(null)"
+                class="activity-container p-4 rounded-2xl bg-base-100 activity prose max-w-none relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all hover:border-l-neutral-content"
+              >
+                <InputTipTap
+                  v-if="editingIndex === i"
+                  v-model="data.activity.content"
+                  autoFocus="end"
+                  @update:modelValue="handleEditing(data.activity)"
+                  classProps="border-0 outline-0 focus:outline-0 focus:border-0"
+                />
+
+                <div
+                  v-else
+                  @click="editingIndex = i"
+                  v-html="data.activity.content"
+                />
+
+                <div
+                  class="edit-actions absolute right-4 top-2"
+                  v-if="editIconsIndex === i"
+                >
+                  <Icon
+                    @click="handleDelete(data.activity)"
+                    class="cursor-pointer hover:text-accent"
+                    name="mingcute:delete-line"
+                    size="18"
+                  />
+                </div>
+
+                <div
+                  class="time-edit-container flex items-center justify-between"
+                >
+                  <UiGoalSelector
+                    :activity="data.activity"
+                    :goals="data.goals"
+                  />
+
+                  <span class="w-full text-right text-xs text-base-content"
+                    >at {{ getTime(data.activity.created_at) }}</span
+                  >
+                </div>
+              </div>
+            </template>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <div v-else-if="!data?.activities?.length && !pending">
+      <WidgetsActivityEmpty />
+    </div>
+  </Transition>
 
   <UiModal id="delete_modal">
     <template #title> Deleting activity </template>
