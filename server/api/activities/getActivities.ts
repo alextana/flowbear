@@ -37,30 +37,24 @@ export default defineEventHandler(async (event) => {
 
   const goalId = query.goalId as number
 
-  let d, endOfDay
-
   if (query.date && typeof query.date === 'string') {
-    d = new Date(query.date)
+    const d = new Date(query.date)
     d.setHours(0, 0, 0, 0)
-    endOfDay = new Date(d)
+    const endOfDay = new Date(d)
     endOfDay.setHours(23, 59, 59, 999)
     // Add filter for a specific date
+    baseQuery.where(
+      and(
+        eq(session.id, activities.userId),
+        gte(activities.created_at, d.toISOString() as string),
+        lte(activities.created_at, endOfDay.toISOString() as string)
+      )
+    )
   }
 
-  baseQuery.where(
-    and(
-      eq(session.id, goals.userId),
-      query.date
-        ? gte(activities.created_at, d?.toISOString() as string)
-        : undefined,
-      query.date
-        ? lte(activities.created_at, endOfDay?.toISOString() as string)
-        : undefined,
-      query.goalId ? eq(goals.goalId, goalId) : undefined
-    )
-  )
-
-  const data = await baseQuery
+  const data = goalId
+    ? await baseQuery.where(eq(goals.goalId, goalId))
+    : await baseQuery
 
   if (!data || !data.length) {
     throw createError({
