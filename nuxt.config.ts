@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     origin: process.env.AUTH_ORIGIN,
     // The base path to the authentication endpoints. Change this if you want to add your auth-endpoints at a non-default location
     basePath: '/api/auth',
-  }
+  },
   build: {
     transpile: ['primevue'],
   },
