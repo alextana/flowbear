@@ -26,7 +26,7 @@
     "sass": "^1.68.0"
   },
   "dependencies": {
-    "@auth/drizzle-adapter": "^0.3.5",
+    "@auth/drizzle-adapter": "^0.3.2",
     "@auth/pg-adapter": "^0.2.0",
     "@formkit/auto-animate": "^0.8.0",
     "@nuxtjs/tailwindcss": "^6.8.0",
@@ -46,7 +46,7 @@
     "drizzle-orm": "^0.28.6",
     "gsap": "^3.12.2",
     "luxon": "^3.4.3",
-    "next-auth": "4.24.3",
+    "next-auth": "4.21.1",
     "nuxt-icon": "^0.5.0",
     "nuxt-storage": "^1.2.2",
     "pg": "^8.11.3",
