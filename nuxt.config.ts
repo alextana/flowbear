@@ -1,10 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindTypography from '@tailwindcss/typography'
-import * as dotenv from 'dotenv'
-
-dotenv.config({
-  path: '.env',
-})
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
@@ -12,7 +7,7 @@ export default defineNuxtConfig({
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
-    AUTH_ORIGIN: process.env.AUTH_ORIGIN,
+    NUXT_SECRET: process.env.NUXT_SECRET,
   },
   build: {
     transpile: ['primevue'],
@@ -34,4 +29,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@formkit/auto-animate/nuxt',
   ],
+  auth: {
+    origin: process.env.ORIGIN,
+  },
 })
