@@ -5,7 +5,7 @@ import { db } from '~/db'
 import { Adapter } from 'next-auth/adapters'
 
 export default NuxtAuthHandler({
-  secret: '7ca0ae2a-a03e-41c4-a3fd-03d60b70ffd4',
+  secret: process.env.NUXT_SECRET,
   adapter: DrizzleAdapter(db) as Adapter,
   providers: [
     // @ts-expect-error You need to use .default here for it to work during SSR. May be fixed via Vite at some point
