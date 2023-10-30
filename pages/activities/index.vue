@@ -1,3 +1,3 @@
 <template>
-  <WidgetsActivityRepeater />
+  <WidgetsActivityRepeater title="No activities found" />
 </template>

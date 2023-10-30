@@ -8,8 +8,6 @@
       </div>
     </div>
 
-    <div v-else-if="error">Error fetching activities</div>
-
     <div
       v-else-if="data && data?.activities?.length"
       class="dates-activities-container"
@@ -81,8 +79,9 @@
     </div>
 
     <div v-else-if="!data?.activities?.length && !pending">
-      <WidgetsActivityEmpty />
+      <WidgetsActivityEmpty :title="props.title" />
     </div>
+    <div v-else-if="error">Error fetching activities {{ error }}</div>
   </Transition>
 
   <UiModal id="delete_modal">
@@ -126,6 +125,10 @@ const props = defineProps({
   limit: {
     type: Number,
     default: null,
+  },
+  title: {
+    type: String,
+    default: 'No activities added for today',
   },
   queryKey: {
     type: String,
@@ -206,7 +209,6 @@ const deleteActivity = () => {
 // need to do things like check window blur, save when that happens (?)
 // or if we detect too many requests happening slow them down
 // by artificially upping debounce time?
-
 const handleEditing = useDebounceFn((activity) => {
   // add a saving indicator
   $fetch('/api/activities/updateActivity', {

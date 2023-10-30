@@ -44,6 +44,7 @@ export default defineEventHandler(async (event) => {
     // Add filter for a specific date
     baseQuery.where(
       and(
+        eq(session.id, todos.userId),
         gte(todos.created_at, d.toISOString() as string),
         lte(todos.created_at, endOfDay.toISOString() as string)
       )

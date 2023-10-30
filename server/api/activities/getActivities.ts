@@ -1,6 +1,6 @@
 import { db } from '~/db'
 import { activities, goals, activitiesToGoals } from '~/db/schema'
-import { desc, eq, sql, gte, lte } from 'drizzle-orm'
+import { desc, eq, sql, gte, lte, and } from 'drizzle-orm'
 import { getServerSession } from '#auth'
 
 export default defineEventHandler(async (event) => {
@@ -37,18 +37,32 @@ export default defineEventHandler(async (event) => {
 
   const goalId = query.goalId as number
 
+  let d, endOfDay
+
   if (query.date && typeof query.date === 'string') {
-    const d = new Date(query.date)
+    d = new Date(query.date)
     d.setHours(0, 0, 0, 0)
+    endOfDay = new Date(d)
+    endOfDay.setHours(23, 59, 59, 999)
     // Add filter for a specific date
-    baseQuery.where(gte(activities.created_at, d.toISOString() as string))
   }
 
-  const data = goalId
-    ? await baseQuery.where(eq(goals.goalId, goalId))
-    : await baseQuery
+  baseQuery.where(
+    and(
+      eq(session.id, goals.userId),
+      query.date
+        ? gte(activities.created_at, d?.toISOString() as string)
+        : undefined,
+      query.date
+        ? lte(activities.created_at, endOfDay?.toISOString() as string)
+        : undefined,
+      query.goalId ? eq(goals.goalId, goalId) : undefined
+    )
+  )
 
-  if (!data) {
+  const data = await baseQuery
+
+  if (!data || !data.length) {
     throw createError({
       statusCode: 404,
       statusMessage: 'No activities were found',

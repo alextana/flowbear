@@ -3,7 +3,9 @@
     class="todos-container overflow-hidden bg-primary/5 dark:bg-base-200 rounded-2xl p-6"
   >
     <div class="flex gap-2 justify-between items-center mb-4">
-      <h4 class="text-2xl font-extrabold">Today's todos</h4>
+      <h4 class="text-2xl font-extrabold">
+        {{ getTodoTitle }}
+      </h4>
       <div class="create-todo">
         <button
           @click="() => (addingTodo = !addingTodo)"
@@ -62,16 +64,17 @@
       </template>
     </div>
   </div>
-  {{ dateStore.currentDate }}
   <Toast position="bottom-left" group="bl" />
 </template>
 
 <script setup>
 import { useSelectedDate } from '#imports'
+import { DateTime } from 'luxon'
 
 import { useToast } from 'primevue/usetoast'
 const toast = useToast()
 const dateStore = useSelectedDate()
+const shouldShow = ref(false)
 
 const { data, pending, error } = useAsyncData(
   'dailyTodos',
@@ -88,15 +91,27 @@ const { data, pending, error } = useAsyncData(
   }
 )
 
-const shouldShow = ref(false)
+// only add loading state
+// if it's taking long (500ms +)
+const { shouldShowLoading } = useLoading(pending, 750)
+
+const getTodoTitle = computed(() => {
+  const today = new Date()
+  const d = new Date(dateStore.currentDate)
+  today.setHours(0, 0, 0, 0)
+  d.setHours(0, 0, 0, 0)
+
+  if (today.toISOString() === d.toISOString()) {
+    return `Today's Todos`
+  }
+  return `Todos for ${DateTime.fromISO(dateStore?.currentDate).toFormat(
+    'dd MMM'
+  )}`
+})
 
 onMounted(() => {
   shouldShow.value = true
 })
-
-// only add loading state
-// if it's taking long (500ms +)
-const { shouldShowLoading } = useLoading(pending, 750)
 
 const addingTodo = ref(false)
 const newTodo = ref({

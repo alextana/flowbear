@@ -1,7 +1,7 @@
 <template>
   <div class="goals prose">
     <h1>{{ route.query.name }}</h1>
-    <WidgetsActivityRepeater />
+    <WidgetsActivityRepeater title="No activities found" />
   </div>
 </template>
 
