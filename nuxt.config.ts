@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
-    ORIGIN: process.env.ORIGIN,
+    AUTH_ORIGIN: process.env.AUTH_ORIGIN,
     NUXT_SECRET: process.env.NUXT_SECRET,
   },
   build: {
