@@ -23,8 +23,7 @@
 
   <div
     v-if="hasGoals()"
-    v-auto-animate
-    class="ml-2 goals-display flex w-full items-center gap-2 text-neutral-content"
+    class="ml-2 goals-display flex w-full flex-wrap min-w-[80%] items-center gap-2 text-neutral-content"
   >
     <template v-for="goal in getGoals()">
       <button
@@ -122,7 +121,10 @@ const handleRemoveGoal = (goal) => {
 }
 
 const handleAddGoal = (goal) => {
-  if (currentGoals.value.find((f) => f.goalId === goal.goalId)) {
+  if (
+    currentGoals.value[0] &&
+    currentGoals.value.find((f) => f.goalId === goal.goalId)
+  ) {
     setButtonError()
 
     toast.add({
@@ -146,7 +148,10 @@ const handleAddGoal = (goal) => {
     onResponse({ response }) {
       if (response.status !== 200) return
 
-      currentGoals.value = [goal, ...currentGoals.value]
+      currentGoals.value = !currentGoals.value[0]
+        ? [goal]
+        : [goal, ...currentGoals.value]
+
       // toggles dropdown
       document.activeElement.blur()
     },

@@ -2,7 +2,7 @@
   <Transition name="fade" mode="out-in">
     <div v-if="pending">
       <div
-        class="w-full h-[350px] prose grid place-content-center text-center relative"
+        class="w-full h-[350px] prose max-w-none grid place-content-center text-center relative"
       >
         <span class="loading loading-dots loading-lg"></span>
       </div>
@@ -31,7 +31,7 @@
               <div
                 @mouseover="handleShowOptions(i)"
                 @mouseleave="handleShowOptions(null)"
-                class="activity-container p-4 rounded-2xl bg-base-100 activity prose relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all"
+                class="activity-container p-4 rounded-2xl max-w-none 2xl:max-w-[unset] bg-base-100 activity prose relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all"
               >
                 <InputTipTap
                   v-if="editingIndex === i"
@@ -53,7 +53,7 @@
                 >
                   <Icon
                     @click="handleDelete(item.activity)"
-                    class="cursor-pointer hover:text-accent"
+                    class="cursor-pointer hover:text-primary"
                     name="mingcute:delete-line"
                     size="18"
                   />
@@ -100,43 +100,53 @@
 import { DateTime } from 'luxon'
 import { getLang } from '~/helpers/getLang'
 import { useDebounceFn } from '@vueuse/core'
+import { useSelectedDate } from '#imports'
 
 const route = useRoute()
 const editIconsIndex = ref(null)
 const editingIndex = ref(null)
 const selectedActivity = ref(null)
+const dateStore = useSelectedDate()
 
-const { data, pending, error } = useFetch('/api/activities/getActivities', {
-  key: props.queryKey,
-  params: {
-    goalId: route.params.id || null,
-    date: props.date,
-  },
-  transform(data) {
-    const dates = data.map((d) => d.activity.created_at)
-    return {
-      activities: data,
-      dates: dates,
-    }
-  },
-})
+const { data, pending, error } = useAsyncData(
+  props.queryKey,
+  () =>
+    $fetch('/api/activities/getActivities', {
+      params: {
+        goalId: route.params.id || null,
+        date: props.date ? dateStore?.currentDate : null,
+      },
+    }),
+  {
+    watch: [dateStore],
+    server: false,
+    lazy: true,
+    transform(data) {
+      const dates = data.map((d) => d.activity.created_at)
+      return {
+        activities: data,
+        dates: dates,
+      }
+    },
+  }
+)
 
 const props = defineProps({
   limit: {
     type: Number,
     default: null,
   },
+  date: {
+    type: Boolean,
+    default: true,
+  },
   title: {
     type: String,
-    default: 'No activities added for today',
+    default: '',
   },
   queryKey: {
     type: String,
     default: 'activities',
-  },
-  date: {
-    type: String,
-    default: '',
   },
 })
 

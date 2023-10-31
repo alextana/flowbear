@@ -4,5 +4,5 @@
     subtitle="a list of all of your activities"
   />
   <UiSeparator class="my-12" />
-  <WidgetsActivityRepeater title="No activities found" />
+  <WidgetsActivityRepeater title="No activities found" :date="false" />
 </template>

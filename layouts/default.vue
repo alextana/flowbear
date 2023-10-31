@@ -7,6 +7,10 @@
     <LayoutMainContent class="flex-1">
       <slot />
     </LayoutMainContent>
-    <LayoutRightSidebar class="min-w-[450px] max-w-[450px]" />
+    <LayoutRightSidebar v-if="!isMobile" class="min-w-[450px] max-w-[450px]" />
   </div>
 </template>
+
+<script setup>
+const isMobile = useDevice()
+</script>

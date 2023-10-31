@@ -2,19 +2,19 @@
   <nav class="min-w-[200px] sticky top-5">
     <ul class="py-2">
       <template v-for="entry in menuEntries">
-        <li
-          :class="`transition-all hover:bg-base-200 hover:text-base-content
+        <button
+          :class="`transition-all w-full hover:bg-base-200 hover:text-base-content
           px-4 py-4 mb-2 rounded-2xl ${shouldHighlight(entry)}`"
         >
           <NuxtLink :to="entry.link">
-            <span class="flex gap-2 items-center">
+            <button class="flex gap-2 items-center">
               <Icon :name="entry.icon" size="20" />
               <span class="block">
                 {{ entry.name }}
               </span>
-            </span>
+            </button>
           </NuxtLink>
-        </li>
+        </button>
       </template>
     </ul>
   </nav>
