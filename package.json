@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@nuxtjs/google-fonts": "^3.0.2",
     "@types/uuid": "^9.0.4",
     "daisyui": "latest",
     "drizzle-kit": "^0.19.13",

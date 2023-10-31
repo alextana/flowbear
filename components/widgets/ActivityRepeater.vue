@@ -2,7 +2,7 @@
   <Transition name="fade" mode="out-in">
     <div v-if="pending">
       <div
-        class="w-full h-[350px] prose max-w-none grid place-content-center text-center relative"
+        class="w-full h-[350px] prose grid place-content-center text-center relative"
       >
         <span class="loading loading-dots loading-lg"></span>
       </div>
@@ -26,25 +26,25 @@
           </ClientOnly>
         </div>
         <div class="activities w-full">
-          <template v-for="(data, i) in data.activities">
-            <template v-if="shouldShowDate(data.activity, date)">
+          <template v-for="(item, i) in data.activities">
+            <template v-if="shouldShowDate(item.activity, date)">
               <div
                 @mouseover="handleShowOptions(i)"
                 @mouseleave="handleShowOptions(null)"
-                class="activity-container p-4 rounded-2xl bg-base-100 activity prose max-w-none relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all hover:border-l-neutral-content"
+                class="activity-container p-4 rounded-2xl bg-base-100 activity prose relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all"
               >
                 <InputTipTap
                   v-if="editingIndex === i"
-                  v-model="data.activity.content"
+                  v-model="item.activity.content"
                   autoFocus="end"
-                  @update:modelValue="handleEditing(data.activity)"
+                  @update:modelValue="handleEditing(item.activity)"
                   classProps="border-0 outline-0 focus:outline-0 focus:border-0"
                 />
 
                 <div
                   v-else
                   @click="editingIndex = i"
-                  v-html="data.activity.content"
+                  v-html="item.activity.content"
                 />
 
                 <div
@@ -52,7 +52,7 @@
                   v-if="editIconsIndex === i"
                 >
                   <Icon
-                    @click="handleDelete(data.activity)"
+                    @click="handleDelete(item.activity)"
                     class="cursor-pointer hover:text-accent"
                     name="mingcute:delete-line"
                     size="18"
@@ -63,12 +63,12 @@
                   class="time-edit-container flex items-center justify-between"
                 >
                   <UiGoalSelector
-                    :activity="data.activity"
-                    :goals="data.goals"
+                    :activity="item.activity"
+                    :goals="item.goals"
                   />
 
                   <span class="w-full text-right text-xs text-base-content"
-                    >at {{ getTime(data.activity.created_at) }}</span
+                    >at {{ getTime(item.activity.created_at) }}</span
                   >
                 </div>
               </div>
@@ -223,6 +223,17 @@ const handleEditing = useDebounceFn((activity) => {
 
 const closeModal = () => {
   delete_modal.close()
+}
+
+const handleEditGoal = (goal, activity, method) => {
+  console.log('a', activity)
+  // if (method === 'add') {
+  //   data.goals = [...data.goals, goal]
+
+  //   return
+  // }
+
+  // data.goals = data.goals.filter((f) => f !== goal)
 }
 </script>
 

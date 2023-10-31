@@ -29,5 +29,12 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vueuse/nuxt',
     '@formkit/auto-animate/nuxt',
+    '@nuxtjs/google-fonts',
   ],
+  googleFonts: {
+    // Options
+    families: {
+      Poppins: [400, 700],
+    },
+  },
 })

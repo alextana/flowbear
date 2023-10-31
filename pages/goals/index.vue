@@ -15,10 +15,10 @@
         <UiButton kind="primary" @click="handleCreate">Create goal</UiButton>
         <UiSeparator class="my-8" />
         <div
-          class="goals grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center gap-4"
+          class="goals h-full grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 items-stretch gap-4"
         >
-          <div class="goal" v-for="goal in data">
-            <div class="card w-full bg-base-100 border border-base-300">
+          <div class="goal h-full" v-for="goal in data">
+            <div class="card w-full h-full bg-base-100 border border-base-300">
               <div class="card-body">
                 <h2 class="card-title">{{ goal.title }}</h2>
                 <p>{{ goal.description }}</p>

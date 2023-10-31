@@ -1,11 +1,19 @@
 <template>
   <div class="w-full min-w-[71ch]">
     <h1 class="text-4xl tracking-tight font-bold text-content">
-      Hey
-      <span v-if="data?.user?.name">{{ data.user.name.split(' ')[0] }}</span>
+      <span v-if="!props.title">
+        Hey
+        <span v-if="data?.user?.name">{{ data.user.name.split(' ')[0] }}</span>
+      </span>
+      <span v-else>
+        {{ props.title }}
+      </span>
     </h1>
     <p class="text-neutral/50 dark:text-neutral-content/50 text-lg">
-      what have you been up to?
+      <span v-if="!props.subtitle"> what have you been up to? </span>
+      <span v-else>
+        {{ props.subtitle }}
+      </span>
     </p>
     <UiSeparator class="my-4" />
     <InputTipTap
@@ -61,6 +69,17 @@ const goalPreview = ref(null)
 const activityContent = ref('')
 import { useToast } from 'primevue/usetoast'
 const toast = useToast()
+
+const props = defineProps({
+  title: {
+    type: String,
+    default: '',
+  },
+  subtitle: {
+    type: String,
+    default: '',
+  },
+})
 
 const handleAdd = () => {
   $fetch('/api/activities/createActivity', {

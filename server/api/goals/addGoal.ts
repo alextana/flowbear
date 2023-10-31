@@ -29,19 +29,12 @@ export default defineEventHandler(async (event) => {
   }
 
   // add goal to activity by adding it to the join table
-  await db.insert(activitiesToGoals).values({
+  const goal = await db.insert(activitiesToGoals).values({
     activityId: body.activityId,
     goalId: body.goalId,
   })
 
-  // await db.insert(goals).values({
-  //   title: body.title,
-  //   userId: session.id,
-  //   description: body.description,
-  //   content: body.content,
-  // })
-
   return {
-    body,
+    goal,
   }
 })
