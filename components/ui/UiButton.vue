@@ -34,6 +34,7 @@ const props = defineProps({
         'secondary',
         'accent',
         'outline',
+        'success',
         'ghost',
         'link',
       ].includes(value)
@@ -69,6 +70,7 @@ const computedClasses = computed(() => {
       neutral: 'btn-neutral',
       secondary: 'btn-secondary',
       accent: 'btn-accent',
+      success: 'btn-success',
       outline: 'btn-outline',
       ghost: 'btn-ghost',
       link: 'btn-link',

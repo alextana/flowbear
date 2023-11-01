@@ -81,10 +81,10 @@ export default defineEventHandler(async (event) => {
         todoOrder.push(todos.id)
       }
 
-      const existingEntry = result[todos.id]
+      const existingActivity = result[todos.id]
 
-      if (existingEntry) {
-        existingEntry.goals.push(goal)
+      if (existingActivity) {
+        existingActivity.goals.push(goal)
       } else {
         result[todos.id] = {
           todos,

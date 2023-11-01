@@ -17,7 +17,7 @@ export default {
 
   props: {
     autoFocus: {
-      type: Boolean,
+      type: [String, Boolean],
       default: false,
     },
     classProps: {

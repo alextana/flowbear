@@ -21,7 +21,7 @@
       <div class="flex items-center gap-2" v-else-if="data">
         <UiAvatar :url="data.user.image" width="30" />
         <button @click="signOut()">
-          <Icon name="mdi:logout" size="24" class="hover:text-green-500" />
+          <Icon name="mdi:logout" size="24" class="hover:text-primary" />
         </button>
       </div>
     </div>

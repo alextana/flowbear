@@ -13,12 +13,11 @@
 
 <script setup>
 const { status } = useAuth()
+const isMobile = useDevice()
 
 onBeforeMount(async () => {
   if (status.value !== 'authenticated') {
     await navigateTo('/home')
   }
 })
-
-const isMobile = useDevice()
 </script>

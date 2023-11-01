@@ -82,10 +82,10 @@ export default defineEventHandler(async (event) => {
         activityOrder.push(activity.id)
       }
 
-      const existingEntry = result[activity.id]
+      const existingActivity = result[activity.id]
 
-      if (existingEntry) {
-        existingEntry.goals.push(goal)
+      if (existingActivity) {
+        existingActivity.goals.push(goal)
       } else {
         result[activity.id] = {
           activity,

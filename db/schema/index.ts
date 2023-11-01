@@ -6,6 +6,7 @@ import {
   integer,
   serial,
   boolean,
+  pgEnum,
 } from 'drizzle-orm/pg-core'
 import type { AdapterAccount } from '@auth/core/adapters'
 
@@ -59,12 +60,14 @@ export const verificationTokens = pgTable(
   })
 )
 
-export const goals = pgTable('goal', {
-  goalId: serial('goalId').primaryKey(),
-  title: text('title').notNull(),
+export const activityTypeEnum = pgEnum('type', ['activity', 'feedback'])
+
+export const activities = pgTable('activity', {
+  id: serial('id').primaryKey().notNull(),
   description: text('description'),
-  content: text('content'),
   userId: text('userId').references(() => users.id),
+  content: text('content').notNull(),
+  type: activityTypeEnum('type').default('activity'),
   created_at: timestamp('created_at', {
     precision: 6,
     withTimezone: true,
@@ -72,11 +75,12 @@ export const goals = pgTable('goal', {
   }).defaultNow(),
 })
 
-export const activities = pgTable('activity', {
-  id: serial('id').primaryKey().notNull(),
+export const goals = pgTable('goal', {
+  goalId: serial('goalId').primaryKey(),
+  title: text('title').notNull(),
   description: text('description'),
+  content: text('content'),
   userId: text('userId').references(() => users.id),
-  content: text('content').notNull(),
   created_at: timestamp('created_at', {
     precision: 6,
     withTimezone: true,

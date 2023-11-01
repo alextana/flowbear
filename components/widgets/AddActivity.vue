@@ -22,42 +22,46 @@
     />
     <UiSeparator class="mb-4" />
 
-    <div class="flex actions justify-end gap-2">
-      <div class="dropdown">
-        <label v-if="!goalPreview" tabindex="0" class="btn btn-outline">
-          <Icon name="material-symbols:add" size="18" /> Add goal
-        </label>
-        <label v-else tabindex="0" class="btn btn-success">
-          <Icon name="iconamoon:edit" size="18" /> {{ goalPreview.title }}
-        </label>
-        <ul
-          tabindex="0"
-          class="dropdown-content z-[1] mt-4 menu border border-base-300 bg-base-100 p-2 shadow-xl rounded-box w-52"
-        >
-          <li
-            class="text-xs border-b dark:border-neutral p-2 mb-2 font-semibold"
+    <div class="flex actions justify-between gap-2">
+      <div class="actions flex items-center gap-2">
+        <div class="type">
+          <UiDropdown
+            :list="activityTypes"
+            @change="selectedType = $event.name"
+            nameKey="name"
+            dropdownLabel="Select an activity type"
           >
-            Select a goal
-          </li>
-          <template v-if="goalsData?.length" v-for="goal in goalsData">
-            <li @click="handleGoal(goal)">
-              <a class="no-underline">
-                {{ goal.title }}
-              </a>
-            </li>
+            <template #label>
+              <UiButton size="sm" kind="outline">Activity Type</UiButton>
+            </template>
+          </UiDropdown>
+        </div>
+        <UiDropdown
+          @change="handleGoal($event)"
+          :list="goalsData"
+          dropdownLabel="Select a goal"
+        >
+          <template #label>
+            <UiButton v-if="!goalPreview" size="sm" kind="outline">
+              <Icon name="material-symbols:add" size="18" /> Add goal
+            </UiButton>
+            <UiButton v-else kind="success" size="sm">
+              <Icon @click="removeGoal" name="mdi:remove" size="18" />
+              {{ goalPreview.title }}
+            </UiButton>
           </template>
-          <template v-if="goalPreview">
-            <li @click="removeGoal"><a class="no-underline">No goal</a></li>
-          </template>
-          <template v-else-if="!goalPreview && !goalsData?.length">
+          <template #empty-list>
             <NuxtLink to="/goals"
               ><li><a>Create goal</a></li></NuxtLink
-            >
-          </template>
-        </ul>
+            ></template
+          >
+        </UiDropdown>
       </div>
-
-      <UiButton @click="handleAdd" kind="primary">Add activity</UiButton>
+      <div class="submit">
+        <UiButton @click="handleAdd" kind="primary" size="sm"
+          >Add {{ selectedType }}</UiButton
+        >
+      </div>
     </div>
   </div>
   <Toast position="bottom-right" group="br" />
@@ -67,8 +71,19 @@
 const { data } = useAuth()
 const goalPreview = ref(null)
 const activityContent = ref('')
-import { useToast } from 'primevue/usetoast'
 const toast = useToast()
+import { useToast } from 'primevue/usetoast'
+
+const selectedType = ref('activity')
+
+const activityTypes = [
+  {
+    name: 'activity',
+  },
+  {
+    name: 'feedback',
+  },
+]
 
 const props = defineProps({
   title: {
@@ -86,6 +101,7 @@ const handleAdd = () => {
     body: {
       content: activityContent.value,
       goalId: goalPreview?.value?.goalId,
+      type: selectedType.value,
     },
     method: 'POST',
     onResponse() {
@@ -115,11 +131,9 @@ const {
 
 const handleGoal = (goal) => {
   goalPreview.value = goal
-  document.activeElement.blur()
 }
 
 const removeGoal = () => {
   goalPreview.value = null
-  document.activeElement.blur()
 }
 </script>

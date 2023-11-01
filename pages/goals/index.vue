@@ -1,7 +1,7 @@
 <template>
   <div class="goals container mx-auto">
-    <div v-if="pending" class="grid place-content-center">
-      <span class="loading loading-ring loading-md"></span>
+    <div v-if="pending && !data" class="grid place-content-center">
+      <span class="loading loading-dots loading-lg"></span>
     </div>
     <div v-if="error">error...</div>
     <div v-if="data">
