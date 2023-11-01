@@ -1,4 +1,4 @@
-<template>
+<template v-if="status === 'authenticated'">
   <!-- handle mobile later, have different layouts -->
   <LayoutHeader />
   <UiSeparator class="mb-4" />
@@ -12,5 +12,13 @@
 </template>
 
 <script setup>
+const { status } = useAuth()
+
+onBeforeMount(async () => {
+  if (status.value !== 'authenticated') {
+    await navigateTo('/home')
+  }
+})
+
 const isMobile = useDevice()
 </script>
