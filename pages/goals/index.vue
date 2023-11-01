@@ -1,5 +1,11 @@
 <template>
   <div class="goals container mx-auto">
+    <div class="heading flex justify-between">
+      <h1 class="text-4xl font-extrabold">Goals</h1>
+      <UiButton kind="primary" @click="handleCreate">Create goal</UiButton>
+    </div>
+    <UiSeparator class="mb-4" />
+
     <div v-if="pending && !data" class="grid place-content-center">
       <span class="loading loading-dots loading-lg"></span>
     </div>
@@ -8,27 +14,22 @@
       <div v-if="!data.length">
         <p>You haven't created any goals</p>
         <UiSeparator class="my-4" />
-        <UiButton kind="primary" @click="handleCreate">Create goal</UiButton>
       </div>
-
       <div v-else>
-        <UiButton kind="primary" @click="handleCreate">Create goal</UiButton>
         <UiSeparator class="my-8" />
         <div
           class="goals h-full grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 items-stretch gap-4"
         >
           <div class="goal h-full" v-for="goal in data">
-            <div class="card w-full h-full bg-base-100 border border-base-300">
-              <div class="card-body">
-                <h2 class="card-title">{{ goal.title }}</h2>
-                <p>{{ goal.description }}</p>
-                <div class="card-actions justify-end">
-                  <NuxtLink :to="`/goals/${goal.goalId}?name=${goal.title}`">
-                    <UiButton kind="primary" size="sm">View</UiButton>
-                  </NuxtLink>
+            <NuxtLink :to="`/goals/${goal.goalId}?name=${goal.title}`">
+              <button
+                class="card text-left min-h-[180px] min-w-[180px] w-full bg-base-100 dark:hover:bg-neutral dark:hover:text-neutral-content hover:bg-primary hover:text-primary-content border border-base-300"
+              >
+                <div class="card-body">
+                  <h2 class="card-title">{{ goal.title }}</h2>
                 </div>
-              </div>
-            </div>
+              </button>
+            </NuxtLink>
           </div>
         </div>
       </div>

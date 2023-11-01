@@ -12,21 +12,27 @@
     `"
     >
       <Transition name="slide-fade">
-        <button
+        <div
           v-if="showDeleteIcon && !currentTodo.completed"
-          :class="`absolute transition-all right-3 transform btn z-10 ${
-            confirmDelete
-              ? 'btn-xl bg-red-500 !rounded-none !right-0 hover:bg-red-600 text-white hover:text-white'
-              : 'btn-circle btn-sm bg-primary hover:bg-primary-focus'
-          } `"
-          @click="handleDelete"
+          class="todo-buttons absolute flex gap-0 items-center transition-all right-1 transform z-10"
         >
-          <Icon
-            name="mingcute:delete-line"
-            size="18"
-            class="text-primary-content"
-          />
-        </button>
+          <button
+            @click="handleEditTodo"
+            class="btn btn-circle btn-sm btn-ghost"
+          >
+            <Icon name="material-symbols:edit-outline" size="18" />
+          </button>
+          <button
+            :class="`btn transition-all ${
+              confirmDelete
+                ? 'btn-xl bg-red-500 !rounded-none !right-0 hover:bg-red-600 text-white hover:text-white'
+                : 'btn-circle btn-sm btn-ghost'
+            } `"
+            @click="handleDelete"
+          >
+            <Icon name="mingcute:delete-line" size="18" />
+          </button>
+        </div>
       </Transition>
 
       <input
@@ -43,7 +49,7 @@
         @update:modelValue="handleEditing"
         :classes="`${
           currentTodo.completed ? 'pointer-events-none' : ''
-        } input input-sm input-ghost !outline-0 bg-transparent`"
+        } input input-sm input-ghost max-w-[260px] !outline-0 bg-transparent`"
       >
         <Transition
           @after-enter="handleAnimation(_, _, 'enter')"
@@ -61,6 +67,30 @@
       </UiInputText>
     </div>
   </Transition>
+  <UiModal id="todo_modal">
+    <template #title>
+      <div>Edit todo</div>
+    </template>
+    <template #default>
+      <div>
+        <UiInputText label="Todo title" v-model="currentTodo.title" />
+        <UiSeparator class="my-4" />
+        <UiInputText
+          label="Todo description"
+          v-model="currentTodo.description"
+        />
+      </div>
+    </template>
+
+    <template #buttons>
+      <div class="w-full justify-end flex gap-2">
+        <button @click="handleCancel" class="btn btn-sm btn-ghost">
+          cancel
+        </button>
+        <button class="btn btn-sm btn-success" @click="editTodo">Save</button>
+      </div>
+    </template>
+  </UiModal>
 </template>
 
 <script setup>
@@ -160,6 +190,19 @@ const handleAnimation = (_, done, type) => {
 const showDelete = (value) => {
   showDeleteIcon.value = value
   confirmDelete.value = false
+}
+
+const handleEditTodo = () => {
+  todo_modal.showModal()
+}
+
+const handleCancel = () => {
+  todo_modal.close()
+  resetData()
+}
+
+const editTodo = () => {
+  console.log('edit', currentTodo)
 }
 </script>
 

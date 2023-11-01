@@ -1,6 +1,6 @@
 <template>
   <div
-    class="todos-container overflow-hidden bg-primary/5 dark:bg-base-200 rounded-2xl p-6"
+    class="todos-container overflow-hidden bg-base-200/70 dark:bg-base-200 rounded-2xl p-6"
   >
     <div class="flex gap-2 justify-between items-center mb-4">
       <h4 class="text-2xl font-extrabold">

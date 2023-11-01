@@ -29,6 +29,7 @@ export default defineEventHandler(async (event) => {
       .values({
         userId: session.id,
         content: body.content,
+        type: body.type,
       })
       .returning()
   } catch (error) {

@@ -32,7 +32,10 @@
             dropdownLabel="Select an activity type"
           >
             <template #label>
-              <UiButton size="sm" kind="outline">Activity Type</UiButton>
+              <UiButton size="sm" kind="outline">
+                {{ selectedType }}
+                <Icon name="mdi:chevron-down" size="18" />
+              </UiButton>
             </template>
           </UiDropdown>
         </div>
