@@ -3,6 +3,11 @@ import GoogleProvider from 'next-auth/providers/google'
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import { db } from '~/db'
 import { Adapter } from 'next-auth/adapters'
+import crypto from 'node:crypto'
+
+if (!process.client) {
+  globalThis.crypto ??= crypto.webcrypto
+}
 
 export default NuxtAuthHandler({
   secret: process.env.NUXT_SECRET,
