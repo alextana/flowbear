@@ -6,7 +6,7 @@
       >
         <UiLogo />
         <div class="text-lg font-semibold">
-          not<span class="font-extrabold">apse</span>
+          note<span class="font-extrabold">lap</span>
         </div>
       </div>
     </NuxtLink>
