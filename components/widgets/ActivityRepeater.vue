@@ -234,17 +234,6 @@ const handleEditing = useDebounceFn((activity) => {
 const closeModal = () => {
   delete_modal.close()
 }
-
-const handleEditGoal = (goal, activity, method) => {
-  console.log('a', activity)
-  // if (method === 'add') {
-  //   data.goals = [...data.goals, goal]
-
-  //   return
-  // }
-
-  // data.goals = data.goals.filter((f) => f !== goal)
-}
 </script>
 
 <style>

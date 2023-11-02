@@ -49,12 +49,19 @@
         </div>
       </template>
       <template :key="data" v-else-if="data && data?.length">
-        <template :key="todo" v-for="todo in data">
-          <WidgetsTodoItem
-            :todo="todo"
-            @editTodo="(todo, goal) => handleEdit(todo, goal)"
-            @deleteTodo="handleDeleteTodo"
-          />
+        <template :key="group" v-for="group in data">
+          <span
+            class="text-sm block mt-4 mb-2 font-semibold text-gray-700 dark:text-gray-300"
+            >{{ group.goal.title }}</span
+          >
+          <template :key="todo" v-for="todo in group.todos">
+            <WidgetsTodoItem
+              :todo="todo"
+              :goal="group.goal"
+              @editTodo="(todo, goal) => handleEdit(todo, goal)"
+              @deleteTodo="handleDeleteTodo"
+            />
+          </template>
         </template>
       </template>
       <template v-if="!data?.length && !error && !shouldShowLoading">
@@ -118,10 +125,7 @@
 
     <template #buttons>
       <div class="w-full justify-end flex gap-2">
-        <button @click="handleCancel" class="btn btn-sm btn-ghost">
-          cancel
-        </button>
-        <button class="btn btn-sm btn-success" @click="close">Close</button>
+        <button class="btn btn-sm btn-neutral" @click="close">Close</button>
       </div>
     </template>
   </UiModal>
@@ -136,20 +140,18 @@ import { useToast } from 'primevue/usetoast'
 const toast = useToast()
 const dateStore = useSelectedDate()
 const shouldShow = ref(false)
-
 const buttonError = ref(false)
-
 const todoGoal = ref(null)
-
 const currentTodo = ref({
   title: '',
   description: '',
 })
-
+// only add loading state
+// if it's taking long (500ms +)
 const { data, pending, error } = useAsyncData(
   'dailyTodos',
   () =>
-    $fetch('/api/todos/getTodos', {
+    $fetch('/api/todos/getGroupedTodos', {
       params: {
         date: dateStore?.currentDate || null,
       },
@@ -160,9 +162,6 @@ const { data, pending, error } = useAsyncData(
     lazy: true,
   }
 )
-
-// only add loading state
-// if it's taking long (500ms +)
 const { shouldShowLoading } = useLoading(pending, 750)
 
 const getTodoTitle = computed(() => {
@@ -229,9 +228,9 @@ const handleAddTodo = (e) => {
 
 const handleEdit = (todo, goal) => {
   currentTodo.value = todo
-
-  todoGoal.value = goal
-
+  if (goal.title.toLowerCase() !== 'no goal') {
+    todoGoal.value = goal
+  }
   todo_modal.showModal()
 }
 
