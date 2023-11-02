@@ -1,5 +1,5 @@
 import { db } from '~/db'
-import { activitiesToGoals } from '~/db/schema'
+import { activitiesToGoals, todosToGoals } from '~/db/schema'
 import { getServerSession } from '#auth'
 
 export default defineEventHandler(async (event) => {
@@ -14,25 +14,31 @@ export default defineEventHandler(async (event) => {
 
   const body = await readBody(event)
 
-  if (!body.activityId) {
+  if (!body.activityId && !body.todoId) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Cannot add goal to activity without activity id',
+      statusMessage:
+        'Cannot add goal to activity/todo without activity/todo id',
     })
   }
 
   if (!body.goalId) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Cannot add goal to activity without goal id',
+      statusMessage: 'Cannot add goal to activity/todo without goal id',
     })
   }
 
   // add goal to activity by adding it to the join table
-  const goal = await db.insert(activitiesToGoals).values({
-    activityId: body.activityId,
-    goalId: body.goalId,
-  })
+  const goal = body.todoId
+    ? await db.insert(todosToGoals).values({
+        todoId: body.todoId,
+        goalId: body.goalId,
+      })
+    : await db.insert(activitiesToGoals).values({
+        activityId: body.activityId,
+        goalId: body.goalId,
+      })
 
   return {
     goal,

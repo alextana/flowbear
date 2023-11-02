@@ -67,30 +67,6 @@
       </UiInputText>
     </div>
   </Transition>
-  <UiModal id="todo_modal">
-    <template #title>
-      <div>Edit todo</div>
-    </template>
-    <template #default>
-      <div>
-        <UiInputText label="Todo title" v-model="currentTodo.title" />
-        <UiSeparator class="my-4" />
-        <UiInputText
-          label="Todo description"
-          v-model="currentTodo.description"
-        />
-      </div>
-    </template>
-
-    <template #buttons>
-      <div class="w-full justify-end flex gap-2">
-        <button @click="handleCancel" class="btn btn-sm btn-ghost">
-          cancel
-        </button>
-        <button class="btn btn-sm btn-success" @click="editTodo">Save</button>
-      </div>
-    </template>
-  </UiModal>
 </template>
 
 <script setup>
@@ -98,7 +74,8 @@ import { gsap } from 'gsap'
 import { useDebounceFn } from '@vueuse/core'
 
 const confirmDelete = ref(false)
-const currentTodo = reactive(props.todo)
+const currentTodo = reactive(props.todo.todos)
+const currentGoal = ref(props.todo.goals[0] || null)
 const show = ref(false)
 const showDeleteIcon = ref(false)
 const invertedAnimation = ref(false)
@@ -113,7 +90,7 @@ const props = defineProps({
 
 const strike = ref('strike')
 
-const emit = defineEmits(['deleteTodo'])
+const emit = defineEmits(['deleteTodo', 'editTodo'])
 
 onMounted(() => {
   show.value = true
@@ -193,16 +170,7 @@ const showDelete = (value) => {
 }
 
 const handleEditTodo = () => {
-  todo_modal.showModal()
-}
-
-const handleCancel = () => {
-  todo_modal.close()
-  resetData()
-}
-
-const editTodo = () => {
-  console.log('edit', currentTodo)
+  emit('editTodo', currentTodo.value || currentTodo, currentGoal.value)
 }
 </script>
 

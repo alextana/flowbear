@@ -1,5 +1,5 @@
 <template>
-  <div class="dropdown">
+  <div :class="`dropdown ${direction}`">
     <slot />
     <ul
       tabindex="0"
@@ -23,7 +23,27 @@
 </template>
 
 <script setup>
+const props = defineProps({
+  direction: {
+    type: String,
+    default: 'dropdown-bottom',
+  },
+})
+
+const direction = ref('')
 const { data, pending, error } = useFetch('/api/goals/getGoals', {
   key: 'goals',
+})
+
+const computeDirection = () => {
+  if (!props.direction) {
+    direction.value = 'dropdown-bottom'
+  }
+
+  direction.value = `dropdown-${props.direction}`
+}
+
+onMounted(() => {
+  computeDirection()
 })
 </script>

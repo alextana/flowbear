@@ -50,7 +50,11 @@
       </template>
       <template :key="data" v-else-if="data && data?.length">
         <template :key="todo" v-for="todo in data">
-          <WidgetsTodoItem :todo="todo.todos" @deleteTodo="handleDeleteTodo" />
+          <WidgetsTodoItem
+            :todo="todo"
+            @editTodo="(todo, goal) => handleEdit(todo, goal)"
+            @deleteTodo="handleDeleteTodo"
+          />
         </template>
       </template>
       <template v-if="!data?.length && !error && !shouldShowLoading">
@@ -64,6 +68,63 @@
       </template>
     </div>
   </div>
+  <UiModal id="todo_modal">
+    <template #title>
+      <span>Edit todo</span>
+    </template>
+    <template #default>
+      <div class="todo-edit">
+        <UiInputText label="Todo title" v-model="currentTodo.title" />
+        <UiSeparator class="my-4" />
+        <UiTextArea
+          label="Todo description"
+          v-model="currentTodo.description"
+        />
+        <UiSeparator class="my-4" />
+        <UiGoalDropdown
+          v-if="!todoGoal"
+          direction="top"
+          @addGoal="($event) => handleAddGoal($event)"
+        >
+          <button
+            :class="`btn btn-sm transition-all duration-500 transform m-1 ${
+              buttonError
+                ? 'btn-error text-error-content scale-[1.10]'
+                : 'btn-outline scale-[1]'
+            }`"
+          >
+            Add Goal
+            <label>
+              <Icon
+                :class="`transition-transform duration-300 transform ${
+                  buttonError ? 'rotate-[45deg]' : 'rotate-0 '
+                }`"
+                name="material-symbols:add"
+                size="18"
+              />
+            </label>
+          </button>
+        </UiGoalDropdown>
+        <button class="btn btn-sm btn-success flex gap-2" v-else>
+          <span>{{ todoGoal.title }}</span>
+          <Icon
+            @click="handleRemoveGoal(todoGoal)"
+            name="mdi:remove"
+            size="18"
+          />
+        </button>
+      </div>
+    </template>
+
+    <template #buttons>
+      <div class="w-full justify-end flex gap-2">
+        <button @click="handleCancel" class="btn btn-sm btn-ghost">
+          cancel
+        </button>
+        <button class="btn btn-sm btn-success" @click="close">Close</button>
+      </div>
+    </template>
+  </UiModal>
   <Toast position="bottom-left" group="bl" />
 </template>
 
@@ -75,6 +136,15 @@ import { useToast } from 'primevue/usetoast'
 const toast = useToast()
 const dateStore = useSelectedDate()
 const shouldShow = ref(false)
+
+const buttonError = ref(false)
+
+const todoGoal = ref(null)
+
+const currentTodo = ref({
+  title: '',
+  description: '',
+})
 
 const { data, pending, error } = useAsyncData(
   'dailyTodos',
@@ -155,6 +225,84 @@ const handleAddTodo = (e) => {
       refreshNuxtData('dailyTodos')
     },
   })
+}
+
+const handleEdit = (todo, goal) => {
+  currentTodo.value = todo
+
+  todoGoal.value = goal
+
+  todo_modal.showModal()
+}
+
+const setButtonError = () => {
+  buttonError.value = true
+
+  setTimeout(() => {
+    buttonError.value = false
+  }, 1200)
+}
+
+const handleRemoveGoal = (goal) => {
+  document.activeElement.blur()
+
+  $fetch('/api/goals/removeGoal', {
+    method: 'POST',
+    body: JSON.stringify({
+      goalId: goal.goalId,
+      todoId: currentTodo.value.id,
+    }),
+    onResponse({ response }) {
+      if (response.status !== 200) return
+      todoGoal.value = null
+
+      refreshNuxtData('dailyTodos')
+    },
+    onResponseError() {
+      setButtonError()
+    },
+  })
+}
+
+const handleAddGoal = (goal) => {
+  if (currentTodo?.value?.goalId === goal.goalId) {
+    setButtonError()
+
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Cannot add duplicate goals',
+      group: 'br',
+      life: 3000,
+    })
+
+    document.activeElement.blur()
+
+    return
+  }
+  $fetch('/api/goals/addGoal', {
+    method: 'POST',
+    body: JSON.stringify({
+      goalId: goal.goalId,
+      todoId: currentTodo.value.id,
+    }),
+    onResponse({ response }) {
+      if (response.status !== 200) return
+
+      todoGoal.value = goal
+      refreshNuxtData('dailyTodos')
+
+      // toggles dropdown
+      document.activeElement.blur()
+    },
+    onResponseError() {
+      setButtonError()
+    },
+  })
+}
+
+const close = () => {
+  todo_modal.close()
 }
 
 const handleDeleteTodo = (todo) => {
