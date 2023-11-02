@@ -30,6 +30,7 @@ export default defineEventHandler(async (event) => {
         userId: session.id,
         title: body.title,
         description: body.description,
+        created_at: body.createdAt,
       })
       .returning()
   } catch (error) {

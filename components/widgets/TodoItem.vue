@@ -1,7 +1,7 @@
 <template>
   <Transition name="fade">
     <div
-      v-show="show"
+      v-show="show && currentTodo"
       @mouseenter="showDelete(true)"
       @mouseleave="showDelete(false)"
       :class="`transition-all duration-300 w-full relative px-2 py-1
@@ -74,7 +74,12 @@ import { gsap } from 'gsap'
 import { useDebounceFn } from '@vueuse/core'
 
 const confirmDelete = ref(false)
-const currentTodo = reactive(props.todo)
+const currentTodo = reactive(
+  props.todo || {
+    title: '',
+    completed: false,
+  }
+)
 const currentGoal = ref(props.goal || null)
 const show = ref(false)
 const showDeleteIcon = ref(false)

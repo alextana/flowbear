@@ -1,5 +1,5 @@
 import { db } from '~/db'
-import { todos } from '~/db/schema'
+import { todos, todosToGoals } from '~/db/schema'
 import { getServerSession } from '#auth'
 import { eq } from 'drizzle-orm'
 
@@ -20,6 +20,14 @@ export default defineEventHandler(async (event) => {
       statusCode: 400,
       statusMessage: 'Cannot remove todo an id',
     })
+  }
+
+  // delete the activities to goals before
+  // deleting the activity
+  try {
+    await db.delete(todosToGoals).where(eq(todosToGoals.todoId, body.id))
+  } catch (error) {
+    // fail silently
   }
 
   await db.delete(todos).where(eq(todos.id, body.id))

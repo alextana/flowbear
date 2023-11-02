@@ -118,7 +118,7 @@ const { data, pending, error } = useAsyncData(
       },
     }),
   {
-    watch: [dateStore],
+    watch: [!props.date ? null : dateStore],
     server: false,
     lazy: true,
     transform(data) {

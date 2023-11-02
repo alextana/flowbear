@@ -5,7 +5,7 @@
   >
     <div class="no-todos text-center z-[2]">
       <h4 class="text-2xl font-bold">Nothing to see here</h4>
-      <p class="mb-4 mt-0">what do you need to do today?</p>
+      <p class="mb-4 mt-0">{{ descriptionTest }}</p>
       <UiButton @click="$emit('adding')" kind="primary">Add a todo</UiButton>
       <GraphicsNoTodos
         class="pointer-events-none w-5/6 h-5/6 absolute right-0 bottom-0 opacity-10 z-[-1]"
@@ -15,9 +15,24 @@
 </template>
 
 <script setup>
+import { useSelectedDate } from '#imports'
+const dateStore = useSelectedDate()
+import { DateTime } from 'luxon'
+
 const props = defineProps({
   addingTodo: {
     type: Boolean,
   },
+})
+
+const descriptionTest = computed(() => {
+  const isToday = dateStore.isSelectedToday()
+  const d = DateTime.fromISO(dateStore?.currentDate).toFormat('dd MMM')
+
+  if (!isToday) {
+    return `Add a todo for ${d}`
+  }
+
+  return `what do you need to do today?`
 })
 </script>

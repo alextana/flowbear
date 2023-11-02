@@ -1,8 +1,10 @@
 <template>
   <div
-    class="todos-container overflow-hidden bg-base-200/70 dark:bg-base-200 rounded-2xl p-6"
+    class="todos-container relative overflow-hidden max-h-[400px] overflow-y-scroll bg-base-200/70 dark:bg-base-200 rounded-2xl pl-6 pb-6 pr-6"
   >
-    <div class="flex gap-2 justify-between items-center mb-4">
+    <div
+      class="flex sticky pt-6 z-20 bg-base-200/70 dark:bg-base-200 top-0 gap-2 justify-between items-center mb-4"
+    >
       <h4 class="text-2xl font-extrabold">
         {{ getTodoTitle }}
       </h4>
@@ -51,8 +53,9 @@
       <template :key="data" v-else-if="data && data?.length">
         <template :key="group" v-for="group in data">
           <span
+            v-if="group && group.goal"
             class="text-sm block mt-4 mb-2 font-semibold text-gray-700 dark:text-gray-300"
-            >{{ group.goal.title }}</span
+            >{{ group?.goal?.title }}</span
           >
           <template :key="todo" v-for="todo in group.todos">
             <WidgetsTodoItem
@@ -135,8 +138,8 @@
 <script setup>
 import { useSelectedDate } from '#imports'
 import { DateTime } from 'luxon'
-
 import { useToast } from 'primevue/usetoast'
+
 const toast = useToast()
 const dateStore = useSelectedDate()
 const shouldShow = ref(false)
@@ -188,12 +191,13 @@ const newTodo = ref({
   description: null,
 })
 
-const handleAddTodo = (e) => {
+const handleAddTodo = () => {
   $fetch('/api/todos/createTodo', {
     method: 'POST',
     body: JSON.stringify({
       title: newTodo.value.title,
       description: newTodo.description,
+      createdAt: dateStore.currentDate,
     }),
     onResponse({ response }) {
       if (response.status !== 200) return
@@ -203,10 +207,21 @@ const handleAddTodo = (e) => {
         description: null,
       }
 
-      data.value = [
-        { todos: response._data.todo[0], goals: [null], todo_to_goal: null },
-        ...data.value,
-      ]
+      const toAdd = {
+        goal: { title: 'No goal' },
+        todos: [response._data.todo[0]],
+      }
+
+      // find the index of 'no goals'
+      const idx = data.value.findIndex(
+        (f) => f.goal.title.toLowerCase() === 'no goal'
+      )
+
+      if (idx === -1) {
+        data.value = [toAdd, ...data.value]
+      } else {
+        data.value[idx].todos.unshift(response._data.todo[0])
+      }
 
       toast.add({
         severity: 'success',
@@ -215,8 +230,6 @@ const handleAddTodo = (e) => {
         group: 'bl',
         life: 3000,
       })
-
-      // addingTodo.value = false
     },
     onResponseError({ error }) {
       console.error(error)
@@ -228,9 +241,10 @@ const handleAddTodo = (e) => {
 
 const handleEdit = (todo, goal) => {
   currentTodo.value = todo
-  if (goal.title.toLowerCase() !== 'no goal') {
-    todoGoal.value = goal
-  }
+  goal.title.toLowerCase() !== 'no goal'
+    ? (todoGoal.value = goal)
+    : (todoGoal.value = null)
+
   todo_modal.showModal()
 }
 
@@ -301,11 +315,22 @@ const handleAddGoal = (goal) => {
 }
 
 const close = () => {
+  todoGoal.value = null
   todo_modal.close()
 }
 
 const handleDeleteTodo = (todo) => {
-  data.value = data.value.filter((f) => f.todos.id !== todo.id)
+  const todoIdToRemove = todo.id
+
+  for (const group of data.value) {
+    group.todos = group.todos.filter((todo) => todo.id !== todoIdToRemove)
+
+    if (!group.todos.length) {
+      // If the todo array is empty, remove the goal
+      const index = data.value.indexOf(group)
+      data.value.splice(index, 1)
+    }
+  }
 }
 </script>
 
