@@ -2,19 +2,19 @@
   <nav class="min-w-[288px] sticky top-5">
     <ul class="py-2">
       <template v-for="activity in menuActivities">
-        <button
-          :class="`transition-all w-full hover:bg-base-200 hover:text-base-content
+        <NuxtLink :to="activity.link">
+          <button
+            :class="`transition-all w-full hover:bg-base-200 hover:text-base-content
           px-4 py-4 mb-2 rounded-2xl ${shouldHighlight(activity)}`"
-        >
-          <NuxtLink :to="activity.link">
+          >
             <div class="flex gap-2 items-center">
               <Icon :name="activity.icon" size="20" />
               <span class="block">
                 {{ activity.name }}
               </span>
             </div>
-          </NuxtLink>
-        </button>
+          </button>
+        </NuxtLink>
       </template>
     </ul>
   </nav>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="todos-container relative overflow-hidden max-h-[400px] overflow-y-scroll bg-base-200/70 dark:bg-base-200 rounded-2xl pl-6 pb-6 pr-6"
+    class="todos-container relative overflow-hidden bg-base-200/70 dark:bg-base-200 rounded-2xl pl-6 pb-6 pr-6"
   >
     <div
       class="flex sticky pt-6 z-20 bg-base-200/70 dark:bg-base-200 top-0 gap-2 justify-between items-center mb-4"
@@ -25,9 +25,14 @@
         </button>
       </div>
     </div>
-    <div v-auto-animate class="content-container">
+    <div
+      v-auto-animate
+      class="content-container min-h-[276px] max-h-[400px] overflow-y-auto overflow-x-hidden"
+    >
       <template v-if="addingTodo">
-        <div class="w-full flex gap-2 items-center mb-2 relative px-2 py-1">
+        <div
+          class="w-full flex sticky top-0 gap-2 bg-base-200 z-[20] items-center mb-2 px-2 py-1"
+        >
           <input type="checkbox" :checked="false" class="checkbox" disabled />
           <UiInputText
             @keyup.enter.prevent.stop="handleAddTodo"
@@ -168,6 +173,12 @@ const { data, pending, error } = useAsyncData(
 const { shouldShowLoading } = useLoading(pending, 750)
 
 const getTodoTitle = computed(() => {
+  if (Array.isArray(dateStore.currentDate)) {
+    return `Todos for ${DateTime.fromISO(dateStore?.currentDate[0]).toFormat(
+      'dd MMM'
+    )} and ${DateTime.fromISO(dateStore?.currentDate[1]).toFormat('dd MMM')}`
+    return
+  }
   const today = new Date()
   const d = new Date(dateStore.currentDate)
   today.setHours(0, 0, 0, 0)

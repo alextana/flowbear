@@ -11,7 +11,9 @@
         <slot name="title"></slot>
       </h3>
       <p class="py-4">
-        <slot></slot>
+        <ClientOnly>
+          <slot name="default"></slot>
+        </ClientOnly>
       </p>
       <div class="buttons flex gap-2 justify-end">
         <slot name="buttons"></slot>

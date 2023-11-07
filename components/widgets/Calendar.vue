@@ -7,6 +7,8 @@
       v-model="date"
     />
   </div>
+  <!-- multiple selection TODO -->
+  <!-- <button @click="currentSelectionMode = modes.RANGE">change</button> -->
 </template>
 <script setup>
 import { useSelectedDate } from '#imports'
@@ -26,6 +28,13 @@ const handleSelectionMode = computed(() => {
 })
 
 const updateDateStore = (e) => {
+  if (Array.isArray(e)) {
+    if (e[1]) {
+      dateStore.changeCurrentDate([e[0].toISOString(), e[1].toISOString()])
+    }
+
+    return
+  }
   dateStore.changeCurrentDate(e.toISOString())
 }
 </script>

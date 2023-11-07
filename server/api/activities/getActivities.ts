@@ -28,6 +28,7 @@ export default defineEventHandler(async (event) => {
   const baseQuery = db
     .select()
     .from(activities)
+    .where(eq(session.id, activities.userId))
     .leftJoin(
       activitiesToGoals,
       eq(activities.id, activitiesToGoals.activityId)

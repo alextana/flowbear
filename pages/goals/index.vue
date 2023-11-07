@@ -23,10 +23,34 @@
           <div class="goal h-full" v-for="goal in data">
             <NuxtLink :to="`/goals/${goal.goalId}?name=${goal.title}`">
               <button
-                class="card text-left min-h-[180px] min-w-[180px] w-full bg-base-100 dark:hover:bg-neutral dark:hover:text-neutral-content hover:bg-primary hover:text-primary-content border border-base-300"
+                class="card text-left min-h-[180px] min-w-[180px] w-full bg-base-100 dark:hover:bg-neutral/50 dark:hover:text-neutral-content hover:bg-primary hover:text-primary-content border border-base-300"
               >
-                <div class="card-body">
+                <div class="card-body w-full">
                   <h2 class="card-title">{{ goal.title }}</h2>
+                  <div class="counts w-full flex gap-2 justify-between">
+                    <div
+                      class="todos-count w-full text-center border border-neutral p-3 rounded-xl"
+                    >
+                      <span class="uppercase text-xs font-bold block"
+                        >todos</span
+                      >
+                      <span class="font-bold text-xl"
+                        >{{ goal.completed_todos }}
+                        /
+                        {{ goal.total_todos }}
+                      </span>
+                    </div>
+                    <div
+                      class="activities-count w-full text-center border border-neutral p-3 rounded-xl"
+                    >
+                      <span class="uppercase text-xs font-bold block"
+                        >activities</span
+                      >
+                      <span class="font-bold text-xl">
+                        {{ goal.total_activities }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </button>
             </NuxtLink>

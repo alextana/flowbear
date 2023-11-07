@@ -1,6 +1,8 @@
 <template>
   <div :class="`dropdown ${direction}`">
-    <slot />
+    <ClientOnly>
+      <slot />
+    </ClientOnly>
     <ul
       tabindex="0"
       class="dropdown-content z-[1] menu border border-base-300 bg-base-100 p-2 shadow-xl rounded-box w-52"
@@ -31,7 +33,7 @@ const props = defineProps({
 })
 
 const direction = ref('')
-const { data, pending, error } = useFetch('/api/goals/getGoals', {
+const { data } = useFetch('/api/goals/getGoals', {
   key: 'goals',
 })
 

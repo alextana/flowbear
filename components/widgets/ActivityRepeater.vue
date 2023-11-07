@@ -31,8 +31,11 @@
               <div
                 @mouseover="handleShowOptions(i)"
                 @mouseleave="handleShowOptions(null)"
-                class="activity-container p-4 rounded-2xl max-w-none 2xl:max-w-[unset] bg-base-100 activity prose relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all"
+                class="activity-container p-4 rounded-2xl max-w-none 2xl:max-w-[unset] bg-base-100 hover:bg-primary/5 dark:hover:bg-base-300 activity prose relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all"
               >
+                <span class="text-xs capitalize dark:text-white/40 font-bold">{{
+                  item.activity.type
+                }}</span>
                 <InputTipTap
                   v-if="editingIndex === i"
                   v-model="item.activity.content"
@@ -118,7 +121,7 @@ const { data, pending, error } = useAsyncData(
       },
     }),
   {
-    watch: [!props.date ? null : dateStore],
+    watch: [!props.date ? ref(null) : dateStore],
     server: false,
     lazy: true,
     transform(data) {

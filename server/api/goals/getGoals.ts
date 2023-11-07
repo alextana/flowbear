@@ -1,6 +1,6 @@
 import { db } from '~/db'
-import { goals } from '~/db/schema'
-import { desc, eq } from 'drizzle-orm'
+import { activitiesToGoals, goals, todos, todosToGoals } from '~/db/schema'
+import { desc, eq, sql, and, inArray } from 'drizzle-orm'
 import { getServerSession } from '#auth'
 
 export default defineEventHandler(async (event) => {
@@ -13,12 +13,19 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const data = await db
-    .select()
-    .from(goals)
-    .orderBy(desc(goals.created_at))
-    .limit(10)
-    .where(eq(session.id, goals.userId))
+  const data = await db.execute(sql`
+  SELECT ${goals.title}, ${goals.description}, ${goals.content}, ${goals.goalId},
+    COUNT(${todosToGoals.todoId}) AS total_todos,
+    SUM(CASE WHEN ${todos.completed} THEN 1 ELSE 0 END) AS completed_todos,
+    (SELECT COUNT(*) FROM ${activitiesToGoals} WHERE ${activitiesToGoals.goalId} = ${goals.goalId}) AS total_activities
+  FROM ${goals}
+
+    LEFT JOIN ${todosToGoals} ON ${goals.goalId} = ${todosToGoals.goalId}
+    LEFT JOIN ${todos} ON ${todosToGoals.todoId} = ${todos.id}
+    WHERE ${session.id} = ${goals.userId}
+
+    GROUP BY ${goals.title}, ${goals.description}, ${goals.content}, ${goals.goalId}
+  `)
 
   if (!data) {
     throw createError({
