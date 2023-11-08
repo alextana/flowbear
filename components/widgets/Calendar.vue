@@ -1,40 +1,53 @@
 <template>
-  <div class="calendar">
+  <div class="calendar disable-selection">
     <Calendar
-      :selectionMode="handleSelectionMode"
+      :selectionMode="currentSelectionMode"
       @update:modelValue="updateDateStore"
       inline
       v-model="date"
-    />
+      ><template #footer>
+        <div class="toggle-selection flex justify-end">
+          <div class="w-max">
+            <label class="label cursor-pointer flex gap-2 items-center">
+              <span class="label-text">Range selection</span>
+              <input type="checkbox" class="toggle" v-model="selection" />
+            </label>
+          </div>
+        </div>
+      </template>
+    </Calendar>
   </div>
-  <!-- multiple selection TODO -->
-  <!-- <button @click="currentSelectionMode = modes.RANGE">change</button> -->
 </template>
 <script setup>
 import { useSelectedDate } from '#imports'
 const date = ref(null)
 
 const modes = {
-  SINGULAR: 'singular',
+  SINGULAR: 'single',
   RANGE: 'range',
 }
+
+const selection = ref(false)
+
+watch(selection, (prevValue) => {
+  date.value = null
+
+  prevValue
+    ? (currentSelectionMode.value = modes.RANGE)
+    : (currentSelectionMode.value = modes.SINGULAR)
+})
 
 const dateStore = useSelectedDate()
 
 const currentSelectionMode = ref(modes.SINGULAR)
 
-const handleSelectionMode = computed(() => {
-  return currentSelectionMode.value === modes.RANGE ? 'range' : 'single'
-})
+const updateDateStore = (date) => {
+  if (Array.isArray(date)) {
+    const newDate = date.map((d) => (d ? d.toISOString() : null))
 
-const updateDateStore = (e) => {
-  if (Array.isArray(e)) {
-    if (e[1]) {
-      dateStore.changeCurrentDate([e[0].toISOString(), e[1].toISOString()])
-    }
-
+    dateStore.changeCurrentDate(newDate)
     return
   }
-  dateStore.changeCurrentDate(e.toISOString())
+  dateStore.changeCurrentDate(date.toISOString())
 }
 </script>

@@ -1,6 +1,6 @@
 import { db } from '~/db'
 import { activitiesToGoals, goals, todos, todosToGoals } from '~/db/schema'
-import { desc, eq, sql, and, inArray } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import { getServerSession } from '#auth'
 
 export default defineEventHandler(async (event) => {

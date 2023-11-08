@@ -33,8 +33,8 @@ export default defineEventHandler(async (event) => {
     .leftJoin(goals, eq(todosToGoals.goalId, goals.goalId))
     .orderBy(desc(todos.created_at))
 
-  if (query.date && typeof query.date === 'string') {
-    const d = new Date(query.date)
+  function singleDateQuery(query: any) {
+    const d = new Date(query)
     d.setHours(0, 0, 0, 0)
 
     const endOfDay = new Date(d)
@@ -48,6 +48,30 @@ export default defineEventHandler(async (event) => {
         lte(todos.created_at, endOfDay.toISOString() as string)
       )
     )
+  }
+
+  if (query.date && typeof query.date === 'string') {
+    singleDateQuery(query.date)
+  }
+
+  if (query.date && Array.isArray(query.date)) {
+    if (query.date[1] === 'null') {
+      singleDateQuery(query.date[0])
+    } else {
+      const start = new Date(query.date[0])
+      const end = new Date(query.date[1])
+
+      start.setHours(0, 0, 0, 0)
+      end.setHours(23, 59, 59, 999)
+
+      baseQuery.where(
+        and(
+          eq(session.id, todos.userId),
+          gte(todos.created_at, start.toISOString() as string),
+          lte(todos.created_at, end.toISOString() as string)
+        )
+      )
+    }
   }
 
   const data = await baseQuery

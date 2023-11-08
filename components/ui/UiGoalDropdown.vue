@@ -8,10 +8,10 @@
       class="dropdown-content z-[1] menu border border-base-300 bg-base-100 p-2 shadow-xl rounded-box w-52"
     >
       <li class="text-xs border-b dark:border-neutral pb-2">Select a goal</li>
-      <template v-if="data?.length" v-for="goal in data">
+      <template v-if="props.allGoals?.length" v-for="goal in props.allGoals">
         <li @click="$emit('addGoal', goal)">
           <a class="no-underline">
-            {{ goal.title }}
+            {{ goal?.title }}
           </a>
         </li>
       </template>
@@ -30,12 +30,13 @@ const props = defineProps({
     type: String,
     default: 'dropdown-bottom',
   },
+  allGoals: {
+    type: Object,
+    default: null,
+  },
 })
 
 const direction = ref('')
-const { data } = useFetch('/api/goals/getGoals', {
-  key: 'goals',
-})
 
 const computeDirection = () => {
   if (!props.direction) {

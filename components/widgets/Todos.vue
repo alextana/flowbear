@@ -173,10 +173,13 @@ const { data, pending, error } = useAsyncData(
 const { shouldShowLoading } = useLoading(pending, 750)
 
 const getTodoTitle = computed(() => {
-  if (Array.isArray(dateStore.currentDate)) {
-    return `Todos for ${DateTime.fromISO(dateStore?.currentDate[0]).toFormat(
-      'dd MMM'
-    )} and ${DateTime.fromISO(dateStore?.currentDate[1]).toFormat('dd MMM')}`
+  const current = dateStore.currentDate
+  if (Array.isArray(current)) {
+    return `Todos ${current[1] ? 'between' : 'for'} ${DateTime.fromISO(
+      current[0]
+    ).toFormat('dd MMM')} ${
+      current[1] ? 'and ' + DateTime.fromISO(current[1]).toFormat('dd MMM') : ''
+    }`
     return
   }
   const today = new Date()

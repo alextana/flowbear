@@ -1,5 +1,6 @@
 <template>
   <UiGoalDropdown
+    :allGoals="props.allGoals"
     v-if="route.path.indexOf('/goals/') === -1"
     @addGoal="handleAddGoal($event)"
   >
@@ -58,18 +59,14 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  allGoals: {
+    type: Object,
+    default: null,
+  },
 })
 
 const buttonError = ref(false)
 const currentGoals = ref(props.goals)
-
-const {
-  data: goals,
-  pending,
-  error,
-} = useFetch('/api/goals/getGoals', {
-  key: 'goals',
-})
 
 const getGoals = () => {
   if (!currentGoals.value) return []

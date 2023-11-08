@@ -68,6 +68,7 @@
                   <UiGoalSelector
                     :activity="item.activity"
                     :goals="item.goals"
+                    :allGoals="allGoals"
                   />
 
                   <span class="w-full text-right text-xs text-base-content"
@@ -133,6 +134,10 @@ const { data, pending, error } = useAsyncData(
     },
   }
 )
+
+const { data: allGoals } = useFetch('/api/goals/getGoals', {
+  key: 'goals',
+})
 
 const props = defineProps({
   limit: {
