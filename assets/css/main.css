@@ -12,27 +12,24 @@
 
 .p-datepicker {
   border-radius: 1rem;
+  background: hsl(var(--b2));
 }
 
-/* .p-datepicker td { */
-/* border: 1px solid hsl(var(--a)); */
-/* } */
+.p-datepicker .p-datepicker-header {
+  color: hsl(var(--bc));
+  background: hsl(var(--b2));
+}
+
+.p-datepicker .p-highlight {
+  background: hsl(var(--n));
+  color: hsl(var(--nc));
+}
 
 .p-datepicker-today > span {
   background: hsl(var(--p));
   color: hsl(var(--pc));
 }
 @media (prefers-color-scheme: dark) {
-  .p-datepicker {
-    color: hsl(var(--bc));
-    background: hsl(var(--b2));
-  }
-
-  .p-datepicker .p-datepicker-header {
-    color: hsl(var(--bc));
-
-    background: hsl(var(--b2));
-  }
 }
 
 .disable-selection {

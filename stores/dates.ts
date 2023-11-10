@@ -1,8 +1,10 @@
 export const useSelectedDate = defineStore('selectedDate', () => {
-  const currentDate: Ref<string | string[]> = ref(new Date().toISOString())
+  const currentDate: Ref<string | string[] | null> = ref(
+    new Date().toISOString()
+  )
 
   const isSelectedToday = () => {
-    if (Array.isArray(currentDate.value)) return false
+    if (Array.isArray(currentDate.value) || !currentDate.value) return false
 
     const today = new Date()
     const current = new Date(currentDate.value)
@@ -12,7 +14,7 @@ export const useSelectedDate = defineStore('selectedDate', () => {
     return today.toISOString() === current.toISOString()
   }
 
-  const changeCurrentDate = (newDate: string | string[]) => {
+  const changeCurrentDate = (newDate: string | string[] | null) => {
     return (currentDate.value = newDate)
   }
 

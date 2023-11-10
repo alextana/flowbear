@@ -14,7 +14,7 @@
               <input type="checkbox" class="toggle" v-model="selection" />
             </label>
           </div>
-          <div v-if="dateStore.currentDate">
+          <div v-if="date">
             <UiButton @click="openSummaryModal" size="sm" kind="primary">
               Get Summary
             </UiButton>
@@ -65,9 +65,11 @@
 import { useToast } from 'primevue/usetoast'
 import { useSelectedDate } from '#imports'
 const toast = useToast()
-const date = ref(null)
 const router = useRouter()
+const route = useRoute()
+const { currentRoute } = router
 const formData = ref(null)
+const date = ref(null)
 
 const modes = {
   SINGULAR: 'single',
@@ -92,18 +94,60 @@ const updateDateStore = (date) => {
   if (Array.isArray(date)) {
     const newDate = date.map((d) => (d ? d.toISOString() : null))
 
+    useQueryRoute('add', 'dates', newDate[1] ? newDate.join(',') : newDate[0])
     dateStore.changeCurrentDate(newDate)
     return
   }
   dateStore.changeCurrentDate(date.toISOString())
+  useQueryRoute('add', 'dates', date.toISOString())
+}
+
+watch(
+  () => route.path,
+  () => {
+    if (!dateStore.currentDate) return
+
+    if (Array.isArray(dateStore.currentDate)) {
+      const d = [...dateStore.currentDate].map((x) => {
+        return typeof x === 'string' ? new Date(x) : x
+      })
+
+      updateDateStore(d)
+      return
+    }
+
+    updateDateStore(new Date(dateStore.currentDate))
+  }
+)
+
+const setDatesFromQuery = async () => {
+  const { dates } = currentRoute.value.query
+
+  if (!dates) {
+    date.value = null
+    return
+  }
+
+  let n = dates.split(',')
+
+  if (n.length > 1) {
+    n = n.map((f) => new Date(f))
+
+    selection.value = true
+    await nextTick()
+
+    date.value = [n[0], n[1]]
+  } else {
+    date.value = new Date(dates)
+  }
 }
 
 onMounted(() => {
-  const { currentRoute } = router
-
   if (!!currentRoute.value.query.summary_modal_open) {
     summary_modal.showModal()
   }
+
+  setDatesFromQuery()
 })
 
 const openSummaryModal = () => {
@@ -117,7 +161,7 @@ const submitHandler = (data) => {
       method: 'POST',
       immediate: false,
       params: {
-        date: dateStore?.currentDate,
+        date: dateStore?.currentDate || date,
         title: data.title,
         description: data.description,
         use_ai: data.use_ai,
@@ -135,6 +179,7 @@ const submitHandler = (data) => {
           group: 'br',
           life: 5000,
         })
+        date.value = null
         refreshNuxtData('summaries')
         await navigateTo('/summaries')
         resolve()

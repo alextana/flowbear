@@ -1,5 +1,4 @@
 import { ref } from 'vue'
-
 export const useLoading = (
   state: globalThis.Ref<boolean>,
   throttle: number = 750
