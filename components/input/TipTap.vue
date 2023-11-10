@@ -5,6 +5,7 @@
 <script>
 import StarterKit from '@tiptap/starter-kit'
 import { Editor, EditorContent } from '@tiptap/vue-3'
+import { Markdown } from 'tiptap-markdown'
 import Placeholder from '@tiptap/extension-placeholder'
 import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
@@ -65,6 +66,7 @@ export default {
         },
       },
       extensions: [
+        Markdown,
         StarterKit,
         Highlight,
         Typography,

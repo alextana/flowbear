@@ -130,3 +130,16 @@ export const todosToGoals = pgTable(
     pk: primaryKey(t.todoId, t.goalId),
   })
 )
+
+export const summaries = pgTable('summary', {
+  id: serial('id').notNull(),
+  title: text('title'),
+  description: text('description'),
+  content: text('content'),
+  userId: text('userId').references(() => users.id),
+  created_at: timestamp('created_at', {
+    precision: 6,
+    withTimezone: true,
+    mode: 'string',
+  }).defaultNow(),
+})

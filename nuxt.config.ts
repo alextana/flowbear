@@ -9,9 +9,13 @@ export default defineNuxtConfig({
     DATABASE_URL: process.env.DATABASE_URL,
     AUTH_ORIGIN: process.env.AUTH_ORIGIN,
     NUXT_SECRET: process.env.NUXT_SECRET,
+    OPEN_AI_KEY: process.env.OPEN_AI_KEY,
   },
   build: {
     transpile: ['primevue'],
+  },
+  alias: {
+    '@helpers': '/<rootDir>/helpers',
   },
   css: [
     '~/assets/css/main.css',
@@ -24,17 +28,11 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxtjs/tailwindcss',
+    '@formkit/nuxt',
     '@sidebase/nuxt-auth',
     'nuxt-icon',
     '@pinia/nuxt',
     '@vueuse/nuxt',
     '@formkit/auto-animate/nuxt',
-    '@nuxtjs/google-fonts',
   ],
-  googleFonts: {
-    // Options
-    families: {
-      Poppins: [400, 700],
-    },
-  },
 })

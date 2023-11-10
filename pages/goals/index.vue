@@ -18,7 +18,7 @@
       <div v-else>
         <UiSeparator class="my-8" />
         <div
-          class="goals h-full grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 items-stretch gap-4"
+          class="goals h-full grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 items-stretch gap-4"
         >
           <div class="goal h-full" v-for="goal in data">
             <NuxtLink :to="`/goals/${goal.goalId}?name=${goal.title}`">

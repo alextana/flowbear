@@ -46,6 +46,13 @@ const menuActivities = [
     id: 3,
     name: 'Todos',
     icon: 'lucide:list-todo',
+    link: '/todos',
+  },
+  {
+    id: 4,
+    name: 'Summaries',
+    icon: 'system-uicons:window-content',
+    link: '/summaries',
   },
 ]
 

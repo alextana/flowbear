@@ -15,6 +15,13 @@ import { useSelectedDate } from '#imports'
 import { DateTime } from 'luxon'
 const dateStore = useSelectedDate()
 
+const props = defineProps({
+  title: {
+    type: String,
+    default: ``,
+  },
+})
+
 const computeTitle = () => {
   const d = DateTime.fromISO(dateStore?.currentDate).toFormat('dd MMM')
   return dateStore.isSelectedToday()
@@ -23,11 +30,4 @@ const computeTitle = () => {
 }
 
 const currentTitle = ref(props.title || computeTitle())
-
-const props = defineProps({
-  title: {
-    type: String,
-    default: ``,
-  },
-})
 </script>

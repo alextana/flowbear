@@ -1,5 +1,5 @@
 <template>
-  <dialog :id="props.id" class="modal">
+  <dialog @close="handleClose" :id="props.id" class="modal">
     <div class="modal-box">
       <form method="dialog">
         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
@@ -26,6 +26,7 @@
 </template>
 
 <script setup>
+const emits = defineEmits(['close'])
 const props = defineProps({
   id: {
     type: String,
@@ -33,4 +34,8 @@ const props = defineProps({
     required: true,
   },
 })
+
+const handleClose = () => {
+  emits('close')
+}
 </script>

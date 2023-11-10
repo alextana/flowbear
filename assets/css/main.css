@@ -70,3 +70,35 @@
   background-color: rgba(255, 255, 255, 0.2);
   outline: 0px;
 }
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+form[data-loading] [data-type='submit'] button {
+  position: relative;
+  padding-left: 40px;
+  opacity: 0.5;
+  @apply bg-info text-info-content;
+}
+.text-error {
+  @apply text-red-500 dark:text-warning;
+}
+
+form[data-loading] [data-type='submit'] button::before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  margin-left: -10px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.5);
+  border-top-color: white;
+  animation: spinner 0.6s linear infinite;
+}

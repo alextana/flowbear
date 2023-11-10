@@ -5,22 +5,69 @@
       @update:modelValue="updateDateStore"
       inline
       v-model="date"
-      ><template #footer>
-        <div class="toggle-selection flex justify-end">
+    >
+      <template #footer>
+        <div class="toggle-selection justify-between flex items-center p-3">
           <div class="w-max">
             <label class="label cursor-pointer flex gap-2 items-center">
               <span class="label-text">Range selection</span>
               <input type="checkbox" class="toggle" v-model="selection" />
             </label>
           </div>
+          <div v-if="dateStore.currentDate">
+            <UiButton @click="openSummaryModal" size="sm" kind="primary">
+              Get Summary
+            </UiButton>
+          </div>
         </div>
       </template>
     </Calendar>
   </div>
+  <UiModal
+    @close="useQueryRoute('remove', 'summary_modal_open')"
+    id="summary_modal"
+  >
+    <template #title>Get Summary</template>
+    <template #default>
+      <FormKit
+        @submit="submitHandler"
+        type="form"
+        :submit-attrs="{
+          inputClass: 'btn btn-primary',
+        }"
+        submit-label="Generate Summary"
+        v-model="formData"
+      >
+        <FormKit
+          type="text"
+          name="title"
+          label="Title"
+          validation="required:trim|length:0, 50"
+        />
+        <FormKit type="text" name="description" label="Description" />
+        <FormKit
+          :outer-class="{
+            'formkit-outer': false,
+          }"
+          name="use_ai"
+          validation="required"
+          type="radio"
+          label="Use ✨ AI ✨ to generate a summary?"
+          :options="['Yes', 'No']"
+        />
+      </FormKit>
+    </template>
+  </UiModal>
+  <Toast position="bottom-right" group="br" />
 </template>
+
 <script setup>
+import { useToast } from 'primevue/usetoast'
 import { useSelectedDate } from '#imports'
+const toast = useToast()
 const date = ref(null)
+const router = useRouter()
+const formData = ref(null)
 
 const modes = {
   SINGULAR: 'single',
@@ -49,5 +96,63 @@ const updateDateStore = (date) => {
     return
   }
   dateStore.changeCurrentDate(date.toISOString())
+}
+
+onMounted(() => {
+  const { currentRoute } = router
+
+  if (!!currentRoute.value.query.summary_modal_open) {
+    summary_modal.showModal()
+  }
+})
+
+const openSummaryModal = () => {
+  summary_modal.showModal()
+  useQueryRoute('add', 'summary_modal_open', 'true')
+}
+
+const submitHandler = (data) => {
+  const res = new Promise((resolve, reject) => {
+    $fetch('/api/summaries/generateSummary', {
+      method: 'POST',
+      immediate: false,
+      params: {
+        date: dateStore?.currentDate,
+        title: data.title,
+        description: data.description,
+        use_ai: data.use_ai,
+      },
+      async onResponse({ response }) {
+        if (response.status !== 200) {
+          reject()
+          return
+        }
+        summary_modal.close()
+        toast.add({
+          severity: 'success',
+          summary: 'Summary created',
+          detail: 'Your summary was created successfully',
+          group: 'br',
+          life: 5000,
+        })
+        refreshNuxtData('summaries')
+        await navigateTo('/summaries')
+        resolve()
+      },
+      onResponseError({ response }) {
+        toast.add({
+          severity: 'error',
+          summary: 'Oh no!',
+          detail: response._data.statusMessage,
+          group: 'br',
+          life: 5000,
+        })
+        reject()
+        return
+      },
+    })
+  })
+
+  return res
 }
 </script>

@@ -17,7 +17,7 @@
         >
           <Icon
             :class="`transition-all ${
-              addingTodo ? 'transform rotate-[45deg]' : ''
+              addingTodo ? 'transform rotate-[225deg]' : ''
             }`"
             name="material-symbols:add"
             size="24"

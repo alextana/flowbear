@@ -74,6 +74,16 @@ import { gsap } from 'gsap'
 import { useDebounceFn } from '@vueuse/core'
 
 const confirmDelete = ref(false)
+const props = defineProps({
+  todo: {
+    type: Object,
+    default: null,
+  },
+  goal: {
+    type: Object,
+    default: {},
+  },
+})
 const currentTodo = reactive(
   props.todo || {
     title: '',
@@ -86,16 +96,6 @@ const showDeleteIcon = ref(false)
 const invertedAnimation = ref(false)
 const tween = ref(null)
 const editing = ref(false)
-const props = defineProps({
-  todo: {
-    type: Object,
-    default: null,
-  },
-  goal: {
-    type: Object,
-    default: {},
-  },
-})
 
 const strike = ref('strike')
 const emit = defineEmits(['deleteTodo', 'editTodo'])

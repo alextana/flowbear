@@ -5,7 +5,6 @@ import { getServerSession } from '#auth'
 
 export default defineEventHandler(async (event) => {
   const session = (await getServerSession(event)) as any
-  const query = getQuery(event)
 
   if (!session?.id) {
     throw createError({
@@ -13,6 +12,8 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Unauthorised',
     })
   }
+
+  const query = getQuery(event)
 
   if (query.count) {
     const today = new Date()

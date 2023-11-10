@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "1e47bc09-deeb-4c6c-ad29-2f0b0efd251b",
+  "id": "64f6e0b3-baf0-456b-b5f6-4ccd362c785d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -81,8 +81,12 @@
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -90,7 +94,10 @@
       "compositePrimaryKeys": {
         "account_provider_providerAccountId": {
           "name": "account_provider_providerAccountId",
-          "columns": ["provider", "providerAccountId"]
+          "columns": [
+            "provider",
+            "providerAccountId"
+          ]
         }
       },
       "uniqueConstraints": {}
@@ -144,8 +151,12 @@
           "name": "activity_userId_user_id_fk",
           "tableFrom": "activity",
           "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -176,8 +187,12 @@
           "name": "activity_to_goal_activity_id_activity_id_fk",
           "tableFrom": "activity_to_goal",
           "tableTo": "activity",
-          "columnsFrom": ["activity_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "activity_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -185,8 +200,12 @@
           "name": "activity_to_goal_goal_id_goal_goalId_fk",
           "tableFrom": "activity_to_goal",
           "tableTo": "goal",
-          "columnsFrom": ["goal_id"],
-          "columnsTo": ["goalId"],
+          "columnsFrom": [
+            "goal_id"
+          ],
+          "columnsTo": [
+            "goalId"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -194,7 +213,10 @@
       "compositePrimaryKeys": {
         "activity_to_goal_activity_id_goal_id": {
           "name": "activity_to_goal_activity_id_goal_id",
-          "columns": ["activity_id", "goal_id"]
+          "columns": [
+            "activity_id",
+            "goal_id"
+          ]
         }
       },
       "uniqueConstraints": {}
@@ -247,8 +269,12 @@
           "name": "goal_userId_user_id_fk",
           "tableFrom": "goal",
           "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -285,9 +311,74 @@
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "summary": {
+      "name": "summary",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(6) with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "summary_userId_user_id_fk": {
+          "name": "summary_userId_user_id_fk",
+          "tableFrom": "summary",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -343,8 +434,12 @@
           "name": "todos_userId_user_id_fk",
           "tableFrom": "todos",
           "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -375,8 +470,12 @@
           "name": "todo_to_goal_todo_id_todos_id_fk",
           "tableFrom": "todo_to_goal",
           "tableTo": "todos",
-          "columnsFrom": ["todo_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "todo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -384,8 +483,12 @@
           "name": "todo_to_goal_goal_id_goal_goalId_fk",
           "tableFrom": "todo_to_goal",
           "tableTo": "goal",
-          "columnsFrom": ["goal_id"],
-          "columnsTo": ["goalId"],
+          "columnsFrom": [
+            "goal_id"
+          ],
+          "columnsTo": [
+            "goalId"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -393,7 +496,10 @@
       "compositePrimaryKeys": {
         "todo_to_goal_todo_id_goal_id": {
           "name": "todo_to_goal_todo_id_goal_id",
-          "columns": ["todo_id", "goal_id"]
+          "columns": [
+            "todo_id",
+            "goal_id"
+          ]
         }
       },
       "uniqueConstraints": {}
@@ -466,7 +572,10 @@
       "compositePrimaryKeys": {
         "verificationToken_identifier_token": {
           "name": "verificationToken_identifier_token",
-          "columns": ["identifier", "token"]
+          "columns": [
+            "identifier",
+            "token"
+          ]
         }
       },
       "uniqueConstraints": {}

@@ -12,6 +12,5 @@
         class="col-span-3 shadow shadow-primary-content dark:shadow-base-200"
       />
     </div>
-    <!-- <WidgetsActivityRepeater /> -->
   </div>
 </template>

@@ -112,6 +112,25 @@ const editingIndex = ref(null)
 const selectedActivity = ref(null)
 const dateStore = useSelectedDate()
 
+const props = defineProps({
+  limit: {
+    type: Number,
+    default: null,
+  },
+  date: {
+    type: Boolean,
+    default: true,
+  },
+  title: {
+    type: String,
+    default: '',
+  },
+  queryKey: {
+    type: String,
+    default: 'activities',
+  },
+})
+
 const { data, pending, error } = useAsyncData(
   props.queryKey,
   () =>
@@ -137,25 +156,6 @@ const { data, pending, error } = useAsyncData(
 
 const { data: allGoals } = useFetch('/api/goals/getGoals', {
   key: 'goals',
-})
-
-const props = defineProps({
-  limit: {
-    type: Number,
-    default: null,
-  },
-  date: {
-    type: Boolean,
-    default: true,
-  },
-  title: {
-    type: String,
-    default: '',
-  },
-  queryKey: {
-    type: String,
-    default: 'activities',
-  },
 })
 
 const getDates = (dates) => {
