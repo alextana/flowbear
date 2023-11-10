@@ -27,12 +27,12 @@ export default defineNuxtConfig({
     },
   },
   modules: [
-    '@nuxtjs/tailwindcss',
     '@formkit/nuxt',
     '@sidebase/nuxt-auth',
     'nuxt-icon',
     '@pinia/nuxt',
     '@vueuse/nuxt',
     '@formkit/auto-animate/nuxt',
+    '@nuxtjs/tailwindcss',
   ],
 })

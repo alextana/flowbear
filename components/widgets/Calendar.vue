@@ -107,6 +107,10 @@ watch(
   () => {
     if (!dateStore.currentDate) return
 
+    if (dateStore.isSelectedToday()) {
+      return
+    }
+
     if (Array.isArray(dateStore.currentDate)) {
       const d = [...dateStore.currentDate].map((x) => {
         return typeof x === 'string' ? new Date(x) : x
