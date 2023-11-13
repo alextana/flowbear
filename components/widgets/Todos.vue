@@ -1,11 +1,11 @@
 <template>
   <div
-    class="todos-container relative overflow-hidden bg-base-200/70 dark:bg-base-200 rounded-2xl pl-6 pb-6 pr-6"
+    class="todos-container relative overflow-hidden bg-base-100 rounded-2xl pl-6 pb-6 pr-6"
   >
     <div
-      class="flex sticky pt-6 z-20 bg-base-200/70 dark:bg-base-200 top-0 gap-2 justify-between items-center mb-4"
+      class="flex sticky pt-6 z-20 bg-base-100 top-0 gap-2 justify-between items-center mb-4"
     >
-      <h4 class="text-2xl font-extrabold">
+      <h4 class="text-2xl font-extrabold tracking-tighter">
         {{ getTodoTitle }}
       </h4>
       <div class="create-todo">
@@ -79,6 +79,7 @@
         />
       </template>
       <template v-else-if="error">
+        {{ error }}
         <div>Error getting todos..</div>
       </template>
     </div>
@@ -180,19 +181,20 @@ const getTodoTitle = computed(() => {
     ).toFormat('dd MMM')} ${
       current[1] ? 'and ' + DateTime.fromISO(current[1]).toFormat('dd MMM') : ''
     }`
-    return
   }
+
   const today = new Date()
-  const d = new Date(dateStore.currentDate)
+  const d = dateStore.currentDate ? new Date(dateStore.currentDate) : new Date()
   today.setHours(0, 0, 0, 0)
   d.setHours(0, 0, 0, 0)
 
   if (today.toISOString() === d.toISOString()) {
     return `Today's Todos`
   }
-  return `Todos for ${DateTime.fromISO(dateStore?.currentDate).toFormat(
-    'dd MMM'
-  )}`
+
+  return `Todos for ${DateTime.fromISO(
+    useGetISOStringFromDate(dateStore?.currentDate)
+  ).toFormat('dd MMM')}`
 })
 
 onMounted(() => {

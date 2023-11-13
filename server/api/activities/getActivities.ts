@@ -40,7 +40,8 @@ export default defineEventHandler(async (event) => {
   const goalId = query.goalId as number
 
   function singleDateQuery(query: any) {
-    const d = new Date(query)
+    const q = query.replaceAll('"', '')
+    const d = new Date(q)
     d.setHours(0, 0, 0, 0)
     const endOfDay = new Date(d)
     endOfDay.setHours(23, 59, 59, 999)

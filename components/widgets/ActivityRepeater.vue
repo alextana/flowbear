@@ -31,7 +31,7 @@
               <div
                 @mouseover="handleShowOptions(i)"
                 @mouseleave="handleShowOptions(null)"
-                class="activity-container p-4 rounded-2xl max-w-none 2xl:max-w-[unset] bg-base-100 hover:bg-primary/5 dark:hover:bg-base-300 activity prose relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all"
+                class="activity-container p-4 rounded-2xl max-w-none 2xl:max-w-[unset] bg-base-100 hover:bg-base-200 activity prose relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all"
               >
                 <span class="text-xs capitalize dark:text-white/40 font-bold">{{
                   item.activity.type
@@ -72,7 +72,7 @@
                   />
 
                   <span class="w-full text-right text-xs text-base-content"
-                    >at {{ getTime(item.activity.created_at) }}</span
+                    >at {{ useDateTime(item.activity.created_at) }}</span
                   >
                 </div>
               </div>
@@ -166,14 +166,6 @@ const getDates = (dates) => {
       })
     ),
   ]
-}
-
-const getTime = (date) => {
-  if (!date) return ''
-
-  const formatted = DateTime.fromISO(date).toFormat('HH:mm')
-
-  return formatted
 }
 
 const shouldShowDate = (activity, date) => {

@@ -1,19 +1,19 @@
 <template>
   <button class="btn" :class="computedClasses">
-    <template v-if="props.state === 'loading'">
+    <template v-if="currentState === 'loading'">
       <span class="loading loading-spinner"></span>
       <span v-if="loadingMessage">
         {{ loadingMessage }}
       </span>
-      <span v-else> loading </span>
+      <span v-else> Loading </span>
     </template>
-    <template v-else-if="props.state === 'error'">
+    <template v-else-if="currentState === 'error'">
       <Icon name="mi:circle-error" size="24" />
-      error
+      Error
     </template>
-    <template v-else-if="props.state === 'done'">
+    <template v-else-if="currentState === 'done'">
       <Icon name="material-symbols:done" size="24" />
-      done!
+      Done!
     </template>
     <template v-else>
       <slot />
@@ -55,7 +55,7 @@ const props = defineProps({
   state: {
     type: String,
     validator(value) {
-      return ['loading', 'error', 'done', ''].includes(value)
+      return ['loading', 'error', 'done', '', null].includes(value)
     },
   },
   loadingMessage: {
@@ -63,7 +63,31 @@ const props = defineProps({
   },
 })
 
+const currentState = ref(props.state)
+
+watch(
+  () => props.state,
+  () => {
+    if (props.state === 'done' || props.state === 'error') {
+      currentState.value = props.state
+      setTimeout(() => {
+        currentState.value = null
+      }, 3000)
+
+      return
+    }
+    currentState.value = props.state
+  },
+  {
+    deep: true,
+  }
+)
+
 const computedClasses = computed(() => {
+  if (currentState.value === 'error') {
+    return 'btn-error text-error-content'
+  }
+
   const buttonVariants = {
     kind: {
       primary: 'btn-primary',
@@ -93,6 +117,10 @@ const computedClasses = computed(() => {
   toCheck.forEach((prop) => {
     prop ? classes.push(buttonVariants[prop.key][prop.value]) : ''
   })
+
+  if (currentState.value === 'loading') {
+    classes.push('pointer-events-none opacity-50')
+  }
 
   return (
     classes.join(' ') + (props.extraClasses ? ' ' + props.extraClasses : '')

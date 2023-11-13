@@ -7,6 +7,7 @@ import {
   serial,
   boolean,
   pgEnum,
+  jsonb,
 } from 'drizzle-orm/pg-core'
 import type { AdapterAccount } from '@auth/core/adapters'
 
@@ -137,6 +138,8 @@ export const summaries = pgTable('summary', {
   description: text('description'),
   content: text('content'),
   userId: text('userId').references(() => users.id),
+  dates: jsonb('dates'),
+  ai_generated: boolean('ai_generated'),
   created_at: timestamp('created_at', {
     precision: 6,
     withTimezone: true,

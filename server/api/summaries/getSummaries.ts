@@ -5,7 +5,6 @@ import { getServerSession } from '#auth'
 
 export default defineEventHandler(async (event) => {
   const session = (await getServerSession(event)) as any
-  const query = getQuery(event)
 
   if (!session?.id) {
     throw createError({
@@ -17,6 +16,7 @@ export default defineEventHandler(async (event) => {
   const data = await db.execute(sql`
     SELECT * FROM ${summaries}
     WHERE ${session.id} = ${summaries.userId}
+    ORDER BY ${summaries.created_at} DESC
   `)
 
   return data

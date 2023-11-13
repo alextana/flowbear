@@ -1,9 +1,12 @@
 <template>
+  <h1 v-if="summary?.title" class="text-4xl font-extrabold mb-8">
+    {{ summary.title }}
+  </h1>
   <div
     v-if="summary"
     @mouseover="showOptions = true"
     @mouseleave="showOptions = false"
-    class="activity-container p-4 rounded-2xl max-w-none 2xl:max-w-[unset] bg-base-100 hover:bg-primary/5 dark:hover:bg-base-300 activity prose relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all"
+    class="activity-container p-4 rounded-2xl max-w-none 2xl:max-w-[unset] activity prose relative mb-2 w-full transition-all"
   >
     <InputTipTap
       v-if="isEditing"
@@ -35,6 +38,7 @@
 <script setup>
 import { DateTime } from 'luxon'
 import VueMarkdown from 'vue-markdown-render'
+
 const route = useRoute()
 const summary = ref(null)
 const isEditing = ref(false)
@@ -53,8 +57,9 @@ const handleDelete = (summary) => {
 
 onBeforeMount(() => {
   if (!route?.query) return
-  const { content, created_at } = route.query
+  const { title, content, created_at } = route.query
   summary.value = {
+    title: JSON.parse(title),
     content: JSON.parse(content),
     created_at: JSON.parse(created_at),
   }

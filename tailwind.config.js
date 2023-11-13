@@ -3,8 +3,9 @@ export default {
   daisyui: {
     themes: [
       "light",
-      "dark",
+      "night",
     ],
+    darkTheme: 'night'
   },
   theme: {
     extend: {},

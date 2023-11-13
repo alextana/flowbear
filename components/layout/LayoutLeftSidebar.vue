@@ -4,7 +4,7 @@
       <template v-for="activity in menuActivities">
         <NuxtLink :to="activity.link">
           <button
-            :class="`transition-all w-full hover:bg-base-200 hover:text-base-content
+            :class="`transition-all w-full hover:bg-base-300 hover:text-base-content
           px-4 py-4 mb-2 rounded-2xl ${shouldHighlight(activity)}`"
           >
             <div class="flex gap-2 items-center">
@@ -59,14 +59,14 @@ const menuActivities = [
 const shouldHighlight = (activity) => {
   if (activity.link === '/') {
     if (route.path === activity.link) {
-      return 'font-bold bg-primary text-primary-content hover:bg-primary-focus hover:text-primary-content focus:ring focus:ring-violet-300'
+      return 'font-bold bg-primary text-primary-content hover:bg-primary hover:text-primary-content focus:ring focus:ring-violet-300'
     } else {
       return
     }
   }
 
   if (route.path.indexOf(activity.link) > -1) {
-    return 'font-bold bg-primary text-primary-content hover:bg-primary-focus hover:text-primary-content focus:ring focus:ring-violet-300'
+    return 'font-bold bg-primary text-primary-content hover:bg-primary hover:text-primary-content focus:ring focus:ring-violet-300'
   }
 }
 </script>

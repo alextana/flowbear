@@ -6,7 +6,9 @@
       class="main-hero-content mx-auto max-w-[1200px] px-4 xl:px-0 gap-2 w-full justify-between flex items-center"
     >
       <div class="app-info w-full flex-1">
-        <h1 class="text-8xl font-extrabold text-black dark:text-white">
+        <h1
+          class="text-8xl font-extrabold tracking-tighter text-black dark:text-white"
+        >
           Notelap
         </h1>
         <p class="mt-2 max-w-[400px] font-semibold">

@@ -32,11 +32,9 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const query = getQuery(event)
+  const body = await readBody(event)
 
-  console.log(query)
-
-  if (!query.date) {
+  if (!body.date) {
     throw createError({
       statusCode: 400,
       statusMessage:
@@ -55,16 +53,16 @@ export default defineEventHandler(async (event) => {
     endDate.setHours(23, 59, 59, 999)
   }
 
-  if (query.date && typeof query.date === 'string') {
-    singleDateQuery(query.date[0])
+  if (body.date && typeof body.date === 'string') {
+    singleDateQuery(body.date)
   }
 
-  if (query.date && Array.isArray(query.date)) {
-    if (query.date[1] === 'null') {
-      singleDateQuery(query.date)
+  if (body.date && Array.isArray(body.date)) {
+    if (body.date[1] === 'null') {
+      singleDateQuery(body.date)
     } else {
-      startDate = new Date(query.date[0])
-      endDate = new Date(query.date[1])
+      startDate = new Date(body.date[0])
+      endDate = new Date(body.date[1])
 
       startDate.setHours(0, 0, 0, 0)
       endDate.setHours(23, 59, 59, 999)
@@ -104,7 +102,7 @@ export default defineEventHandler(async (event) => {
 
   let generatedSummary = null
 
-  if (query?.use_ai) {
+  if (body?.use_ai) {
     try {
       generatedSummary = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
@@ -112,14 +110,7 @@ export default defineEventHandler(async (event) => {
           {
             role: 'user',
             content: `
-          This is a list of activities/feedback and todos, the type is specified in the object,
-          please make a summary of these to make them human readable,
-          feel free to rewrite things to improve brevity and readability.
-          these should be used in a 121 with a manager, do NOT add a title to the result.
-          List them as Activities, Feedback, Completed Todos and Discussion points.
-          If relevant add other considerations.
-          Please output Markdown and create discussion points.
-          Do not include any extra text, only respond with the lists.
+          ${process.env.AI_PROMPT}
 
           ------
           ${JSON.stringify(data)}
@@ -137,13 +128,17 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Add this to summary
   try {
     await db.insert(summaries).values({
-      title: (query?.title as string) || 'Summary',
-      description: (query?.description as string) || '',
-      content: query.use_ai ? generatedSummary?.choices[0].message.content : '',
+      title: (body?.title as string) || 'Summary',
+      description: (body?.description as string) || '',
+      content: body.use_ai ? generatedSummary?.choices[0].message.content : '',
       userId: session.id,
+      ai_generated: (body?.use_ai as boolean) || false,
+      dates: {
+        startDate: startDate,
+        endDate: endDate,
+      },
     })
   } catch (error) {}
 

@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  background: oklch(var(--b2));
+}
+
 .btn {
   @apply rounded-3xl;
 }
@@ -12,24 +16,36 @@
 
 .p-datepicker {
   border-radius: 1rem;
-  background: hsl(var(--b2));
+  background: oklch(var(--b1));
+}
+
+.btn {
+  text-transform: uppercase;
 }
 
 .p-datepicker .p-datepicker-header {
-  color: hsl(var(--bc));
-  background: hsl(var(--b2));
+  color: oklch(var(--bc));
+  background: oklch(var(--b1));
 }
 
 .p-datepicker .p-highlight {
-  background: hsl(var(--n));
-  color: hsl(var(--nc));
+  background: oklch(var(--a));
+  color: oklch(var(--b1));
 }
 
 .p-datepicker-today > span {
-  background: hsl(var(--p));
-  color: hsl(var(--pc));
+  background: oklch(var(--p));
+  color: oklch(var(--pc));
 }
+
 @media (prefers-color-scheme: dark) {
+  :root {
+    background: oklch(var(--b2));
+  }
+  .p-datepicker .p-highlight {
+    background: oklch(var(--s));
+    color: oklch(var(--pc));
+  }
 }
 
 .disable-selection {

@@ -53,7 +53,10 @@
           validation="required"
           type="radio"
           label="Use ✨ AI ✨ to generate a summary?"
-          :options="['Yes', 'No']"
+          :options="[
+            { label: 'Yes', value: true },
+            { label: 'No', value: false },
+          ]"
         />
       </FormKit>
     </template>
@@ -67,6 +70,7 @@ import { useSelectedDate } from '#imports'
 const toast = useToast()
 const router = useRouter()
 const route = useRoute()
+
 const { currentRoute } = router
 const formData = ref(null)
 const date = ref(null)
@@ -146,12 +150,15 @@ const setDatesFromQuery = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (!!currentRoute.value.query.summary_modal_open) {
     summary_modal.showModal()
   }
 
   setDatesFromQuery()
+
+  dateStore.currentDate = date.value
+  await nextTick()
 })
 
 const openSummaryModal = () => {
@@ -164,17 +171,18 @@ const submitHandler = (data) => {
     $fetch('/api/summaries/generateSummary', {
       method: 'POST',
       immediate: false,
-      params: {
-        date: dateStore?.currentDate || date,
+      body: JSON.stringify({
+        date: dateStore?.currentDate || date.value,
         title: data.title,
         description: data.description,
         use_ai: data.use_ai,
-      },
+      }),
       async onResponse({ response }) {
         if (response.status !== 200) {
-          reject()
+          reject(new Error(response._data.statusMessage))
           return
         }
+
         summary_modal.close()
         toast.add({
           severity: 'success',
@@ -184,9 +192,9 @@ const submitHandler = (data) => {
           life: 5000,
         })
         date.value = null
+        resolve(response)
         refreshNuxtData('summaries')
         await navigateTo('/summaries')
-        resolve()
       },
       onResponseError({ response }) {
         toast.add({
@@ -196,12 +204,13 @@ const submitHandler = (data) => {
           group: 'br',
           life: 5000,
         })
-        reject()
+
+        reject(new Error(response._data.statusMessage))
         return
       },
     })
   })
 
-  return res
+  return res.then(() => res).catch((error) => console.error(error))
 }
 </script>

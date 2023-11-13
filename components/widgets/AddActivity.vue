@@ -15,15 +15,18 @@
         {{ props.subtitle }}
       </span>
     </p>
+
     <UiSeparator class="my-4" />
+
     <InputTipTap
       v-model="activityContent"
       classProps="mt-8 rounded-2xl bg-base-100 min-h-[125px] border-2 border-base-300 prose prose-slate w-full min-w-full mx-auto prose-base"
     />
+
     <UiSeparator class="mb-4" />
 
     <div class="flex actions justify-between gap-2">
-      <div class="actions flex items-center gap-2">
+      <div class="actions flex items-start gap-2">
         <div class="type">
           <UiDropdown
             :list="activityTypes"
@@ -61,7 +64,7 @@
         </UiDropdown>
       </div>
       <div class="submit">
-        <UiButton @click="handleAdd" kind="primary" size="sm"
+        <UiButton :state="buttonState" @click="handleAdd" kind="primary"
           >Add {{ selectedType }}</UiButton
         >
       </div>
@@ -78,6 +81,8 @@ const toast = useToast()
 import { useToast } from 'primevue/usetoast'
 
 const selectedType = ref('activity')
+
+const buttonState = ref(null)
 
 const activityTypes = [
   {
@@ -100,6 +105,7 @@ const props = defineProps({
 })
 
 const handleAdd = () => {
+  buttonState.value = 'loading'
   $fetch('/api/activities/createActivity', {
     body: {
       content: activityContent.value,
@@ -107,7 +113,8 @@ const handleAdd = () => {
       type: selectedType.value,
     },
     method: 'POST',
-    onResponse() {
+    onResponse({ response }) {
+      if (response.status !== 200) return
       activityContent.value = ''
       refreshNuxtData('activities')
       refreshNuxtData('dailyActivities')
@@ -119,6 +126,17 @@ const handleAdd = () => {
         detail: 'Activity added',
         group: 'br',
         life: 3000,
+      })
+      buttonState.value = 'done'
+    },
+    onResponseError({ response }) {
+      buttonState.value = 'error'
+      toast.add({
+        severity: 'error',
+        summary: 'Oh no!',
+        detail: response._data.statusMessage,
+        group: 'br',
+        life: 5000,
       })
     },
   })

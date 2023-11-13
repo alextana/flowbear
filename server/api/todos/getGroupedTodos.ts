@@ -34,7 +34,8 @@ export default defineEventHandler(async (event) => {
     .orderBy(desc(todos.created_at))
 
   function singleDateQuery(query: any) {
-    const d = new Date(query)
+    const q = query.replaceAll('"', '')
+    const d = new Date(q)
     d.setHours(0, 0, 0, 0)
 
     const endOfDay = new Date(d)

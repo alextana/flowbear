@@ -27,7 +27,9 @@ const props = defineProps({
 
 const descriptionTest = computed(() => {
   const isToday = dateStore.isSelectedToday()
-  const d = DateTime.fromISO(dateStore?.currentDate).toFormat('dd MMM')
+  const d = DateTime.fromISO(
+    useGetISOStringFromDate(dateStore.currentDate)
+  ).toFormat('dd MMM')
 
   if (!isToday) {
     return `Add a todo for ${d}`
