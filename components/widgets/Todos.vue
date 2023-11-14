@@ -162,7 +162,7 @@ const { data, pending, error } = useAsyncData(
   () =>
     $fetch('/api/todos/getGroupedTodos', {
       params: {
-        date: dateStore?.currentDate || null,
+        date: dateStore?.currentDate || new Date(),
       },
     }),
   {

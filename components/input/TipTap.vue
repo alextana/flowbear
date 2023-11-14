@@ -45,7 +45,6 @@ export default {
 
   watch: {
     modelValue(value) {
-      // HTML
       const isSame = this.editor.getHTML() === value
 
       if (isSame) {
@@ -74,16 +73,12 @@ export default {
           allowBase64: true,
         }),
         Placeholder.configure({
-          placeholder: this.placeHolder || 'Today I...',
+          placeholder: this.placeHolder || 'Type here...',
         }),
       ],
       content: this.modelValue,
       onUpdate: () => {
-        // HTML
         this.$emit('update:modelValue', this.editor.getHTML())
-
-        // JSON
-        // this.$emit('update:modelValue', this.editor.getJSON())
       },
     })
   },
@@ -99,9 +94,7 @@ export default {
 .tiptap {
   margin: 0;
   padding: 1rem;
-
-  /* border: 1px solid rgba(255, 255, 255, 0.3); */
-  /* border-radius: 0.3rem; */
+  /* background: oklch(var(--b2)); */
 }
 .tiptap p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);

@@ -59,14 +59,14 @@ const menuActivities = [
 const shouldHighlight = (activity) => {
   if (activity.link === '/') {
     if (route.path === activity.link) {
-      return 'font-bold bg-primary text-primary-content hover:bg-primary hover:text-primary-content focus:ring focus:ring-violet-300'
+      return 'font-bold bg-primary text-primary-content hover:bg-primary hover:text-primary-content focus:ring focus:ring-primary/50'
     } else {
       return
     }
   }
 
   if (route.path.indexOf(activity.link) > -1) {
-    return 'font-bold bg-primary text-primary-content hover:bg-primary hover:text-primary-content focus:ring focus:ring-violet-300'
+    return 'font-bold bg-primary text-primary-content hover:bg-primary hover:text-primary-content focus:ring focus:ring-primary/50'
   }
 }
 </script>

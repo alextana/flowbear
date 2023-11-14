@@ -23,12 +23,12 @@
           <div class="goal h-full" v-for="goal in data">
             <NuxtLink :to="`/goals/${goal.goalId}?name=${goal.title}`">
               <button
-                class="card text-left min-h-[180px] min-w-[180px] w-full bg-base-100 dark:hover:bg-base-300 dark:hover:text-neutral-content hover:bg-base-200 border border-base-300"
+                class="card text-left min-h-[180px] min-w-[180px] w-full dark:hover:bg-base-300 dark:hover:text-neutral-content hover:bg-base-200 border border-base-300"
                 :class="`${
                   Number(goal.completed_todos) === Number(goal.total_todos) &&
                   Number(goal.completed_todos) !== 0
                     ? 'bg-gradient-to-tl from-success/40 border-success to-base-100'
-                    : ''
+                    : 'bg-gradient-to-br from-transparent to-primary/10'
                 }`"
               >
                 <div class="card-body w-full">

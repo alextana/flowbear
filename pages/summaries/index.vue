@@ -14,15 +14,16 @@
           )}&created_at=${JSON.stringify(summary.created_at)}`"
         >
           <div
-            class="w-full text-left flex items-center justify-between gap-3 dark:hover:bg-base-300 cursor-pointer p-3 border border-neutral bg-base-100 rounded-md mb-3"
+            class="w-full text-left flex items-center justify-between gap-3 bg-gradient-to-br from-transparent to-primary/10 hover:bg-base-300 cursor-pointer p-3 border border-base-300 rounded-md mb-3"
           >
             <div class="title-desc w-full">
               <div class="title mb-2 flex gap-2 justify-between items-center">
                 <div class="main-title">
                   <span class="block text-lg">{{ summary.title }}</span>
-                  <span class="block text-sm text-neutral-content/70">{{
-                    summary.description
-                  }}</span>
+                  <span
+                    class="block text-sm text-neutral/80 dark:text-white/60"
+                    >{{ summary.description }}</span
+                  >
                 </div>
                 <div class="dates text-sm">
                   {{ getDate(summary) }}
@@ -32,7 +33,7 @@
               <div class="desc w-full items-center flex gap-2 justify-between">
                 <span
                   v-if="summary.ai_generated"
-                  class="ai-gen border border-neutral px-2 py-1 rounded-md text-[.6rem] uppercase"
+                  class="ai-gen bg-gradient-to-br from-blue-500 to-cyan-500 font-bold text-white px-2 py-1 rounded-md text-[.6rem] uppercase"
                 >
                   generated with AI</span
                 >
