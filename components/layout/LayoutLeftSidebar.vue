@@ -1,5 +1,5 @@
 <template>
-  <nav class="min-w-[288px] sticky top-5">
+  <nav class="min-w-[288px] max-w-[288px] sticky top-5">
     <ul class="py-2">
       <template v-for="activity in menuActivities">
         <NuxtLink :to="activity.link">

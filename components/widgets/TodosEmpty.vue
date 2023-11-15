@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="!props.addingTodo"
-    class="no-todos relative w-[370px] h-[276px] grid place-content-center"
+    class="no-todos relative min-w-[370px] min-h-[276px] grid place-content-center"
   >
     <div class="no-todos text-center z-[2]">
       <h4 class="text-2xl font-bold">Nothing to see here</h4>
@@ -28,7 +28,7 @@ const props = defineProps({
 const descriptionTest = computed(() => {
   const isToday = dateStore.isSelectedToday()
   const d = DateTime.fromISO(
-    useGetISOStringFromDate(dateStore.currentDate)
+    useGetISOStringFromDate(dateStore.currentDate || new Date())
   ).toFormat('dd MMM')
 
   if (!isToday) {

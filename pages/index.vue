@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto">
+  <div>
     <WidgetsAddActivity />
     <UiSeparator class="my-8" />
     <WidgetsActivityRepeater :date="true" queryKey="dailyActivities" />

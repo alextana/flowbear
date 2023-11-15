@@ -1,8 +1,8 @@
 <template>
   <div class="dropdown">
-    <div class="dd-label flex items-center justify-between">
+    <label class="dd-label flex items-center justify-between">
       <slot name="label"></slot>
-    </div>
+    </label>
     <ul
       tabindex="0"
       class="dropdown-content z-[1] capitalize mt-4 menu border border-base-300 bg-base-100 p-2 shadow-xl rounded-box w-52"

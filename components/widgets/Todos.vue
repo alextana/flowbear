@@ -31,7 +31,7 @@
     >
       <template v-if="addingTodo">
         <div
-          class="w-full flex sticky top-0 gap-2 bg-base-200 z-[20] items-center mb-2 px-2 py-1"
+          class="w-full flex sticky top-0 gap-2 bg-base-100 z-[20] items-center mb-2 px-2 py-1"
         >
           <input type="checkbox" :checked="false" class="checkbox" disabled />
           <UiInputText
@@ -100,6 +100,7 @@
         <UiGoalDropdown
           v-if="!todoGoal"
           direction="top"
+          :allGoals="allGoals"
           @addGoal="($event) => handleAddGoal($event)"
         >
           <button
@@ -155,6 +156,11 @@ const currentTodo = ref({
   title: '',
   description: '',
 })
+
+const { data: allGoals } = useFetch('/api/goals/getGoals', {
+  key: 'goals',
+})
+
 // only add loading state
 // if it's taking long (500ms +)
 const { data, pending, error } = useAsyncData(
@@ -213,7 +219,7 @@ const handleAddTodo = () => {
     body: JSON.stringify({
       title: newTodo.value.title,
       description: newTodo.description,
-      createdAt: dateStore.currentDate,
+      createdAt: dateStore.currentDate || new Date(),
     }),
     onResponse({ response }) {
       if (response.status !== 200) return
@@ -246,6 +252,8 @@ const handleAddTodo = () => {
         group: 'bl',
         life: 3000,
       })
+
+      refreshNuxtData('todosPage')
     },
     onResponseError({ error }) {
       console.error(error)

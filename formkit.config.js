@@ -57,9 +57,11 @@ const theme = {
   tel: textClassification,
   text: textClassification,
   textarea: {
+    label: '$reset label-text m-1 font-bold block',
     input: `
     $reset
     textarea
+    w-full
     input-bordered
     focus-within:input-info
     formkit-invalid:input-error
@@ -70,8 +72,25 @@ const theme = {
   week: textClassification
 }
 
+const focusPlugin = (node) => {
+  if (node.type !== 'input') return
+
+  node.on('created', () => {
+    const focus = () => {
+      const el = document.getElementById(node.props.id)
+      if (el) {
+        el.focus()
+      }
+    }
+
+    node.context.fns.focus = focus
+  })
+}
+
 export default defaultConfig({
+  plugins: [focusPlugin],
   config: {
-    classes: generateClasses(theme)
+    classes: generateClasses(theme),
+
   }
 })

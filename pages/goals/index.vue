@@ -1,5 +1,5 @@
 <template>
-  <div class="goals container mx-auto">
+  <div class="goals">
     <div class="heading flex justify-between">
       <h1 class="text-4xl font-extrabold">Goals</h1>
       <UiButton kind="primary" @click="handleCreate">Create goal</UiButton>
