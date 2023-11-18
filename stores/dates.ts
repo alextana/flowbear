@@ -1,7 +1,11 @@
+function initDate() {
+  const date = new Date()
+  date.setHours(0, 0, 0, 0)
+  return date.toISOString()
+}
+
 export const useSelectedDate = defineStore('selectedDate', () => {
-  const currentDate: Ref<string | string[] | null> = ref(
-    new Date().toISOString()
-  )
+  const currentDate: Ref<string | string[] | null> = ref(initDate())
 
   const isSelectedToday = () => {
     if (Array.isArray(currentDate.value) || !currentDate.value) return false

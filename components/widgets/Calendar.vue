@@ -156,9 +156,6 @@ onMounted(async () => {
   }
 
   setDatesFromQuery()
-
-  dateStore.currentDate = date.value
-  await nextTick()
 })
 
 const openSummaryModal = () => {

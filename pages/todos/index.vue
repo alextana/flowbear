@@ -240,7 +240,6 @@ const submitHandler = (formData) => {
           },
           ...data.value,
         ]
-        console.log('post', data.value)
         refreshNuxtData('dailyTodos')
       },
       onResponseError({ response }) {
