@@ -1,6 +1,7 @@
 import { db } from '~/db'
-import { todos, todosToGoals } from '~/db/schema'
+import { goals, todos, todosToGoals } from '~/db/schema'
 import { getServerSession } from '#auth'
+import { sql } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
   const session = (await getServerSession(event)) as any
@@ -22,6 +23,8 @@ export default defineEventHandler(async (event) => {
   }
 
   let todo = null
+  let todoToGoal = null
+  let todoGoals = null
 
   try {
     todo = await db
@@ -41,13 +44,24 @@ export default defineEventHandler(async (event) => {
   }
 
   if (body.goalId && todo[0].id) {
-    await db.insert(todosToGoals).values({
-      todoId: todo[0].id,
-      goalId: body.goalId,
-    })
+    todoToGoal = await db
+      .insert(todosToGoals)
+      .values({
+        todoId: todo[0].id,
+        goalId: body.goalId,
+      })
+      .returning()
+
+    todoGoals = await db.execute(sql`
+      SELECT * FROM ${goals}
+      WHERE ${session.id} = ${goals.userId} AND
+      ${goals.goalId} = ${body.goalId}
+      `)
   }
 
   return {
-    todo,
+    todos: todo,
+    todo_to_goals: todoToGoal,
+    goals: todoGoals,
   }
 })

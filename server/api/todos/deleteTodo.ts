@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   if (!body.id) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Cannot remove todo an id',
+      statusMessage: 'Cannot remove todo without id',
     })
   }
 

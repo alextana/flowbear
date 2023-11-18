@@ -174,7 +174,7 @@ const shouldShowDate = (activity, date) => {
 }
 
 const formatDate = (date, stringFormat) => {
-  const d = DateTime.fromFormat(date, 'MM/d/yyyy').setLocale(getLang())
+  const d = DateTime.fromFormat(date, 'd/MM/yyyy').setLocale(getLang())
 
   switch (true) {
     case stringFormat === 'day':

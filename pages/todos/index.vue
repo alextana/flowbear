@@ -4,43 +4,50 @@
       <h1 class="text-4xl font-extrabold tracking-tighter">Todos</h1>
       <UiButton @click="handleModalOpen" kind="primary" class="add-new"
         >Create todo
-        <!-- todo add shortcut and windows/mac detection
-        <span class="keys text-xs"
-          ><kbd class="kbd text-neutral-content">⌘</kbd> +
-          <kbd class="kbd text-neutral-content">n</kbd></span
-        >       -->
       </UiButton>
     </div>
     <UiSeparator class="my-8" />
 
-    <template v-if="!data?.length && !error && !shouldShowLoading">
+    <template v-if="!data?.todos?.length && !error && !shouldShowLoading">
       <WidgetsTodosEmpty @adding="addingTodo = true" :addingTodo="addingTodo" />
     </template>
 
-    <div v-for="todo in data">
-      <div
-        class="w-full text-left flex items-center relative gap-3 bg-gradient-to-br from-transparent to-primary/10 hover:bg-base-300 cursor-pointer p-5 border border-base-300 rounded-2xl mb-3"
-        :class="`${todo.todos.completed ? 'opacity-50' : ''}`"
-      >
-        <div class="edit absolute right-2 top-2">
-          <Icon name="tabler:dots" size="18" />
+    <div ref="todoContainer" class="todos-body">
+      <div v-for="todo in data?.todos">
+        <div
+          class="w-full text-left flex items-center relative gap-3 bg-gradient-to-br from-transparent to-primary/10 hover:bg-base-300 cursor-pointer p-5 border border-base-300 rounded-2xl mb-3"
+          :class="`${todo.completed ? 'opacity-50' : ''}`"
+        >
+          <div class="edit absolute right-2 top-2">
+            <UiDropdown
+              :list="actions"
+              nameKey="name"
+              @change="(e) => handleAction(e, todo)"
+              :dropdownLabel="'Edit Todo'"
+            >
+              <template #label>
+                <UiButton kind="ghost" size="sm">
+                  <Icon name="tabler:dots" size="18" />
+                </UiButton>
+              </template>
+            </UiDropdown>
+          </div>
+          <div class="check">
+            <input
+              type="checkbox"
+              @change="() => handleTodoState(todo)"
+              v-model="todo.completed"
+              :checked="todo.completed"
+              class="checkbox z-[10] checkbox-primary"
+            />
+          </div>
+          <div class="title-desc">
+            <span class="block text-lg">{{ todo.title }}</span>
+            <span class="block text-neutral dark:text-white/60">{{
+              todo.description
+            }}</span>
+          </div>
         </div>
-        <div class="check">
-          <input
-            type="checkbox"
-            @change="() => handleTodoState(todo.todos)"
-            v-model="todo.todos.completed"
-            :checked="todo.todos.completed"
-            class="checkbox z-[10] checkbox-primary"
-          />
-        </div>
-        <div class="title-desc">
-          <span class="block text-lg">{{ todo.todos.title }}</span>
-          <span class="block text-neutral dark:text-white/60">{{
-            todo.todos.description
-          }}</span>
-        </div>
-        <!-- {{ todo }} -->
       </div>
     </div>
   </div>
@@ -84,17 +91,88 @@
 <script setup>
 import { useToast } from 'primevue/usetoast'
 import { reset } from '@formkit/core'
+
+const todoContainer = ref(null)
 const router = useRouter()
 const { currentRoute } = router
 const formData = ref(null)
+const pageOffset = ref(0)
+const pageLimit = ref(20)
 const toast = useToast()
 
 const { data, pending, error } = useFetch('/api/todos/getTodos', {
   key: 'todosPage',
   params: {
+    limit: pageLimit.value,
+    offset: pageOffset.value,
     orderBy: '',
   },
 })
+
+const fetchMoreTodos = async () => {
+  pageOffset.value += pageLimit.value
+  const res = await $fetch('/api/todos/getTodos', {
+    params: {
+      limit: pageLimit.value,
+      offset: pageOffset.value,
+    },
+  })
+
+  data.value = data.value.concat(res)
+}
+
+const handleDelete = (todo) => {
+  $fetch('/api/todos/deleteTodo', {
+    method: 'POST',
+    body: JSON.stringify({
+      id: todo.todos.id,
+    }),
+    onResponse({ response }) {
+      if (response.status !== 200) return
+      data.value = data.value.filter((f) => f.todos.id !== todo.todos.id)
+      toast.add({
+        severity: 'success',
+        summary: 'Done',
+        detail: 'Todo deleted',
+        group: 'br',
+        life: 3000,
+      })
+    },
+    onResponseError({ response }) {
+      toast.add({
+        severity: 'error',
+        summary: 'Oh no!',
+        detail: response._data.statusMessage,
+        group: 'br',
+        life: 5000,
+      })
+    },
+  })
+}
+
+const handleEdit = (todo) => {
+  console.log('edit', todo)
+}
+
+const actions = [
+  // {
+  //   name: 'Edit',
+  // },
+  {
+    name: 'Delete',
+  },
+]
+
+const handleAction = (element, todo) => {
+  switch (true) {
+    case element.name === 'Edit':
+      handleEdit(todo)
+      break
+    case element.name === 'Delete':
+      handleDelete(todo)
+      break
+  }
+}
 
 const { data: goalData } = useFetch('/api/goals/getGoals')
 
@@ -129,16 +207,16 @@ onMounted(async () => {
   }
 })
 
-const submitHandler = (data) => {
+const submitHandler = (formData) => {
   const res = new Promise((resolve, reject) => {
     $fetch('/api/todos/createTodo', {
       method: 'POST',
       immediate: false,
       body: JSON.stringify({
-        title: data.title,
-        description: data.description,
+        title: formData.title,
+        description: formData.description,
         created_at: new Date(),
-        goalId: data.goals,
+        goalId: formData.goals,
       }),
       async onResponse({ response }) {
         if (response.status !== 200) {
@@ -154,7 +232,16 @@ const submitHandler = (data) => {
           life: 5000,
         })
         resolve(response)
-        refreshNuxtData('todosPage')
+        data.value = [
+          {
+            todos: response._data.todos[0],
+            todo_to_goals: response._data.todo_to_goals,
+            goals: response._data.goals,
+          },
+          ...data.value,
+        ]
+        console.log('post', data.value)
+        refreshNuxtData('dailyTodos')
       },
       onResponseError({ response }) {
         toast.add({

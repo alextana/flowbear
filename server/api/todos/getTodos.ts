@@ -1,6 +1,6 @@
 import { db } from '~/db'
 import { todos, goals, todosToGoals } from '~/db/schema'
-import { desc, eq, sql, gte, and, lte } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import { getServerSession } from '#auth'
 
 export default defineEventHandler(async (event) => {
@@ -14,115 +14,80 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (query.count) {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const data = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(todos)
-      .where(gte(todos.created_at, today.toISOString()))
-
-    return data
-  }
-
-  const baseQuery = db
-    .select()
-    .from(todos)
-    .leftJoin(todosToGoals, eq(todos.id, todosToGoals.todoId))
-    .leftJoin(goals, eq(todosToGoals.goalId, goals.goalId))
-    .orderBy(desc(todos.created_at))
-
-  const goalId = query.goalId as number
+  let start = new Date(),
+    end = new Date()
 
   function singleDateQuery(query: any) {
-    const d = new Date(query)
-    d.setHours(0, 0, 0, 0)
+    start = new Date(query)
+    end = new Date(start)
+    start.setHours(0, 0, 0, 0)
+    end.setHours(23, 59, 59, 999)
+  }
 
-    const endOfDay = new Date(d)
-    endOfDay.setHours(23, 59, 59, 999)
+  const setDateQuery = () => {
+    if (!query.date) return ''
 
-    // Add filter for a specific date
-    baseQuery.where(
-      and(
-        eq(session.id, todos.userId),
-        gte(todos.created_at, d.toISOString() as string),
-        lte(todos.created_at, endOfDay.toISOString() as string)
-      )
+    if (query.date && typeof query.date === 'string') {
+      singleDateQuery(query.date)
+    }
+
+    if (query.date && Array.isArray(query.date)) {
+      if (query.date[1] === 'null') {
+        singleDateQuery(query.date)
+      } else {
+        start = new Date(query.date[0])
+        end = new Date(query.date[1])
+
+        start.setHours(0, 0, 0, 0)
+        end.setHours(23, 59, 59, 999)
+      }
+    }
+  }
+
+  setDateQuery()
+
+  const finalSql = sql.empty()
+  const finalCountSql = sql.empty()
+
+  finalSql.append(sql`
+    SELECT ${todos.id}, ${todos.title}, ${todos.description}, ${todos.completed}, ${todos.created_at}, ${todosToGoals.goalId} as goal_id
+    FROM ${todos}
+    LEFT JOIN ${todosToGoals} ON ${todos.id} = ${todosToGoals.todoId}
+    LEFT JOIN ${goals} ON ${todosToGoals.goalId} = ${goals.goalId}
+    WHERE ${session.id} = ${todos.userId}
+  `)
+
+  if (query.date) {
+    finalSql.append(
+      sql`
+      AND ${todos.created_at} >= ${start.toISOString()} AND
+      ${todos.created_at} <= ${end.toISOString()}`
     )
   }
 
-  if (query.date && typeof query.date === 'string') {
-    singleDateQuery(query.date[0])
+  finalSql.append(sql`ORDER BY ${todos.created_at} DESC
+    LIMIT ${query.limit || '20'}
+    OFFSET ${query.offset || '0'}
+  `)
+
+  finalCountSql.append(sql`
+    SELECT COUNT(${todos.id})
+    FROM ${todos}
+    WHERE ${session.id} = ${todos.userId}
+  `)
+
+  if (query.date) {
+    finalCountSql.append(sql`
+      AND ${todos.created_at} >= ${start.toISOString()} AND
+      ${todos.created_at} <= ${end.toISOString()}
+    `)
   }
 
-  if (query.date && Array.isArray(query.date)) {
-    if (query.date[1] === 'null') {
-      singleDateQuery(query.date)
-    } else {
-      const start = new Date(query.date[0])
-      const end = new Date(query.date[1])
+  const data = await db.execute(finalSql)
+  const total = await db.execute(finalCountSql)
 
-      start.setHours(0, 0, 0, 0)
-      end.setHours(23, 59, 59, 999)
-
-      baseQuery.where(
-        and(
-          eq(session.id, todos.userId),
-          gte(todos.created_at, start.toISOString() as string),
-          lte(todos.created_at, end.toISOString() as string)
-        )
-      )
-    }
+  return {
+    todos: data,
+    total: total[0]?.count,
   }
-
-  const data = goalId
-    ? await baseQuery.where(eq(goals.goalId, goalId))
-    : await baseQuery
-
-  if (!data) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: 'No todos were found',
-    })
-  }
-
-  type GroupedType = Record<
-    string,
-    {
-      todos: (typeof data)[0]['todos']
-      todo_to_goal: (typeof data)[0]['todo_to_goal']
-      goals: Array<(typeof data)[0]['goal']>
-    }
-  >
-
-  // Maintain the order of todos
-  const todoOrder: number[] = []
-  const groupedDataMap: GroupedType = data.reduce(
-    (result: GroupedType, item) => {
-      const { todos, todo_to_goal, goal } = item
-
-      if (!todoOrder.includes(todos.id)) {
-        todoOrder.push(todos.id)
-      }
-
-      const existingActivity = result[todos.id]
-
-      if (existingActivity) {
-        existingActivity.goals.push(goal)
-      } else {
-        result[todos.id] = {
-          todos,
-          todo_to_goal,
-          goals: [goal],
-        }
-      }
-
-      return result
-    },
-    {}
-  )
-
-  const groupedData = todoOrder.map((todoId) => groupedDataMap[todoId])
-
-  return groupedData
 })
