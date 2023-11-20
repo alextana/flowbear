@@ -3,7 +3,7 @@
     class="w-full h-[350px] prose mx-auto grid place-content-center text-center relative"
   >
     <GraphicsNoActivities class="w-5/6 h-5/6" />
-    <h2 class="mt-0">
+    <h2 class="mt-0 mb-2">
       {{ currentTitle }}
     </h2>
     <p>Use the add activity panel above to add an activity</p>

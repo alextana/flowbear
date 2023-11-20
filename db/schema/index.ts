@@ -104,7 +104,7 @@ export const activitiesToGoals = pgTable(
   })
 )
 
-export const todos = pgTable('todos', {
+export const tasks = pgTable('tasks', {
   id: serial('id').primaryKey().notNull(),
   title: text('title').notNull(),
   description: text('description'),
@@ -117,18 +117,18 @@ export const todos = pgTable('todos', {
   }).defaultNow(),
 })
 
-export const todosToGoals = pgTable(
-  'todo_to_goal',
+export const tasksToGoals = pgTable(
+  'task_to_goal',
   {
-    todoId: serial('todo_id')
+    taskId: serial('task_id')
       .notNull()
-      .references(() => todos.id),
+      .references(() => tasks.id),
     goalId: serial('goal_id')
       .notNull()
       .references(() => goals.goalId),
   },
   (t) => ({
-    pk: primaryKey(t.todoId, t.goalId),
+    pk: primaryKey(t.taskId, t.goalId),
   })
 )
 

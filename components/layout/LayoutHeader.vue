@@ -1,9 +1,7 @@
 <template>
   <header class="w-full py-2 px-4 flex justify-between items-center">
     <NuxtLink to="/">
-      <div
-        class="logo transform transition-all hover:scale-105 hover:rotate-2 flex gap-2 items-center"
-      >
+      <div class="logo transform transition-all flex gap-2 items-center">
         <UiLogo />
         <div class="text-lg font-semibold">
           note<span class="font-extrabold">lap</span>

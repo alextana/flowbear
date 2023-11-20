@@ -3,7 +3,7 @@
     <h4 class="text-xl font-bold tracking-tight">Today so far..</h4>
     <UiSeparator class="my-4" />
     <div class="grid place-content-center text-center">
-      <!-- TODO get actual count -->
+      <!-- TASK get actual count -->
       <span
         v-if="data && data.length"
         class="font-extrabold text-primary text-6xl"

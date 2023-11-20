@@ -5,7 +5,7 @@
         <NuxtLink :to="activity.link">
           <button
             :class="`transition-all w-full hover:bg-base-300 hover:text-base-content
-          px-4 py-4 mb-2 rounded-2xl ${shouldHighlight(activity)}`"
+          px-4 py-3 mb-2 rounded-md ${shouldHighlight(activity)}`"
           >
             <div class="flex gap-2 items-center">
               <Icon :name="activity.icon" size="20" />
@@ -44,9 +44,9 @@ const menuActivities = [
   },
   {
     id: 3,
-    name: 'Todos',
+    name: 'Tasks',
     icon: 'lucide:list-todo',
-    link: '/todos',
+    link: '/tasks',
   },
   {
     id: 4,

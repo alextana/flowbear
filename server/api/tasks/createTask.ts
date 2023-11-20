@@ -1,5 +1,5 @@
 import { db } from '~/db'
-import { goals, todos, todosToGoals } from '~/db/schema'
+import { goals, tasks, tasksToGoals } from '~/db/schema'
 import { getServerSession } from '#auth'
 import { sql } from 'drizzle-orm'
 
@@ -18,17 +18,17 @@ export default defineEventHandler(async (event) => {
   if (!body.title) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Cannot add empty todo',
+      statusMessage: 'Cannot add empty task',
     })
   }
 
-  let todo = null
-  let todoToGoal = null
-  let todoGoals = null
+  let task = null
+  let taskToGoal = null
+  let taskGoals = null
 
   try {
-    todo = await db
-      .insert(todos)
+    task = await db
+      .insert(tasks)
       .values({
         userId: session.id,
         title: body.title,
@@ -39,20 +39,20 @@ export default defineEventHandler(async (event) => {
   } catch (error) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Cannot add todo',
+      statusMessage: 'Cannot add task',
     })
   }
 
-  if (body.goalId && todo[0].id) {
-    todoToGoal = await db
-      .insert(todosToGoals)
+  if (body.goalId && task[0].id) {
+    taskToGoal = await db
+      .insert(tasksToGoals)
       .values({
-        todoId: todo[0].id,
+        taskId: task[0].id,
         goalId: body.goalId,
       })
       .returning()
 
-    todoGoals = await db.execute(sql`
+    taskGoals = await db.execute(sql`
       SELECT * FROM ${goals}
       WHERE ${session.id} = ${goals.userId} AND
       ${goals.goalId} = ${body.goalId}
@@ -60,8 +60,8 @@ export default defineEventHandler(async (event) => {
   }
 
   return {
-    todos: todo,
-    todo_to_goals: todoToGoal,
-    goals: todoGoals,
+    tasks: task,
+    task_to_goals: taskToGoal,
+    goals: taskGoals,
   }
 })

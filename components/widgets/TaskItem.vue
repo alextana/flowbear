@@ -1,23 +1,23 @@
 <template>
   <Transition name="fade">
     <div
-      v-show="show && currentTodo"
+      v-show="show && currentTask"
       @mouseenter="showDelete(true)"
       @mouseleave="showDelete(false)"
       :class="`transition-all duration-300 w-full relative px-2 py-1
-    hover:bg-base-100 border-b border-base-300 dark:border-neutral/70 overflow-hidden
+    hover:bg-neutral border-b border-base-300 dark:border-base-300 overflow-hidden
     hover:text-base-200-content flex
     gap-2 items-center
-    ${currentTodo.completed ? 'opacity-60' : 'opacity-100 bg-transparent'}
+    ${currentTask.completed ? 'opacity-60' : 'opacity-100 bg-transparent'}
     `"
     >
       <Transition name="slide-fade">
         <div
-          v-if="showDeleteIcon && !currentTodo.completed"
-          class="todo-buttons absolute flex gap-0 items-center transition-all right-1 transform z-10"
+          v-if="showDeleteIcon && !currentTask.completed"
+          class="task-buttons absolute flex gap-0 items-center transition-all right-1 transform z-10"
         >
           <button
-            @click="handleEditTodo"
+            @click="handleEditTask"
             class="btn btn-circle btn-sm btn-ghost"
           >
             <Icon name="material-symbols:edit-outline" size="18" />
@@ -37,18 +37,18 @@
 
       <input
         type="checkbox"
-        @change="handleTodoState"
-        v-model="currentTodo.completed"
-        :checked="currentTodo.completed"
+        @change="handleTaskstate"
+        v-model="currentTask.completed"
+        :checked="currentTask.completed"
         class="checkbox z-[10] checkbox-primary"
       />
       <UiInputText
         @focus="editing.value = true"
         @blur="editing = false"
-        v-model="currentTodo.title"
+        v-model="currentTask.title"
         @update:modelValue="handleEditing"
         :classes="`${
-          currentTodo.completed ? 'pointer-events-none' : ''
+          currentTask.completed ? 'pointer-events-none' : ''
         } input input-sm input-ghost max-w-[260px] !outline-0 bg-transparent`"
       >
         <Transition
@@ -59,7 +59,7 @@
         >
           <div
             ref="strike"
-            v-show="currentTodo.completed"
+            v-show="currentTask.completed"
             :class="`strike bg-black dark:bg-neutral-content z-[9] h-[1px]
           absolute top-1/2 transform-translate-y-1/2`"
           />
@@ -75,7 +75,7 @@ import { useDebounceFn } from '@vueuse/core'
 
 const confirmDelete = ref(false)
 const props = defineProps({
-  todo: {
+  task: {
     type: Object,
     default: null,
   },
@@ -84,8 +84,8 @@ const props = defineProps({
     default: {},
   },
 })
-const currentTodo = reactive(
-  props.todo || {
+const currentTask = reactive(
+  props.task || {
     title: '',
     completed: false,
   }
@@ -98,12 +98,12 @@ const tween = ref(null)
 const editing = ref(false)
 
 const strike = ref('strike')
-const emit = defineEmits(['deleteTodo', 'editTodo'])
+const emit = defineEmits(['deleteTask', 'editTask'])
 
 onMounted(() => {
   show.value = true
 
-  if (currentTodo.completed) {
+  if (currentTask.completed) {
     invertedAnimation.value = true
   }
   tween.value = invertedAnimation.value
@@ -118,18 +118,20 @@ onMounted(() => {
 const updateFn = (timeout = 1000, type = '') =>
   useDebounceFn(() => {
     // add a saving indicator
-    $fetch('/api/todos/updateTodo', {
+    $fetch('/api/tasks/updateTasks', {
       method: 'POST',
-      body: JSON.stringify(currentTodo),
+      body: JSON.stringify(currentTask),
       onResponseError() {
-        // TODO negate optimistic update
+        // TASK negate optimistic update
       },
-      onResponse() {},
+      onResponse() {
+        refreshNuxtData('goals')
+      },
     })
   }, timeout)
 
 const handleEditing = updateFn()
-const handleTodoState = updateFn(0)
+const handleTaskstate = updateFn(0)
 
 const handleDelete = () => {
   if (!confirmDelete.value) {
@@ -138,20 +140,21 @@ const handleDelete = () => {
     return
   }
 
-  $fetch('/api/todos/deleteTodo', {
+  $fetch('/api/tasks/deleteTask', {
     method: 'POST',
-    body: JSON.stringify(currentTodo),
+    body: JSON.stringify(currentTask),
     onResponse({ response }) {
       if (!response.status === 200) return
 
-      emit('deleteTodo', currentTodo)
+      emit('deleteTask', currentTask)
+      refreshNuxtData('tasksPage')
 
       confirmDelete.value = false
     },
     onResponseError({ error }) {
       console.error(error)
 
-      refreshNuxtData('dailyTodos')
+      refreshNuxtData('dailyTasks')
     },
   })
 }
@@ -177,8 +180,8 @@ const showDelete = (value) => {
   confirmDelete.value = false
 }
 
-const handleEditTodo = () => {
-  emit('editTodo', currentTodo.value || currentTodo, currentGoal.value)
+const handleEditTask = () => {
+  emit('editTask', currentTask.value || currentTask, currentGoal.value)
 }
 </script>
 

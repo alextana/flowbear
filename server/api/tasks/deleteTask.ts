@@ -1,5 +1,5 @@
 import { db } from '~/db'
-import { todos } from '~/db/schema'
+import { tasks, tasksToGoals } from '~/db/schema'
 import { getServerSession } from '#auth'
 import { eq } from 'drizzle-orm'
 
@@ -15,21 +15,22 @@ export default defineEventHandler(async (event) => {
 
   const body = await readBody(event)
 
-  if (!body.title) {
+  if (!body.id) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Cannot update todo without a title',
+      statusMessage: 'Cannot remove task without id',
     })
   }
 
-  await db
-    .update(todos)
-    .set({
-      title: body.title,
-      completed: body.completed,
-      description: body.description,
-    })
-    .where(eq(todos.id, body.id))
+  // delete the activities to goals before
+  // deleting the activity
+  try {
+    await db.delete(tasksToGoals).where(eq(tasksToGoals.taskId, body.id))
+  } catch (error) {
+    // fail silently
+  }
+
+  await db.delete(tasks).where(eq(tasks.id, body.id))
 
   return {
     body,

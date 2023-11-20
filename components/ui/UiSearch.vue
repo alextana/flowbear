@@ -1,7 +1,7 @@
 <template>
   <div class="search-input relative">
     <UiInputText
-      classes="px-8 py-2 rounded-2xl input-bordered input"
+      classes="px-8 py-2 rounded-md input-bordered input"
       :auto-focus="true"
       place-holder="Search"
     />

@@ -1,5 +1,5 @@
 import { db } from '~/db'
-import { todos, goals, todosToGoals } from '~/db/schema'
+import { tasks, goals, tasksToGoals } from '~/db/schema'
 import { sql } from 'drizzle-orm'
 import { getServerSession } from '#auth'
 
@@ -50,36 +50,36 @@ export default defineEventHandler(async (event) => {
   const finalCountSql = sql.empty()
 
   finalSql.append(sql`
-    SELECT ${todos.id}, ${todos.title}, ${todos.description}, ${todos.completed}, ${todos.created_at}, ${todosToGoals.goalId} as goal_id
-    FROM ${todos}
-    LEFT JOIN ${todosToGoals} ON ${todos.id} = ${todosToGoals.todoId}
-    LEFT JOIN ${goals} ON ${todosToGoals.goalId} = ${goals.goalId}
-    WHERE ${session.id} = ${todos.userId}
+    SELECT ${tasks.id}, ${tasks.title}, ${tasks.description}, ${tasks.completed}, ${tasks.created_at}, ${tasksToGoals.goalId} as goal_id
+    FROM ${tasks}
+    LEFT JOIN ${tasksToGoals} ON ${tasks.id} = ${tasksToGoals.taskId}
+    LEFT JOIN ${goals} ON ${tasksToGoals.goalId} = ${goals.goalId}
+    WHERE ${session.id} = ${tasks.userId}
   `)
 
   if (query.date) {
     finalSql.append(
       sql`
-      AND ${todos.created_at} >= ${start.toISOString()} AND
-      ${todos.created_at} <= ${end.toISOString()}`
+      AND ${tasks.created_at} >= ${start.toISOString()} AND
+      ${tasks.created_at} <= ${end.toISOString()}`
     )
   }
 
-  finalSql.append(sql`ORDER BY ${todos.created_at} DESC
+  finalSql.append(sql`ORDER BY ${tasks.created_at} DESC
     LIMIT ${query.limit || '20'}
     OFFSET ${query.offset || '0'}
   `)
 
   finalCountSql.append(sql`
-    SELECT COUNT(${todos.id})
-    FROM ${todos}
-    WHERE ${session.id} = ${todos.userId}
+    SELECT COUNT(${tasks.id})
+    FROM ${tasks}
+    WHERE ${session.id} = ${tasks.userId}
   `)
 
   if (query.date) {
     finalCountSql.append(sql`
-      AND ${todos.created_at} >= ${start.toISOString()} AND
-      ${todos.created_at} <= ${end.toISOString()}
+      AND ${tasks.created_at} >= ${start.toISOString()} AND
+      ${tasks.created_at} <= ${end.toISOString()}
     `)
   }
 
@@ -87,7 +87,7 @@ export default defineEventHandler(async (event) => {
   const total = await db.execute(finalCountSql)
 
   return {
-    todos: data,
+    tasks: data,
     total: total[0]?.count,
   }
 })

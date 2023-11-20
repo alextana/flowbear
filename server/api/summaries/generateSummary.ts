@@ -1,7 +1,7 @@
 /*
   Summaries endpoint
   takes a date, or array of dates
-  and gets all the activities/todos in between
+  and gets all the activities/tasks in between
   probably do some manipulation to
   make it AI digestible
 
@@ -13,7 +13,7 @@
 import { getServerSession } from '#auth'
 import { db } from '~/db'
 import { sql } from 'drizzle-orm'
-import { activities, todos, summaries } from '~/db/schema'
+import { activities, tasks, summaries } from '~/db/schema'
 import { OpenAI } from 'openai'
 const runtimeConfig = useRuntimeConfig()
 const { OPEN_AI_KEY } = runtimeConfig
@@ -72,7 +72,7 @@ export default defineEventHandler(async (event) => {
   startDate = startDate?.toISOString()
   endDate = endDate?.toISOString()
 
-  // get activities and (completed) todos between two dates
+  // get activities and (completed) tasks between two dates
   const data = await db.execute(sql`
     SELECT ${activities.content} as title,
     CASE WHEN ${
@@ -84,13 +84,13 @@ export default defineEventHandler(async (event) => {
         activities.created_at
       } <= ${endDate})
     UNION
-      SELECT ${todos.title}, ${'todo'}
-      FROM ${todos}
-      WHERE ${session.id} = ${todos.userId}
-      AND (${todos.created_at} >= ${startDate} AND ${
-        todos.created_at
+      SELECT ${tasks.title}, ${'task'}
+      FROM ${tasks}
+      WHERE ${session.id} = ${tasks.userId}
+      AND (${tasks.created_at} >= ${startDate} AND ${
+        tasks.created_at
       } <= ${endDate})
-      AND ${todos.completed} = TRUE
+      AND ${tasks.completed} = TRUE
   `)
 
   if (!data.length) {

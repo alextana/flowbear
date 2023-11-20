@@ -14,7 +14,7 @@
     >
       <div class="dates mb-4 flex gap-4" v-for="date in getDates(data.dates)">
         <div
-          class="date-block h-max min-h-[65px] bg-base-100 min-w-[65px] rounded-2xl border border-neutral-content dark:border-neutral px-3 py-2 text-center"
+          class="date-block h-max min-h-[65px] bg-base-100 dark:bg-base-200 min-w-[65px] rounded-2xl border border-neutral-content dark:border-neutral px-3 py-2 text-center"
         >
           <ClientOnly>
             <span class="day block text-2xl font-bold">
@@ -31,7 +31,7 @@
               <div
                 @mouseover="handleShowOptions(i)"
                 @mouseleave="handleShowOptions(null)"
-                class="activity-container p-4 rounded-2xl max-w-none 2xl:max-w-[unset] bg-base-100 hover:bg-base-200 activity prose relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all"
+                class="activity-container p-4 rounded-2xl max-w-none 2xl:max-w-[unset] bg-base-100 hover:bg-base-200 dark:bg-base-200 dark:hover:bg-base-300 activity prose relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all"
               >
                 <span class="text-xs capitalize dark:text-white/40 font-bold">{{
                   item.activity.type
@@ -214,7 +214,7 @@ const deleteActivity = () => {
   })
 }
 
-// TODO - add optimisations to persist text
+// TASK - add optimisations to persist text
 // debounce is cool but too many requests atm
 // need to do things like check window blur, save when that happens (?)
 // or if we detect too many requests happening slow them down
@@ -225,7 +225,7 @@ const handleEditing = useDebounceFn((activity) => {
     method: 'POST',
     body: JSON.stringify(activity),
     onResponseError() {
-      // TODO negate optimistic update
+      // TASK negate optimistic update
     },
     onResponse() {},
   })

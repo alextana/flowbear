@@ -28,7 +28,7 @@
   >
     <template v-for="goal in getGoals()">
       <button
-        class="w-max px-2 py-1 bg-neutral hover:bg-primary hover:text-primary-content rounded-full text-xs"
+        class="w-max px-2 py-1 btn btn-outline btn-xs hover:bg-primary hover:text-primary-content rounded-md text-xs"
       >
         <div v-if="goal?.title" class="flex gap-1 items-center">
           <span class="block">{{ goal.title }}</span>

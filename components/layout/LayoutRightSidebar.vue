@@ -3,6 +3,6 @@
     <WidgetsCalendar />
 
     <UiSeparator class="my-2" />
-    <WidgetsTodos />
+    <WidgetsTasks />
   </div>
 </template>

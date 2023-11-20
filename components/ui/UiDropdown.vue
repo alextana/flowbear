@@ -41,8 +41,8 @@ const props = defineProps({
   },
 })
 
-const handleClick = (element) => {
-  emit('change', element)
+const handleClick = (e) => {
+  emit('change', e)
 
   document.activeElement.blur()
 }

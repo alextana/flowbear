@@ -1,23 +1,23 @@
 <template>
   <div
-    class="todos-container relative overflow-hidden bg-base-100 rounded-2xl pl-6 pb-6 pr-6"
+    class="tasks-container relative overflow-hidden bg-base-100 rounded-md pl-6 pb-6 pr-6"
   >
     <div
       class="flex sticky pt-6 z-20 bg-base-100 top-0 gap-2 justify-between items-center mb-4"
     >
-      <h4 class="text-2xl font-extrabold tracking-tighter">
-        {{ getTodoTitle }}
+      <h4 class="text-xl font-semibold tracking-tighter">
+        {{ getTaskTitle }}
       </h4>
-      <div class="create-todo">
+      <div class="create-task">
         <button
-          @click="() => (addingTodo = !addingTodo)"
+          @click="() => (addingTask = !addingTask)"
           :class="`btn btn-xl btn-circle ${
-            addingTodo ? 'btn-neutral text-neutral-content' : 'btn-primary'
+            addingTask ? 'btn-neutral text-neutral-content' : 'btn-primary'
           } m-1`"
         >
           <Icon
             :class="`transition-all ${
-              addingTodo ? 'transform rotate-[225deg]' : ''
+              addingTask ? 'transform rotate-[225deg]' : ''
             }`"
             name="material-symbols:add"
             size="24"
@@ -29,20 +29,20 @@
       v-auto-animate
       class="content-container min-h-[276px] max-h-[400px] overflow-y-auto overflow-x-hidden"
     >
-      <template v-if="addingTodo">
+      <template v-if="addingTask">
         <div
           class="w-full flex sticky top-0 gap-2 bg-base-100 z-[20] items-center mb-2 px-2 py-1"
         >
           <input type="checkbox" :checked="false" class="checkbox" disabled />
           <UiInputText
-            @keyup.enter.prevent.stop="handleAddTodo"
+            @keyup.enter.prevent.stop="handleAddTask"
             :autoFocus="true"
-            placeHolder="Your todo title"
-            v-model="newTodo.title"
+            placeHolder="Your task title"
+            v-model="newTask.title"
             classes="input input-sm input-bordered w-full"
           />
           <UiButton
-            @click="handleAddTodo"
+            @click="handleAddTask"
             size="sm"
             kind="primary"
             extra-classes="!rounded-lg"
@@ -62,43 +62,43 @@
             class="text-sm block mt-4 mb-2 font-semibold text-gray-700 dark:text-gray-300"
             >{{ group?.goal?.title }}</span
           >
-          <template :key="todo" v-for="todo in group.todos">
-            <WidgetsTodoItem
-              :todo="todo"
+          <template :key="task" v-for="task in group.tasks">
+            <WidgetsTaskItem
+              :task="task"
               :goal="group.goal"
-              @editTodo="(todo, goal) => handleEdit(todo, goal)"
-              @deleteTodo="handleDeleteTodo"
+              @editTask="(task, goal) => handleEdit(task, goal)"
+              @deleteTask="handleDeleteTask"
             />
           </template>
         </template>
       </template>
       <template v-if="!data?.length && !error && !shouldShowLoading">
-        <WidgetsTodosEmpty
-          @adding="addingTodo = true"
-          :addingTodo="addingTodo"
+        <WidgetsTasksEmpty
+          @adding="addingTask = true"
+          :addingTask="addingTask"
         />
       </template>
       <template v-else-if="error">
         {{ error }}
-        <div>Error getting todos..</div>
+        <div>Error getting tasks..</div>
       </template>
     </div>
   </div>
-  <UiModal id="todo_modal">
+  <UiModal id="task_modal">
     <template #title>
-      <span>Edit todo</span>
+      <span>Edit task</span>
     </template>
     <template #default>
-      <div class="todo-edit">
-        <UiInputText label="Todo title" v-model="currentTodo.title" />
+      <div class="task-edit">
+        <UiInputText label="Task title" v-model="currentTask.title" />
         <UiSeparator class="my-4" />
         <UiTextArea
-          label="Todo description"
-          v-model="currentTodo.description"
+          label="Task description"
+          v-model="currentTask.description"
         />
         <UiSeparator class="my-4" />
         <UiGoalDropdown
-          v-if="!todoGoal"
+          v-if="!taskGoal"
           direction="top"
           :allGoals="allGoals"
           @addGoal="($event) => handleAddGoal($event)"
@@ -123,9 +123,9 @@
           </button>
         </UiGoalDropdown>
         <button class="btn btn-sm btn-success flex gap-2" v-else>
-          <span>{{ todoGoal.title }}</span>
+          <span>{{ taskGoal.title }}</span>
           <Icon
-            @click="handleRemoveGoal(todoGoal)"
+            @click="handleRemoveGoal(taskGoal)"
             name="mdi:remove"
             size="18"
           />
@@ -151,8 +151,8 @@ const toast = useToast()
 const dateStore = useSelectedDate()
 const shouldShow = ref(false)
 const buttonError = ref(false)
-const todoGoal = ref(null)
-const currentTodo = ref({
+const taskGoal = ref(null)
+const currentTask = ref({
   title: '',
   description: '',
 })
@@ -164,9 +164,9 @@ const { data: allGoals } = useFetch('/api/goals/getGoals', {
 // only add loading state
 // if it's taking long (500ms +)
 const { data, pending, error } = useAsyncData(
-  'dailyTodos',
+  'dailyTasks',
   () =>
-    $fetch('/api/todos/getGroupedTodos', {
+    $fetch('/api/tasks/getGroupedTasks', {
       params: {
         date: dateStore?.currentDate || new Date(),
       },
@@ -179,10 +179,10 @@ const { data, pending, error } = useAsyncData(
 )
 const { shouldShowLoading } = useLoading(pending, 750)
 
-const getTodoTitle = computed(() => {
+const getTaskTitle = computed(() => {
   const current = dateStore.currentDate
   if (Array.isArray(current)) {
-    return `Todos ${current[1] ? 'between' : 'for'} ${DateTime.fromISO(
+    return `Tasks ${current[1] ? 'between' : 'for'} ${DateTime.fromISO(
       current[0]
     ).toFormat('dd MMM')} ${
       current[1] ? 'and ' + DateTime.fromISO(current[1]).toFormat('dd MMM') : ''
@@ -195,10 +195,10 @@ const getTodoTitle = computed(() => {
   d.setHours(0, 0, 0, 0)
 
   if (today.toISOString() === d.toISOString()) {
-    return `Today's Todos`
+    return `Today's Tasks`
   }
 
-  return `Todos for ${DateTime.fromISO(
+  return `Tasks for ${DateTime.fromISO(
     useGetISOStringFromDate(dateStore?.currentDate)
   ).toFormat('dd MMM')}`
 })
@@ -207,31 +207,32 @@ onMounted(() => {
   shouldShow.value = true
 })
 
-const addingTodo = ref(false)
-const newTodo = ref({
+const addingTask = ref(false)
+
+const newTask = ref({
   title: null,
   description: null,
 })
 
-const handleAddTodo = () => {
-  $fetch('/api/todos/createTodo', {
+const handleAddTask = () => {
+  $fetch('/api/tasks/createTask', {
     method: 'POST',
     body: JSON.stringify({
-      title: newTodo.value.title,
-      description: newTodo.description,
+      title: newTask.value.title,
+      description: newTask.description,
       createdAt: dateStore.currentDate || new Date(),
     }),
     onResponse({ response }) {
       if (response.status !== 200) return
 
-      newTodo.value = {
+      newTask.value = {
         title: null,
         description: null,
       }
 
       const toAdd = {
         goal: { title: 'No goal' },
-        todos: [response._data.todo[0]],
+        tasks: [response._data.tasks[0]],
       }
 
       // find the index of 'no goals'
@@ -242,34 +243,34 @@ const handleAddTodo = () => {
       if (idx === -1) {
         data.value = [toAdd, ...data.value]
       } else {
-        data.value[idx].todos.unshift(response._data.todo[0])
+        data.value[idx].tasks.unshift(response._data.tasks[0])
       }
 
       toast.add({
         severity: 'success',
         summary: 'Done',
-        detail: 'Todo added',
+        detail: 'Task added',
         group: 'bl',
         life: 3000,
       })
 
-      refreshNuxtData('todosPage')
+      refreshNuxtData('tasksPage')
     },
     onResponseError({ error }) {
       console.error(error)
 
-      refreshNuxtData('dailyTodos')
+      refreshNuxtData('dailyTasks')
     },
   })
 }
 
-const handleEdit = (todo, goal) => {
-  currentTodo.value = todo
+const handleEdit = (task, goal) => {
+  currentTask.value = task
   goal.title.toLowerCase() !== 'no goal'
-    ? (todoGoal.value = goal)
-    : (todoGoal.value = null)
+    ? (taskGoal.value = goal)
+    : (taskGoal.value = null)
 
-  todo_modal.showModal()
+  task_modal.showModal()
 }
 
 const setButtonError = () => {
@@ -287,13 +288,13 @@ const handleRemoveGoal = (goal) => {
     method: 'POST',
     body: JSON.stringify({
       goalId: goal.goalId,
-      todoId: currentTodo.value.id,
+      taskId: currentTask.value.id,
     }),
     onResponse({ response }) {
       if (response.status !== 200) return
-      todoGoal.value = null
+      taskGoal.value = null
 
-      refreshNuxtData('dailyTodos')
+      refreshNuxtData('dailyTasks')
     },
     onResponseError() {
       setButtonError()
@@ -302,7 +303,7 @@ const handleRemoveGoal = (goal) => {
 }
 
 const handleAddGoal = (goal) => {
-  if (currentTodo?.value?.goalId === goal.goalId) {
+  if (currentTask?.value?.goalId === goal.goalId) {
     setButtonError()
 
     toast.add({
@@ -321,13 +322,13 @@ const handleAddGoal = (goal) => {
     method: 'POST',
     body: JSON.stringify({
       goalId: goal.goalId,
-      todoId: currentTodo.value.id,
+      taskId: currentTask.value.id,
     }),
     onResponse({ response }) {
       if (response.status !== 200) return
 
-      todoGoal.value = goal
-      refreshNuxtData('dailyTodos')
+      taskGoal.value = goal
+      refreshNuxtData('dailyTasks')
 
       // toggles dropdown
       document.activeElement.blur()
@@ -339,18 +340,18 @@ const handleAddGoal = (goal) => {
 }
 
 const close = () => {
-  todoGoal.value = null
-  todo_modal.close()
+  taskGoal.value = null
+  task_modal.close()
 }
 
-const handleDeleteTodo = (todo) => {
-  const todoIdToRemove = todo.id
+const handleDeleteTask = (task) => {
+  const taskIdToRemove = task.id
 
   for (const group of data.value) {
-    group.todos = group.todos.filter((todo) => todo.id !== todoIdToRemove)
+    group.tasks = group.tasks.filter((task) => task.id !== taskIdToRemove)
 
-    if (!group.todos.length) {
-      // If the todo array is empty, remove the goal
+    if (!group.tasks.length) {
+      // If the task array is empty, remove the goal
       const index = data.value.indexOf(group)
       data.value.splice(index, 1)
     }

@@ -7,7 +7,7 @@
 }
 
 .btn {
-  @apply rounded-3xl;
+  @apply rounded-md;
 }
 
 .p-calendar {
@@ -15,7 +15,7 @@
 }
 
 .p-datepicker {
-  border-radius: 1rem;
+  border-radius: 0.375rem;
   background: oklch(var(--b1));
 }
 
@@ -41,6 +41,21 @@
 @media (prefers-color-scheme: dark) {
   :root {
     background: oklch(var(--b2));
+  }
+  .p-datepicker {
+    color: oklch(var(--nc));
+  }
+  .p-datepicker:not(.p-disabled)
+    table
+    td
+    span:not(.p-highlight):not(.p-disabled):hover {
+    color: oklch(var(--n));
+  }
+  .p-datepicker:not(.p-disabled)
+    table
+    td
+    span:not(.p-highlight):not(.p-disabled):hover {
+    color: oklch(var(--n));
   }
   .p-datepicker .p-highlight {
     background: oklch(var(--s));

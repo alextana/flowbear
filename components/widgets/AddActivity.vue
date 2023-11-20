@@ -1,6 +1,6 @@
 <template>
   <div class="w-full min-w-[71ch]">
-    <h1 class="text-4xl tracking-tighter font-bold text-content">
+    <h1 class="text-xl tracking-tighter font-semibold text-content">
       <span v-if="!props.title">
         Hey
         <span v-if="data?.user?.name">{{ data.user.name.split(' ')[0] }}</span>
@@ -9,7 +9,7 @@
         {{ props.title }}
       </span>
     </h1>
-    <p class="text-neutral/50 dark:text-neutral-content/50 text-lg">
+    <p class="text-neutral/50 dark:text-neutral-content/50 text-sm">
       <span v-if="!props.subtitle"> what have you been up to? </span>
       <span v-else>
         {{ props.subtitle }}
@@ -20,7 +20,7 @@
 
     <InputTipTap
       v-model="activityContent"
-      classProps="mt-8 rounded-2xl bg-base-300/30 min-h-[125px] border-2 border-base-300 prose prose-slate w-full min-w-full mx-auto prose-base"
+      classProps="mt-8 rounded-md bg-base-300/30 dark:bg-neutral min-h-[125px] border-2 border-base-300 prose prose-slate w-full min-w-full mx-auto prose-base"
     />
 
     <UiSeparator class="mb-4" />

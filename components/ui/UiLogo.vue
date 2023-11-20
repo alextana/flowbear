@@ -1,6 +1,8 @@
 <template>
   <div class="logo transform mask mask-squircle">
-    <div class="circle relative w-[60px] h-[60px] bg-white dark:bg-black">
+    <div
+      class="circle relative w-[60px] h-[60px] bg-white dark:bg-base-300 hover:dark:bg-base-100"
+    >
       <svg
         class="absolute w-[47px] h-[36px] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
         viewBox="0 0 547 374"

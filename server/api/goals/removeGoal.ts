@@ -1,5 +1,5 @@
 import { db } from '~/db'
-import { activitiesToGoals, todosToGoals } from '~/db/schema'
+import { activitiesToGoals, tasksToGoals } from '~/db/schema'
 import { getServerSession } from '#auth'
 import { and, eq } from 'drizzle-orm'
 
@@ -15,29 +15,29 @@ export default defineEventHandler(async (event) => {
 
   const body = await readBody(event)
 
-  if (!body.activityId && !body.todoId) {
+  if (!body.activityId && !body.taskId) {
     throw createError({
       statusCode: 400,
       statusMessage:
-        'Cannot remove goal from activity without activity id or todo id',
+        'Cannot remove goal from activity without activity id or task id',
     })
   }
 
   if (!body.goalId) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Cannot remove goal from activity or todo without goal id',
+      statusMessage: 'Cannot remove goal from activity or task without goal id',
     })
   }
 
   // remove goal to activity by adding it to the join table
-  const data = body.todoId
+  const data = body.taskId
     ? await db
-        .delete(todosToGoals)
+        .delete(tasksToGoals)
         .where(
           and(
-            eq(todosToGoals.todoId, body.todoId),
-            eq(todosToGoals.goalId, body.goalId)
+            eq(tasksToGoals.taskId, body.taskId),
+            eq(tasksToGoals.goalId, body.goalId)
           )
         )
     : await db

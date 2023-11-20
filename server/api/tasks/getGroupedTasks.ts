@@ -1,9 +1,9 @@
 import { db } from '~/db'
-import { todos, goals, todosToGoals } from '~/db/schema'
+import { tasks, goals, tasksToGoals } from '~/db/schema'
 import { desc, eq, sql, gte, and, lte } from 'drizzle-orm'
 import { getServerSession } from '#auth'
 
-// groups todos by goals, useful for the todo widget
+// groups tasks by goals, useful for the task widget
 export default defineEventHandler(async (event) => {
   const session = (await getServerSession(event)) as any
   const query = getQuery(event)
@@ -20,18 +20,18 @@ export default defineEventHandler(async (event) => {
     today.setHours(0, 0, 0, 0)
     const data = await db
       .select({ count: sql<number>`count(*)` })
-      .from(todos)
-      .where(gte(todos.created_at, today.toISOString()))
+      .from(tasks)
+      .where(gte(tasks.created_at, today.toISOString()))
 
     return data
   }
 
   const baseQuery = db
     .select()
-    .from(todos)
-    .leftJoin(todosToGoals, eq(todos.id, todosToGoals.todoId))
-    .leftJoin(goals, eq(todosToGoals.goalId, goals.goalId))
-    .orderBy(desc(todos.created_at))
+    .from(tasks)
+    .leftJoin(tasksToGoals, eq(tasks.id, tasksToGoals.taskId))
+    .leftJoin(goals, eq(tasksToGoals.goalId, goals.goalId))
+    .orderBy(desc(tasks.created_at))
 
   function singleDateQuery(query: any) {
     const q = query.replaceAll('"', '')
@@ -44,9 +44,9 @@ export default defineEventHandler(async (event) => {
     // Add filter for a specific date
     baseQuery.where(
       and(
-        eq(session.id, todos.userId),
-        gte(todos.created_at, d.toISOString() as string),
-        lte(todos.created_at, endOfDay.toISOString() as string)
+        eq(session.id, tasks.userId),
+        gte(tasks.created_at, d.toISOString() as string),
+        lte(tasks.created_at, endOfDay.toISOString() as string)
       )
     )
   }
@@ -67,9 +67,9 @@ export default defineEventHandler(async (event) => {
 
       baseQuery.where(
         and(
-          eq(session.id, todos.userId),
-          gte(todos.created_at, start.toISOString() as string),
-          lte(todos.created_at, end.toISOString() as string)
+          eq(session.id, tasks.userId),
+          gte(tasks.created_at, start.toISOString() as string),
+          lte(tasks.created_at, end.toISOString() as string)
         )
       )
     }
@@ -80,14 +80,14 @@ export default defineEventHandler(async (event) => {
   if (!data) {
     throw createError({
       statusCode: 404,
-      statusMessage: 'No todos were found',
+      statusMessage: 'No tasks were found',
     })
   }
 
   const groupedData: {
     [key: string]: {
       goal: any
-      todos: any[]
+      tasks: any[]
     }
   } = {}
 
@@ -98,21 +98,21 @@ export default defineEventHandler(async (event) => {
       if (!groupedData[goal.title]) {
         groupedData[goal.title] = {
           goal: goal,
-          todos: [],
+          tasks: [],
         }
       }
 
-      groupedData[goal.title].todos.push(item.todos)
+      groupedData[goal.title].tasks.push(item.tasks)
     } else {
-      // If there's no goal, group the todo as "No Goal" or any other label you prefer
+      // If there's no goal, group the task as "No Goal" or any other label you prefer
       if (!groupedData['No goal']) {
         groupedData['No goal'] = {
           goal: { title: 'No goal' },
-          todos: [],
+          tasks: [],
         }
       }
 
-      groupedData['No goal'].todos.push(item.todos)
+      groupedData['No goal'].tasks.push(item.tasks)
     }
   })
 
