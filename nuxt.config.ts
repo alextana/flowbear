@@ -26,6 +26,13 @@ export default defineNuxtConfig({
       plugins: [tailwindTypography],
     },
   },
+  nitro: {
+    esbuild: {
+      options: {
+        target: 'esnext',
+      },
+    },
+  },
   modules: [
     '@formkit/nuxt',
     '@sidebase/nuxt-auth',

@@ -1,8 +1,7 @@
+const connectionString = process.env.DATABASE_URL
+
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 
-import * as schema from './schema'
-
-const connectionString = process.env.DATABASE_URL
-const client = postgres(connectionString)
-export const db = drizzle(client, { schema: schema })
+const sql = postgres(connectionString, { max: 1 })
+export const db = drizzle(sql)

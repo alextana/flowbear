@@ -36,6 +36,20 @@
       "when": 1700334207230,
       "tag": "0004_optimal_marauders",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1700445683648,
+      "tag": "0005_fresh_champions",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1700445709948,
+      "tag": "0006_numerous_young_avengers",
+      "breakpoints": true
     }
   ]
 }
