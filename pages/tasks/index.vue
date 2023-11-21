@@ -6,6 +6,7 @@
         >Create task
       </UiButton>
     </div>
+    <UiFilters :filters="taskFilters" />
     <UiSeparator class="my-8" />
 
     <template v-if="!data?.tasks?.length && !error && !shouldShowLoading">
@@ -15,9 +16,8 @@
     <div v-auto-animate ref="taskContainer" class="tasks-body">
       <div v-for="task in data?.tasks">
         <div
-          class="w-full text-left flex items-center rounded-none relative gap-3 hover:bg-base-300 cursor-pointer px-5 py-3 border-b border-base-300"
+          class="w-full text-left flex items-center rounded-none relative gap-3 hover:bg-base-300 px-5 py-0 border-b border-base-300"
           :class="`${task.completed ? 'opacity-50' : ''}`"
-          @click="handleTaskClick"
         >
           <div class="edit absolute right-2 top-2">
             <UiDropdown
@@ -40,24 +40,27 @@
             :checked="task.completed"
             class="checkbox z-[10] checkbox-primary"
           />
-          <div class="title-desc">
+          <div
+            @click="() => handleEdit(task)"
+            class="title-desc w-full py-3 cursor-pointer"
+          >
             <span class="block text-sm">{{ task.title }}</span>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <UiModal @close="useQueryRoute('remove', 'task_modal_open')" id="add_task">
-    <template #title> Add task </template>
+  <UiModal @close="handleCloseModal" id="add_task">
+    <template #title>{{ editing ? 'Edit task' : 'Add task' }}</template>
     <template #default>
       <FormKit
         id="task-form"
-        @submit="submitHandler"
+        @submit="(e) => submitHandler(e, editing ? 'edit' : 'add')"
         type="form"
         :submit-attrs="{
           inputClass: 'btn btn-success',
         }"
-        submit-label="Add task"
+        :submit-label="editing ? 'Edit task' : 'Add task'"
         v-model="formData"
       >
         <FormKit
@@ -94,28 +97,19 @@ const pageOffset = ref(0)
 const pageLimit = ref(20)
 const toast = useToast()
 const router = useRouter()
+const editing = ref(null)
 const { currentRoute } = router
+const currentFilter = ref(useQueryRoute('get')?.filter || 'all')
 
 const { data, pending, error } = useFetch('/api/tasks/getTasks', {
   key: 'tasksPage',
   params: {
     limit: pageLimit.value,
     offset: pageOffset.value,
+    filter: currentFilter.value,
     orderBy: '',
   },
 })
-
-const fetchMoreTasks = async () => {
-  pageOffset.value += pageLimit.value
-  const res = await $fetch('/api/tasks/getTasks', {
-    params: {
-      limit: pageLimit.value,
-      offset: pageOffset.value,
-    },
-  })
-
-  data.value = data.value.concat(res)
-}
 
 const handleDelete = (task) => {
   $fetch('/api/tasks/deleteTask', {
@@ -144,10 +138,6 @@ const handleDelete = (task) => {
       })
     },
   })
-}
-
-const handleEdit = (task) => {
-  console.log('edit', task)
 }
 
 const actions = [
@@ -188,6 +178,7 @@ const handleTaskstate = (task) => {
     onResponseError({ response }) {},
     onResponse({ response }) {
       if (response.status !== 200) return
+      refreshNuxtData('dailyTasks')
     },
   })
 }
@@ -200,47 +191,63 @@ onMounted(async () => {
   }
 })
 
-const submitHandler = (formData) => {
+const submitHandler = (formData, type) => {
   const res = new Promise((resolve, reject) => {
-    $fetch('/api/tasks/createTask', {
-      method: 'POST',
-      immediate: false,
-      body: JSON.stringify({
-        title: formData.title,
-        description: formData.description,
-        created_at: new Date(),
-        goalId: formData.goals,
-      }),
-      async onResponse({ response }) {
-        if (response.status !== 200) {
+    $fetch(
+      `${type === 'add' ? '/api/tasks/createTask' : '/api/tasks/updateTasks'}`,
+      {
+        method: 'POST',
+        immediate: false,
+        body: JSON.stringify({
+          id: editing.value ? Number(editing.value) : '',
+          title: formData.title,
+          description: formData.description,
+          created_at: new Date(),
+          goalId: formData.goals,
+        }),
+        async onResponse({ response }) {
+          if (response.status !== 200) {
+            reject(new Error(response._data.statusMessage))
+            return
+          }
+          const action = type === 'add' ? 'created' : 'updated'
+
+          toast.add({
+            severity: 'success',
+            summary: `Task ${action}`,
+            detail: `Your task was ${action} successfully`,
+            group: 'br',
+            life: 5000,
+          })
+          resolve(response)
+
+          if (type === 'add') {
+            data.value.tasks = [response._data.tasks[0], ...data.value.tasks]
+          } else {
+            const idx = data.value.tasks.findIndex(
+              (f) => f.id === editing.value
+            )
+            data.value.tasks[idx] = response._data[0]
+          }
+
+          handleCloseModal()
+
+          refreshNuxtData('dailyTasks')
+        },
+        onResponseError({ response }) {
+          toast.add({
+            severity: 'error',
+            summary: 'Oh no!',
+            detail: response._data.statusMessage,
+            group: 'br',
+            life: 5000,
+          })
+
           reject(new Error(response._data.statusMessage))
           return
-        }
-        add_task.close()
-        toast.add({
-          severity: 'success',
-          summary: 'Task created',
-          detail: 'Your task was created successfully',
-          group: 'br',
-          life: 5000,
-        })
-        resolve(response)
-        data.value.tasks = [response._data.tasks[0], ...data.value.tasks]
-        refreshNuxtData('dailyTasks')
-      },
-      onResponseError({ response }) {
-        toast.add({
-          severity: 'error',
-          summary: 'Oh no!',
-          detail: response._data.statusMessage,
-          group: 'br',
-          life: 5000,
-        })
-
-        reject(new Error(response._data.statusMessage))
-        return
-      },
-    })
+        },
+      }
+    )
   })
   return res.then(() => res).catch((error) => console.error(error))
 }
@@ -251,8 +258,58 @@ const handleModalOpen = () => {
   useFocus('title-input')
 }
 
-const closeModal = () => {
+const handleEdit = (task) => {
+  editing.value = task.id
+  formData.value = {
+    title: task.title,
+    description: task.description,
+    goals: task.goal_id,
+  }
+
+  add_task.showModal()
+}
+
+const handleCloseModal = () => {
+  useQueryRoute('remove', 'task_modal_open')
+
+  editing.value = null
   add_task.close()
   reset('task-form')
 }
+
+const filterQuery = async (action) => {
+  const current = useQueryRoute('get')
+
+  if (action === current.filter) {
+    return
+  }
+
+  useQueryRoute('remove', 'filter')
+  useQueryRoute('add', 'filter', action)
+
+  data.value = await $fetch('/api/tasks/getTasks', {
+    method: 'GET',
+    query: {
+      filter: action,
+    },
+  })
+}
+
+const taskFilters = [
+  {
+    name: 'All',
+    param: 'all',
+    fn: () => filterQuery('all'),
+  },
+  {
+    name: 'Completed',
+    param: 'completed',
+    fn: () => filterQuery('completed'),
+  },
+  {
+    name: 'Not Completed',
+    param: 'not_completed',
+    fn: () => filterQuery('not_completed'),
+  },
+]
 </script>

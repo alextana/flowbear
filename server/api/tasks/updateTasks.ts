@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  await db
+  const task = await db
     .update(tasks)
     .set({
       title: body.title,
@@ -30,8 +30,7 @@ export default defineEventHandler(async (event) => {
       description: body.description,
     })
     .where(eq(tasks.id, body.id))
+    .returning()
 
-  return {
-    body,
-  }
+  return task
 })

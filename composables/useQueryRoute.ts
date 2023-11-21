@@ -48,6 +48,8 @@ export const useQueryRoute = (
       if (!key) return
       removeFromRoute(key)
       break
+    case 'get':
+      return currentRoute.value.query
     case 'reset':
       reset()
       break

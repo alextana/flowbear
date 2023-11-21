@@ -1,4 +1,8 @@
+const route = useRouter()
+
 export const add = (key: string, value: string) => {
+  const { currentRoute, push } = route
+
   push({
     query: {
       ...currentRoute.value.query,
@@ -8,8 +12,6 @@ export const add = (key: string, value: string) => {
 }
 
 export const remove = (key: string) => {
-  const route = useRouter()
-
   const { currentRoute, push } = route
   const query = currentRoute.value.query
   delete query[key]
@@ -23,7 +25,7 @@ export const remove = (key: string) => {
 export const reset = () => {
   const route = useRouter()
 
-  const { currentRoute, push } = route
+  const { push } = route
   push({
     query: {},
   })

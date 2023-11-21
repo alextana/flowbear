@@ -46,7 +46,7 @@ const menuActivities = [
     id: 3,
     name: 'Tasks',
     icon: 'lucide:list-todo',
-    link: '/tasks',
+    link: '/tasks?filter=all',
   },
   {
     id: 4,

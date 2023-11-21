@@ -104,7 +104,7 @@ export default defineEventHandler(async (event) => {
 
       groupedData[goal.title].tasks.push(item.tasks)
     } else {
-      // If there's no goal, group the task as "No Goal" or any other label you prefer
+      // If there's no goal, group the task as "No Goal"
       if (!groupedData['No goal']) {
         groupedData['No goal'] = {
           goal: { title: 'No goal' },

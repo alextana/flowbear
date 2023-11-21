@@ -65,11 +65,6 @@ export default defineEventHandler(async (event) => {
     )
   }
 
-  finalSql.append(sql`ORDER BY ${tasks.created_at} DESC
-    LIMIT ${query.limit || '20'}
-    OFFSET ${query.offset || '0'}
-  `)
-
   finalCountSql.append(sql`
     SELECT COUNT(${tasks.id})
     FROM ${tasks}
@@ -82,6 +77,24 @@ export default defineEventHandler(async (event) => {
       ${tasks.created_at} <= ${end.toISOString()}
     `)
   }
+
+  // find a better way to not repeat this twice
+  if (query.filter !== 'all' && query.filter) {
+    if (query.filter === 'completed') {
+      finalSql.append(sql`AND ${tasks.completed} = TRUE`)
+      finalCountSql.append(sql`AND ${tasks.completed} = TRUE`)
+    }
+
+    if (query.filter === 'not_completed') {
+      finalSql.append(sql`AND ${tasks.completed} = FALSE`)
+      finalCountSql.append(sql`AND ${tasks.completed} = FALSE`)
+    }
+  }
+
+  finalSql.append(sql` ORDER BY ${tasks.created_at} DESC
+    LIMIT ${query.limit || '20'}
+    OFFSET ${query.offset || '0'}
+  `)
 
   const data = await db.execute(finalSql)
   const total = await db.execute(finalCountSql)
