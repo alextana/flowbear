@@ -279,11 +279,10 @@ const handleEdit = (task) => {
 const handleCloseModal = () => {
   useQueryRoute('remove', 'task_modal_open')
 
+  reset('task-form')
   editing.value = null
 
   add_task.close()
-
-  reset('task-form')
 }
 
 const filterQuery = async (action) => {
