@@ -9,8 +9,8 @@
     <UiFilters :filters="taskFilters" />
     <UiSeparator class="my-8" />
 
-    <template v-if="!data?.tasks?.length && !error && !shouldShowLoading">
-      <WidgetsTasksEmpty @adding="addingTask = true" :addingTask="addingTask" />
+    <template v-if="!data?.tasks?.length && !error">
+      <WidgetsTasksEmpty @adding="handleModalOpen" />
     </template>
 
     <div v-auto-animate ref="taskContainer" class="tasks-body">
@@ -222,7 +222,13 @@ const submitHandler = (formData, type) => {
           resolve(response)
 
           if (type === 'add') {
-            data.value.tasks = [response._data.tasks[0], ...data.value.tasks]
+            if (data.value.length) {
+              data.value.tasks = data.value.length
+                ? [response._data.tasks[0], ...data.value.tasks]
+                : response._data
+            } else {
+              data.value = response._data
+            }
           } else {
             const idx = data.value.tasks.findIndex(
               (f) => f.id === editing.value

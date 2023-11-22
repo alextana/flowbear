@@ -65,7 +65,7 @@ const shouldHighlight = (activity) => {
     }
   }
 
-  if (route.path.indexOf(activity.link) > -1) {
+  if (route.path.indexOf(activity.link.split('?')[0]) > -1) {
     return 'font-bold bg-primary text-primary-content hover:bg-primary hover:text-primary-content focus:ring focus:ring-primary/50'
   }
 }
