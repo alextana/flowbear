@@ -74,6 +74,11 @@ export const activities = pgTable('activity', {
     withTimezone: true,
     mode: 'string',
   }).defaultNow(),
+  updated_at: timestamp('updated_at', {
+    precision: 6,
+    withTimezone: true,
+    mode: 'string',
+  }),
 })
 
 export const goals = pgTable('goal', {
@@ -87,6 +92,11 @@ export const goals = pgTable('goal', {
     withTimezone: true,
     mode: 'string',
   }).defaultNow(),
+  updated_at: timestamp('updated_at', {
+    precision: 6,
+    withTimezone: true,
+    mode: 'string',
+  }),
 })
 
 export const activitiesToGoals = pgTable(
@@ -115,6 +125,16 @@ export const tasks = pgTable('tasks', {
     withTimezone: true,
     mode: 'string',
   }).defaultNow(),
+  completed_at: timestamp('completed_at', {
+    precision: 6,
+    withTimezone: true,
+    mode: 'string',
+  }),
+  updated_at: timestamp('updated_at', {
+    precision: 6,
+    withTimezone: true,
+    mode: 'string',
+  }),
 })
 
 export const tasksToGoals = pgTable(

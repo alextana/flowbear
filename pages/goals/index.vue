@@ -20,7 +20,23 @@
         <div
           class="goals h-full grid grid-cols-1 lg:grid-cols-2 items-stretch gap-4"
         >
-          <div class="goal h-full" v-for="goal in data">
+          <div
+            @mouseenter="showDelete(i)"
+            @mouseleave="showDelete(false)"
+            class="goal h-full w-full relative"
+            v-for="(goal, i) in data"
+          >
+            <div class="delete absolute z-[900] right-2 top-2">
+              <div v-if="showDeleteIcon === i">
+                <button
+                  :class="`btn btn-sm transition-all`"
+                  @click="() => handleDelete(goal)"
+                >
+                  <Icon name="mingcute:delete-line" size="18" />
+                </button>
+              </div>
+            </div>
+
             <NuxtLink :to="`/goals/${goal.goalId}?name=${goal.title}`">
               <button
                 class="card rounded-md text-left min-h-[180px] min-w-[180px] w-full dark:hover:bg-base-300 dark:hover:text-neutral-content hover:bg-base-200 border border-base-300"
@@ -31,7 +47,7 @@
                     : 'bg-gradient-to-br from-transparent to-base-300'
                 }`"
               >
-                <div class="card-body w-full">
+                <div class="card-body w-full relative">
                   <h2 class="card-title text-lg font-semibold tracking-tighter">
                     {{ goal.title }}
                   </h2>
@@ -77,7 +93,11 @@
       </template>
       <template #default>
         <div>
-          <UiInputText label="Goal title" v-model="goal.title" />
+          <UiInputText
+            :autoFocus="true"
+            label="Goal title"
+            v-model="goal.title"
+          />
           <UiSeparator class="my-4" />
           <UiInputText label="Goal description" v-model="goal.description" />
         </div>
@@ -95,15 +115,35 @@
       </template>
     </UiModal>
   </div>
+
+  <UiModal id="delete_modal">
+    <template #title> Deleting goal </template>
+    <template #default> The goal will be lost, are you sure? </template>
+    <template #buttons>
+      <button @click="closeModal" class="btn btn-ghost btn-sm">cancel</button>
+      <button class="btn btn-error btn-sm" @click="deleteGoal">
+        Delete Goal
+      </button>
+    </template>
+  </UiModal>
 </template>
 
 <script setup>
+import { useToast } from 'primevue/usetoast'
+
 const router = useRouter()
 const { currentRoute } = router
+const toast = useToast()
+const showDeleteIcon = ref(false)
+const currentlySelectedGoal = ref(null)
 
 const { data, pending, error } = useFetch('/api/goals/getGoals', {
   key: 'goals',
 })
+
+const showDelete = (value) => {
+  showDeleteIcon.value = value
+}
 
 const goal = ref({
   title: '',
@@ -114,6 +154,46 @@ const goal = ref({
 const handleCreate = () => {
   goal_modal.showModal()
   useQueryRoute('add', 'goal_modal_open', 'true')
+}
+
+const handleDelete = (goal) => {
+  currentlySelectedGoal.value = goal
+  delete_modal.showModal()
+}
+
+const deleteGoal = async () => {
+  if (!currentlySelectedGoal.value) return
+
+  await $fetch('/api/goals/deleteGoal', {
+    method: 'POST',
+    body: JSON.stringify({
+      id: currentlySelectedGoal.value.goalId,
+    }),
+    onResponse({ response }) {
+      if (response.status !== 200) return
+      currentlySelectedGoal.value = null
+
+      delete_modal.close()
+      toast.add({
+        severity: 'success',
+        summary: 'Goal deleted',
+        detail: 'Your goal was deleted successfully',
+        group: 'br',
+        life: 5000,
+      })
+
+      refreshNuxtData('goals')
+    },
+    onResponseError({ response }) {
+      toast.add({
+        severity: 'error',
+        summary: 'Oh no!',
+        detail: response._data.statusMessage,
+        group: 'br',
+        life: 5000,
+      })
+    },
+  })
 }
 
 const resetData = () => {
@@ -146,4 +226,8 @@ onMounted(() => {
     goal_modal.showModal()
   }
 })
+
+const closeModal = () => {
+  delete_modal.close()
+}
 </script>
