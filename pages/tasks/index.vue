@@ -210,6 +210,7 @@ const submitHandler = (formData, type) => {
             reject(new Error(response._data.statusMessage))
             return
           }
+
           const action = type === 'add' ? 'created' : 'updated'
 
           toast.add({
@@ -222,8 +223,8 @@ const submitHandler = (formData, type) => {
           resolve(response)
 
           if (type === 'add') {
-            if (data.value.length) {
-              data.value.tasks = data.value.length
+            if (data.value?.tasks?.length) {
+              data.value.tasks = data.value?.tasks?.length
                 ? [response._data.tasks[0], ...data.value.tasks]
                 : response._data
             } else {
@@ -279,7 +280,9 @@ const handleCloseModal = () => {
   useQueryRoute('remove', 'task_modal_open')
 
   editing.value = null
+
   add_task.close()
+
   reset('task-form')
 }
 
