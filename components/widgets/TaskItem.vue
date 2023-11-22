@@ -118,6 +118,8 @@ onMounted(() => {
 const updateFn = (timeout = 1000, type = '') =>
   useDebounceFn(() => {
     // add a saving indicator
+    currentTask.completed_at = new Date()
+    currentTask.updated_at = new Date()
     $fetch('/api/tasks/updateTasks', {
       method: 'POST',
       body: JSON.stringify(currentTask),

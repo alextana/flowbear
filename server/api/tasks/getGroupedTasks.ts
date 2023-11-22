@@ -33,20 +33,24 @@ export default defineEventHandler(async (event) => {
     .leftJoin(goals, eq(tasksToGoals.goalId, goals.goalId))
     .orderBy(desc(tasks.created_at))
 
+  let start = new Date(),
+    end = new Date()
+
   function singleDateQuery(query: any) {
     const q = query.replaceAll('"', '')
-    const d = new Date(q)
-    d.setHours(0, 0, 0, 0)
+    start = new Date(q)
+    start.setHours(0, 0, 0, 0)
 
-    const endOfDay = new Date(d)
-    endOfDay.setHours(23, 59, 59, 999)
+    end = new Date(start)
+    end.setHours(23, 59, 59, 999)
 
     // Add filter for a specific date
     baseQuery.where(
       and(
         eq(session.id, tasks.userId),
-        gte(tasks.created_at, d.toISOString() as string),
-        lte(tasks.created_at, endOfDay.toISOString() as string)
+        eq(tasks.completed, false),
+        // gte(tasks.created_at, d.toISOString() as string),
+        lte(tasks.created_at, end.toISOString() as string)
       )
     )
   }
@@ -59,8 +63,8 @@ export default defineEventHandler(async (event) => {
     if (query.date[1] === 'null') {
       singleDateQuery(query.date[0])
     } else {
-      const start = new Date(query.date[0])
-      const end = new Date(query.date[1])
+      start = new Date(query.date[0])
+      end = new Date(query.date[1])
 
       start.setHours(0, 0, 0, 0)
       end.setHours(23, 59, 59, 999)
@@ -68,7 +72,8 @@ export default defineEventHandler(async (event) => {
       baseQuery.where(
         and(
           eq(session.id, tasks.userId),
-          gte(tasks.created_at, start.toISOString() as string),
+          eq(tasks.completed, false),
+          // gte(tasks.created_at, start.toISOString() as string),
           lte(tasks.created_at, end.toISOString() as string)
         )
       )
@@ -84,40 +89,63 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const groupedData: {
-    [key: string]: {
-      goal: any
-      tasks: any[]
-    }
-  } = {}
-
-  data.forEach((item) => {
-    const goal = item.goal
-
-    if (goal) {
-      if (!groupedData[goal.title]) {
-        groupedData[goal.title] = {
-          goal: goal,
-          tasks: [],
-        }
+  const getGroupedData = (resData: typeof data) => {
+    const groupedData: {
+      [key: string]: {
+        goal: any
+        tasks: any[]
       }
+    } = {}
 
-      groupedData[goal.title].tasks.push(item.tasks)
-    } else {
-      // If there's no goal, group the task as "No Goal"
-      if (!groupedData['No goal']) {
-        groupedData['No goal'] = {
-          goal: { title: 'No goal' },
-          tasks: [],
+    resData.forEach((item) => {
+      const goal = item.goal
+
+      if (goal) {
+        if (!groupedData[goal.title]) {
+          groupedData[goal.title] = {
+            goal: goal,
+            tasks: [],
+          }
         }
+
+        groupedData[goal.title].tasks.push(item.tasks)
+      } else {
+        // If there's no goal, group the task as "No Goal"
+        if (!groupedData['No goal']) {
+          groupedData['No goal'] = {
+            goal: { title: 'No goal' },
+            tasks: [],
+          }
+        }
+
+        groupedData['No goal'].tasks.push(item.tasks)
       }
+    })
 
-      groupedData['No goal'].tasks.push(item.tasks)
-    }
-  })
+    // Convert the grouped data object into an array
+    return Object.values(groupedData)
+  }
 
-  // Convert the grouped data object into an array
-  const result = Object.values(groupedData)
+  const completed = await db
+    .select()
+    .from(tasks)
+    .leftJoin(tasksToGoals, eq(tasks.id, tasksToGoals.taskId))
+    .leftJoin(goals, eq(tasksToGoals.goalId, goals.goalId))
+    .orderBy(desc(tasks.created_at))
+    .where(
+      and(
+        eq(session.id, tasks.userId),
+        eq(tasks.completed, true),
+        gte(tasks.completed_at, start.toISOString() as string),
+        lte(tasks.completed_at, end?.toISOString() as string)
+      )
+    )
 
-  return result
+  const r = getGroupedData(data)
+  const c = getGroupedData(completed)
+
+  return {
+    not_completed: r,
+    completed: c,
+  }
 })

@@ -50,13 +50,19 @@
           /></UiButton>
         </div>
       </template>
-      <template v-if="shouldShowLoading && !data?.length">
+      <template
+        v-if="
+          shouldShowLoading &&
+          !data?.not_completed?.length &&
+          !data?.completed?.length
+        "
+      >
         <div class="grid place-content-center">
           <span class="loading loading-ball loading-lg"></span>
         </div>
       </template>
-      <template :key="data" v-else-if="data && data?.length">
-        <template :key="group" v-for="group in data">
+      <template v-else-if="data && data?.not_completed?.length">
+        <template :key="group" v-for="group in data?.not_completed">
           <span
             v-if="group && group.goal"
             class="text-sm block mt-4 mb-2 font-semibold text-gray-700 dark:text-gray-300"
@@ -67,12 +73,41 @@
               :task="task"
               :goal="group.goal"
               @editTask="(task, goal) => handleEdit(task, goal)"
-              @deleteTask="handleDeleteTask"
+              @deleteTask="(task) => handleDeleteTask(task, 'not_completed')"
             />
           </template>
         </template>
       </template>
-      <template v-if="!data?.length && !error && !shouldShowLoading">
+
+      <template :key="dataCompleted" v-if="data && data?.completed?.length">
+        <span class="mt-8 mb-4 block font-bold text-lg tracking-tighter"
+          >Completed Tasks</span
+        >
+        <template :key="group" v-for="group in data?.completed">
+          <span
+            v-if="group && group.goal"
+            class="text-sm block mt-4 mb-2 font-semibold text-gray-700 dark:text-gray-300"
+            >{{ group?.goal?.title }}</span
+          >
+          <template :key="task" v-for="task in group.tasks">
+            <WidgetsTaskItem
+              :task="task"
+              :goal="group.goal"
+              @editTask="(task, goal) => handleEdit(task, goal)"
+              @deleteTask="(task) => handleDeleteTask(task, 'completed')"
+            />
+          </template>
+        </template>
+      </template>
+
+      <template
+        v-if="
+          !data?.not_completed?.length &&
+          !data?.completed?.length &&
+          !error &&
+          !shouldShowLoading
+        "
+      >
         <WidgetsTasksEmpty
           @adding="addingTask = true"
           :addingTask="addingTask"
@@ -84,13 +119,18 @@
       </template>
     </div>
   </div>
+
   <UiModal id="task_modal">
     <template #title>
       <span>Edit task</span>
     </template>
     <template #default>
       <div class="task-edit">
-        <UiInputText label="Task title" v-model="currentTask.title" />
+        <UiInputText
+          :autoFocus="true"
+          label="Task title"
+          v-model="currentTask.title"
+        />
         <UiSeparator class="my-4" />
         <UiTextArea
           label="Task description"
@@ -236,14 +276,14 @@ const handleAddTask = () => {
       }
 
       // find the index of 'no goals'
-      const idx = data.value.findIndex(
+      const idx = data.value.not_completed.findIndex(
         (f) => f.goal.title.toLowerCase() === 'no goal'
       )
 
       if (idx === -1) {
-        data.value = [toAdd, ...data.value]
+        data.value.not_completed = [toAdd, ...data.value.not_completed]
       } else {
-        data.value[idx].tasks.unshift(response._data.tasks[0])
+        data.value.not_completed[idx].tasks.unshift(response._data.tasks[0])
       }
 
       toast.add({
@@ -344,16 +384,16 @@ const close = () => {
   task_modal.close()
 }
 
-const handleDeleteTask = (task) => {
+const handleDeleteTask = (task, kind) => {
   const taskIdToRemove = task.id
 
-  for (const group of data.value) {
+  for (const group of data.value[kind]) {
     group.tasks = group.tasks.filter((task) => task.id !== taskIdToRemove)
 
     if (!group.tasks.length) {
       // If the task array is empty, remove the goal
-      const index = data.value.indexOf(group)
-      data.value.splice(index, 1)
+      const index = data.value[kind].indexOf(group)
+      data.value[kind].splice(index, 1)
     }
   }
 }

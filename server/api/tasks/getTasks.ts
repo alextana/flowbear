@@ -91,7 +91,7 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  finalSql.append(sql` ORDER BY ${tasks.created_at} DESC
+  finalSql.append(sql` ORDER BY ${tasks.completed} ASC, ${tasks.created_at} DESC
     LIMIT ${query.limit || '20'}
     OFFSET ${query.offset || '0'}
   `)

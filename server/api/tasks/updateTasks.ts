@@ -28,6 +28,8 @@ export default defineEventHandler(async (event) => {
       title: body.title,
       completed: body.completed,
       description: body.description,
+      completed_at: body.completed_at,
+      updated_at: body.updated_at,
     })
     .where(eq(tasks.id, body.id))
     .returning()
