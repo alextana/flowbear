@@ -3,7 +3,7 @@
     class="w-screen dark:bg-black bg-white h-[80dvh] grid grid-cols-1 place-content-center"
   >
     <div
-      class="main-hero-content mx-auto max-w-[1200px] px-4 xl:px-0 gap-2 w-full justify-between flex items-center"
+      class="main-hero-content mx-auto max-w-[1200px] px-2 xl:px-0 gap-2 w-full justify-between flex items-center"
     >
       <div class="app-info w-full flex-1">
         <h1

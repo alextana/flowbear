@@ -111,8 +111,9 @@ form[data-loading] [data-type='submit'] button {
   opacity: 0.5;
   @apply bg-info text-info-content;
 }
+
 .text-error {
-  @apply text-red-500 dark:text-warning;
+  color: oklch(var(--er));
 }
 
 form[data-loading] [data-type='submit'] button::before {

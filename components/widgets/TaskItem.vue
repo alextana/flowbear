@@ -49,8 +49,23 @@
         @update:modelValue="handleEditing"
         :classes="`${
           currentTask.completed ? 'pointer-events-none' : ''
-        } input input-sm input-ghost max-w-[260px] !outline-0 bg-transparent`"
+        } input input-sm input-ghost !px-2 max-w-[250px] !outline-0 bg-transparent`"
       >
+        <Transition name="test">
+          <span
+            v-if="
+              getTaskAge(currentTask) > 0 &&
+              !showDeleteIcon &&
+              !currentTask.completed
+            "
+            :class="`${getBackgroundClass(
+              getTaskAge(currentTask)
+            )} text-[12px] font-bold uppercase mt-0 ml-auto text-neutral-content/60 absolute right-0 top-1/2 -translate-y-1/2 transform`"
+          >
+            {{ getTaskAge(currentTask) }}d
+          </span>
+        </Transition>
+
         <Transition
           @after-enter="handleAnimation(_, _, 'enter')"
           @leave="(e, done) => handleAnimation(e, done, 'leave')"
@@ -67,12 +82,16 @@
       </UiInputText>
     </div>
   </Transition>
+  <Toast position="bottom-left" group="bl" />
 </template>
 
 <script setup>
 import { gsap } from 'gsap'
 import { useDebounceFn } from '@vueuse/core'
+import { DateTime, Interval } from 'luxon'
+import { useToast } from 'primevue/usetoast'
 
+const toast = useToast()
 const confirmDelete = ref(false)
 const props = defineProps({
   task: {
@@ -123,10 +142,18 @@ const updateFn = (timeout = 1000, type = '') =>
     $fetch('/api/tasks/updateTasks', {
       method: 'POST',
       body: JSON.stringify(currentTask),
-      onResponseError() {
-        // TASK negate optimistic update
+      onResponseError({ response }) {
+        toast.add({
+          severity: 'error',
+          summary: 'Oh no!',
+          detail: response._data.statusMessage,
+          group: 'bl',
+          life: 5000,
+        })
       },
-      onResponse() {
+      onResponse({ response }) {
+        if (response.status !== 200) return
+
         refreshNuxtData('goals')
       },
     })
@@ -185,6 +212,38 @@ const showDelete = (value) => {
 const handleEditTask = () => {
   emit('editTask', currentTask.value || currentTask, currentGoal.value)
 }
+
+const getDiff = (start, end) => {
+  const d = Interval.fromDateTimes(end, start)
+  return Math.trunc(d.length('days'))
+}
+
+const getTaskAge = (current) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  let start = DateTime.fromISO(today.toISOString())
+  let end = DateTime.fromISO(current.created_at)
+
+  const diff = getDiff(start, end)
+
+  return diff
+}
+
+const getBackgroundClass = (day) => {
+  let color = null
+
+  switch (true) {
+    case day >= 2 && day <= 4:
+      color = 'text-warning'
+      break
+    case day >= 5:
+      color = 'text-error'
+      break
+  }
+
+  return color ? color : ''
+}
 </script>
 
 <style>
@@ -200,5 +259,14 @@ const handleEditTask = () => {
 .slide-fade-leave-to {
   transform: translateX(20px);
   opacity: 0;
+}
+
+.test-enter-from,
+.test-leave-to {
+  opacity: 0;
+}
+.test-enter-active {
+  transition: all 0.2s ease-out;
+  transition-delay: 0.2s;
 }
 </style>
