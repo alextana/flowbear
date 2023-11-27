@@ -1,6 +1,8 @@
 <template>
-  <div class="goals prose max-w-none">
-    <h1>{{ route.query.name }}</h1>
+  <div class="goals max-w-none">
+    <h1 class="text-xl font-semibold tracking-tighter">Goals</h1>
+    <UiSeparator class="mb-8" />
+
     <WidgetsActivityRepeater title="No activities found" />
   </div>
 </template>

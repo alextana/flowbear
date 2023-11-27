@@ -10,6 +10,8 @@ export default defineNuxtConfig({
     AUTH_ORIGIN: process.env.AUTH_ORIGIN,
     NUXT_SECRET: process.env.NUXT_SECRET,
     OPEN_AI_KEY: process.env.OPEN_AI_KEY,
+    UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
+    UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
   },
   build: {
     transpile: ['primevue'],

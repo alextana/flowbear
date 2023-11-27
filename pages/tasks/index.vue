@@ -14,7 +14,7 @@
     </template>
 
     <div v-auto-animate ref="taskContainer" class="tasks-body">
-      <div v-for="task in data?.tasks">
+      <div :key="task.id" v-for="task in data?.tasks">
         <div
           class="w-full text-left flex items-center rounded-none relative gap-3 hover:bg-base-300 px-5 py-0 border-b border-base-300"
           :class="`${task.completed ? 'opacity-50' : ''}`"
@@ -175,10 +175,30 @@ const handleTaskstate = (task) => {
   $fetch('/api/tasks/updateTasks', {
     method: 'POST',
     body: JSON.stringify(newTask),
-    onResponseError({ response }) {},
+    onResponseError({ response }) {
+      toast.add({
+        severity: 'error',
+        summary: 'Oh no!',
+        detail: response._data.statusMessage,
+        group: 'br',
+        life: 3000,
+      })
+    },
     onResponse({ response }) {
       if (response.status !== 200) return
-      refreshNuxtData('dailyTasks')
+      const modifiedTask = response._data[0]
+
+      data.value.tasks = data.value.tasks.filter(
+        (f) => f.id !== modifiedTask.id
+      )
+
+      if (modifiedTask.completed) {
+        const idx = data.value.tasks.findIndex((f) => f.completed)
+        data.value.tasks.splice(idx, 0, modifiedTask)
+      } else {
+        data.value.tasks.unshift(modifiedTask)
+      }
+      // refreshNuxtData('dailyTasks')
     },
   })
 }
