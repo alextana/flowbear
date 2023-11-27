@@ -39,7 +39,7 @@
 
             <NuxtLink :to="`/goals/${goal.goalId}?name=${goal.title}`">
               <button
-                class="card rounded-md text-left min-h-[180px] min-w-[180px] w-full dark:hover:bg-base-300 dark:hover:text-neutral-content hover:bg-base-200 border border-base-300"
+                class="transition-all duration-500 card rounded-md text-left min-h-[180px] min-w-[180px] w-full dark:hover:bg-base-300 dark:hover:text-neutral-content hover:bg-base-200 border border-base-300"
                 :class="`${
                   Number(goal.completed_tasks) === Number(goal.total_tasks) &&
                   Number(goal.completed_tasks) !== 0

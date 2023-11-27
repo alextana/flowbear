@@ -2,6 +2,7 @@
   <div class="summaries">
     <div class="heading flex justify-between">
       <h1 class="text-xl font-semibold tracking-tighter">Summaries</h1>
+      <UiButton kind="primary" @click="handleCreate">Create summary</UiButton>
     </div>
     <UiSeparator class="my-12" />
     <div v-if="data">
@@ -44,6 +45,16 @@
       </template>
     </div>
   </div>
+  <UiModal id="summary">
+    <template #title> Create summary </template>
+    <template #default> show calendar here </template>
+    <!-- <template #buttons>
+      <button @click="closeModal" class="btn btn-ghost btn-sm">cancel</button>
+      <button class="btn btn-error btn-sm" @click="deleteGoal">
+        Delete Goal
+      </button>
+    </template> -->
+  </UiModal>
 </template>
 
 <script setup>
@@ -52,6 +63,11 @@ import { DateTime } from 'luxon'
 const { data, pending, error } = useFetch('/api/summaries/getSummaries', {
   key: 'summaries',
 })
+
+const handleCreate = () => {
+  summary.showModal()
+  useQueryRoute('add', 'summary_modal_open', 'true')
+}
 
 const getDate = (summary) => {
   if (!summary.dates) {
