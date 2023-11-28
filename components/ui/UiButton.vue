@@ -1,5 +1,5 @@
 <template>
-  <button class="btn" :class="computedClasses">
+  <button class="btn !normal-case" :class="computedClasses">
     <template v-if="currentState === 'loading'">
       <span class="loading loading-spinner"></span>
       <span v-if="loadingMessage">

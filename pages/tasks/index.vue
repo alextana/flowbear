@@ -16,7 +16,7 @@
     <div v-auto-animate ref="taskContainer" class="tasks-body">
       <div :key="task.id" v-for="task in data?.tasks">
         <div
-          class="w-full text-left flex items-center rounded-none relative gap-3 hover:bg-base-300 px-5 py-0 border-b border-base-300"
+          class="w-full text-left flex items-center rounded-none relative gap-3 hover:bg-base-300 px-5 py-0 border-b border-base-300 dark:border-neutral/30"
           :class="`${task.completed ? 'opacity-50' : ''}`"
         >
           <div class="edit absolute right-2 top-2">

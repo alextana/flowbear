@@ -36,16 +36,17 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    /* --nc: color: white; */
     background: oklch(var(--b2));
   }
   .p-datepicker {
-    color: oklch(var(--nc));
+    color: white;
   }
   .p-datepicker:not(.p-disabled)
     table
     td
     span:not(.p-highlight):not(.p-disabled):hover {
-    color: oklch(var(--n));
+    background: oklch(var(--a));
   }
   .p-datepicker:not(.p-disabled)
     table

@@ -1,10 +1,11 @@
 <template v-if="filters?.length">
   <div class="filters flex gap-2">
     <UiButton
+      extraClasses="font-normal"
       v-for="filter in filters"
       @click="filter.fn"
-      :kind="currentRoute === filter.param ? 'primary' : 'neutral'"
-      size="sm"
+      :kind="currentRoute === filter.param ? 'primary' : 'outline'"
+      size="xs"
       >{{ filter.name }}</UiButton
     >
   </div>

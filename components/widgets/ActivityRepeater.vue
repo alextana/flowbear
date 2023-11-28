@@ -14,10 +14,10 @@
     >
       <div class="dates mb-4 flex gap-4" v-for="date in getDates(data.dates)">
         <div
-          class="date-block h-max min-h-[65px] bg-base-100 dark:bg-base-200 min-w-[65px] rounded-2xl border border-neutral-content dark:border-neutral px-3 py-2 text-center"
+          class="date-block h-max min-h-[65px] bg-base-100 dark:bg-base-200 min-w-[65px] rounded-2xl border border-neutral-content dark:border-neutral/30 px-3 py-2 text-center"
         >
           <ClientOnly>
-            <span class="day block text-2xl font-bold">
+            <span class="day block text-2xl font-bold text-primary">
               {{ formatDate(date, 'day') }}
             </span>
             <span class="month block text-xs uppercase">
@@ -31,7 +31,7 @@
               <div
                 @mouseover="handleShowOptions(i)"
                 @mouseleave="handleShowOptions(null)"
-                class="activity-container p-4 rounded-2xl max-w-none 2xl:max-w-[unset] bg-base-100 hover:bg-base-200 dark:bg-base-200 dark:hover:bg-base-300 activity prose relative mb-2 w-full border dark:border-neutral border-neutral-content transition-all"
+                class="activity-container p-4 rounded-2xl max-w-none 2xl:max-w-[unset] bg-base-100 hover:bg-base-200 dark:bg-base-200 dark:hover:bg-base-300 activity prose relative mb-2 w-full border dark:border-neutral/30 border-neutral-content transition-all"
               >
                 <span class="text-xs capitalize dark:text-white/40 font-bold">{{
                   item.activity.type

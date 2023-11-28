@@ -39,11 +39,11 @@
 
             <NuxtLink :to="`/goals/${goal.goalId}?name=${goal.title}`">
               <button
-                class="transition-all duration-500 card rounded-md text-left min-h-[180px] min-w-[180px] w-full dark:hover:bg-base-300 dark:hover:text-neutral-content hover:bg-base-200 border border-base-300"
+                class="transition-all duration-500 card rounded-md text-left min-h-[180px] min-w-[180px] w-full dark:hover:bg-base-300 dark:hover:border-white dark:hover:text-white hover:bg-base-200 border border-base-300 dark:border-neutral/50"
                 :class="`${
                   Number(goal.completed_tasks) === Number(goal.total_tasks) &&
                   Number(goal.completed_tasks) !== 0
-                    ? 'bg-gradient-to-tl from-success/40 border-success to-base-100'
+                    ? 'bg-gradient-to-tl from-success/40 dark:from-success/80 border-success dark:border-success to-base-100'
                     : 'bg-gradient-to-br from-transparent to-base-300'
                 }`"
               >
@@ -51,7 +51,7 @@
                   <h2 class="card-title text-lg font-semibold tracking-tighter">
                     {{ goal.title }}
                   </h2>
-                  <p class="text-sm text-neutral-content/70">
+                  <p class="text-sm text-black/70 dark:text-white/60">
                     {{ goal.description }}
                   </p>
                   <div

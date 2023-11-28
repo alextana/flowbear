@@ -61,6 +61,33 @@ export const verificationTokens = pgTable(
   })
 )
 
+export const teams = pgTable('teams', {
+  id: serial('id').primaryKey().notNull(),
+  name: text('name').notNull(),
+  image: text('image'),
+  created_at: timestamp('created_at', {
+    precision: 6,
+    withTimezone: true,
+    mode: 'string',
+  }).defaultNow(),
+  administrator_id: text('administrator_id').notNull(),
+})
+
+export const teamsToUsers = pgTable(
+  'teams_to_users',
+  {
+    teamId: serial('team_id')
+      .notNull()
+      .references(() => teams.id),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.teamId, t.userId] }),
+  })
+)
+
 export const activityTypeEnum = pgEnum('type', ['activity', 'feedback'])
 
 export const activities = pgTable('activity', {
@@ -69,6 +96,7 @@ export const activities = pgTable('activity', {
   userId: text('userId').references(() => users.id),
   content: text('content').notNull(),
   type: activityTypeEnum('type').default('activity'),
+  feedback_data: jsonb('feedback_data'),
   created_at: timestamp('created_at', {
     precision: 6,
     withTimezone: true,

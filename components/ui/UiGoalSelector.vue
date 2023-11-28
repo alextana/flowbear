@@ -27,9 +27,7 @@
     class="ml-2 goals-display flex w-full flex-wrap min-w-[80%] items-center gap-2 text-neutral-content"
   >
     <template v-for="goal in getGoals()">
-      <button
-        class="w-max px-2 py-1 btn btn-outline btn-xs hover:bg-primary hover:text-primary-content rounded-md text-xs"
-      >
+      <UiButton size="xs" kind="outline" extraClasses="font-normal">
         <div v-if="goal?.title" class="flex gap-1 items-center">
           <span class="block">{{ goal.title }}</span>
           <Icon
@@ -39,7 +37,7 @@
             size="16"
           />
         </div>
-      </button>
+      </UiButton>
     </template>
   </div>
   <Toast position="bottom-right" group="br" />

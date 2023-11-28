@@ -15,7 +15,7 @@
           )}&created_at=${JSON.stringify(summary.created_at)}`"
         >
           <div
-            class="w-full text-left flex items-center justify-between gap-3 dark:hover:bg-base-300 dark:hover:text-neutral-content hover:bg-base-200 bg-gradient-to-br from-transparent to-base-300 cursor-pointer p-3 border border-base-300 rounded-md mb-3"
+            class="w-full text-left flex items-center justify-between gap-3 dark:hover:bg-base-300 dark:hover:text-white hover:bg-base-200 bg-gradient-to-br from-transparent to-base-300 cursor-pointer p-3 border border-base-300 dark:border-neutral/50 rounded-md mb-3"
           >
             <div class="title-desc w-full">
               <div class="title mb-2 flex gap-2 justify-between items-center">

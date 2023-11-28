@@ -9,7 +9,7 @@
         {{ props.title }}
       </span>
     </h1>
-    <p class="text-neutral/50 dark:text-neutral-content/50 text-sm">
+    <p class="text-neutral/50 dark:text-white/50 text-sm">
       <span v-if="!props.subtitle"> what have you been up to? </span>
       <span v-else>
         {{ props.subtitle }}
@@ -20,7 +20,7 @@
 
     <InputTipTap
       v-model="activityContent"
-      classProps="mt-8 rounded-md bg-base-300/30 dark:bg-neutral min-h-[125px] border-2 border-base-300 prose prose-slate w-full min-w-full mx-auto prose-base"
+      classProps="mt-8 rounded-md bg-base-300/30 dark:bg-base-100 min-h-[125px] border border-base-300 dark:border-neutral/30 prose prose-slate w-full min-w-full mx-auto prose-base"
     />
 
     <UiSeparator class="mb-4" />
@@ -36,7 +36,7 @@
           >
             <template #label>
               <UiButton size="sm" kind="outline">
-                {{ selectedType }}
+                <span class="capitalize">{{ selectedType }}</span>
                 <Icon name="mdi:chevron-down" size="18" />
               </UiButton>
             </template>
