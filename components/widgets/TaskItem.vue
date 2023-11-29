@@ -5,7 +5,7 @@
       @mouseenter="showDelete(true)"
       @mouseleave="showDelete(false)"
       :class="`transition-all duration-300 w-full relative px-2 py-1
-    hover:bg-neutral border-b border-base-300 dark:border-neutral/30 overflow-hidden
+    hover:bg-neutral dark:hover:bg-base-300 border-b border-base-300 dark:border-neutral/30 overflow-hidden
     hover:text-base-200-content flex
     gap-2 items-center
     ${currentTask.completed ? 'opacity-60' : 'opacity-100 bg-transparent'}

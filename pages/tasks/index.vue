@@ -2,7 +2,10 @@
   <div class="tasks">
     <div class="heading flex justify-between">
       <h1 class="text-xl font-semibold tracking-tighter">Tasks</h1>
-      <UiButton @click="handleModalOpen" kind="primary" class="add-new"
+      <UiButton
+        @click="() => handleModalOpen('create')"
+        kind="primary"
+        class="add-new"
         >Create task
       </UiButton>
     </div>
@@ -54,7 +57,7 @@
     <template #title>{{ editing ? 'Edit task' : 'Add task' }}</template>
     <template #default>
       <FormKit
-        id="task-form"
+        id="task_form"
         @submit="(e) => submitHandler(e, editing ? 'edit' : 'add')"
         type="form"
         :submit-attrs="{
@@ -89,7 +92,7 @@
 
 <script setup>
 import { useToast } from 'primevue/usetoast'
-import { reset } from '@formkit/core'
+import { getNode, reset } from '@formkit/core'
 
 const taskContainer = ref(null)
 const formData = ref(null)
@@ -240,7 +243,6 @@ const submitHandler = (formData, type) => {
             group: 'br',
             life: 5000,
           })
-          resolve(response)
 
           if (type === 'add') {
             if (data.value?.tasks?.length) {
@@ -256,6 +258,8 @@ const submitHandler = (formData, type) => {
             )
             data.value.tasks[idx] = response._data[0]
           }
+
+          resolve(response)
 
           handleCloseModal()
 
@@ -279,7 +283,7 @@ const submitHandler = (formData, type) => {
   return res.then(() => res).catch((error) => console.error(error))
 }
 
-const handleModalOpen = () => {
+const handleModalOpen = (type) => {
   add_task.showModal()
   useQueryRoute('add', 'task_modal_open', 'true')
   useFocus('title-input')
@@ -296,13 +300,17 @@ const handleEdit = (task) => {
   add_task.showModal()
 }
 
-const handleCloseModal = () => {
-  useQueryRoute('remove', 'task_modal_open')
+const handleCloseModal = async () => {
+  console.log('t', getNode('task_form'))
+  console.log('test', document.getElementById('task_form'))
+  // getNode('task_form').reset()
 
-  reset('task-form')
   editing.value = null
 
+  await nextTick()
   add_task.close()
+
+  useQueryRoute('remove', 'task_modal_open')
 }
 
 const filterQuery = async (action) => {
