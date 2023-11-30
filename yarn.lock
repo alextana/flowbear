@@ -5989,8 +5989,6 @@ pg@^8.10.0:
     pg-protocol "^1.6.0"
     pg-types "^2.1.0"
     pgpass "1.x"
-  optionalDependencies:
-    pg-cloudflare "^1.1.1"
 
 pgpass@1.x:
   version "1.0.5"
