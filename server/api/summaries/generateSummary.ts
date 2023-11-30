@@ -16,7 +16,7 @@ import { sql } from 'drizzle-orm'
 import { activities, tasks, summaries } from '~/db/schema'
 import { OpenAI } from 'openai'
 const runtimeConfig = useRuntimeConfig()
-const { OPEN_AI_KEY } = runtimeConfig
+const { OPEN_AI_KEY, AI_PROMPT } = runtimeConfig
 
 const openai = new OpenAI({
   apiKey: OPEN_AI_KEY,
@@ -104,7 +104,7 @@ export default defineEventHandler(async (event) => {
           {
             role: 'user',
             content: `
-          ${process.env.AI_PROMPT}
+          ${AI_PROMPT}
 
           ------
           ${JSON.stringify(data)}
