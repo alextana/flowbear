@@ -136,7 +136,7 @@ const { data, pending, error } = useAsyncData(
   () =>
     $fetch('/api/activities/getActivities', {
       params: {
-        goalId: route.params.id || null,
+        goalId: route?.params?.id || null,
         date: props.date ? dateStore?.currentDate : null,
       },
     }),

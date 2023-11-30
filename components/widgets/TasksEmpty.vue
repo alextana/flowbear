@@ -27,8 +27,14 @@ const props = defineProps({
 
 const descriptionTest = computed(() => {
   const isToday = dateStore.isSelectedToday()
+  let dateToUse = dateStore.currentDate
+
+  if (Array.isArray(dateToUse)) {
+    dateToUse = dateToUse[0]
+  }
+
   const d = DateTime.fromISO(
-    useGetISOStringFromDate(dateStore.currentDate || new Date())
+    useGetISOStringFromDate(dateToUse || new Date())
   ).toFormat('dd MMM')
 
   if (!isToday) {

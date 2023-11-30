@@ -60,7 +60,7 @@
             "
             :class="`${getBackgroundClass(
               getTaskAge(currentTask)
-            )} text-[12px] font-bold uppercase mt-0 ml-auto text-neutral-content/60 absolute right-0 top-1/2 -translate-y-1/2 transform`"
+            )} text-[12px] dark:text-white/50 font-bold uppercase mt-0 ml-auto text-neutral-content/60 absolute right-0 top-1/2 -translate-y-1/2 transform`"
           >
             {{ getTaskAge(currentTask) }}d
           </span>
@@ -75,7 +75,7 @@
           <div
             ref="strike"
             v-show="currentTask.completed"
-            :class="`strike bg-black dark:bg-neutral-content z-[9] h-[1px]
+            :class="`strike bg-black dark:bg-white/50 z-[9] h-[1px]
           absolute top-1/2 transform-translate-y-1/2`"
           />
         </Transition>
@@ -242,7 +242,7 @@ const getBackgroundClass = (day) => {
       break
   }
 
-  return color ? color : ''
+  return color || ''
 }
 </script>
 

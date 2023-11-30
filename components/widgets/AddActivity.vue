@@ -64,7 +64,11 @@
         </UiDropdown>
       </div>
       <div class="submit">
-        <UiButton :state="buttonState" @click="handleAdd" kind="primary"
+        <UiButton
+          :disabled="!canSubmit()"
+          :state="buttonState"
+          @click="handleAdd"
+          kind="primary"
           >Add {{ selectedType }}</UiButton
         >
       </div>
@@ -74,11 +78,14 @@
 </template>
 
 <script setup>
+import { useToast } from 'primevue/usetoast'
+import { useSelectedDate } from '#imports'
+
 const { data } = useAuth()
 const goalPreview = ref(null)
 const activityContent = ref('')
 const toast = useToast()
-import { useToast } from 'primevue/usetoast'
+const dateStore = useSelectedDate()
 
 const selectedType = ref('activity')
 
@@ -104,6 +111,14 @@ const props = defineProps({
   },
 })
 
+const canSubmit = () => {
+  // cannot submit in the future
+  const t = new Date()
+  const d = new Date(dateStore.currentDate)
+
+  return !(d >= t)
+}
+
 const handleAdd = () => {
   buttonState.value = 'loading'
   $fetch('/api/activities/createActivity', {
@@ -111,6 +126,10 @@ const handleAdd = () => {
       content: activityContent.value,
       goalId: goalPreview?.value?.goalId,
       type: selectedType.value,
+      date:
+        dateStore.currentDate && !dateStore.isSelectedToday()
+          ? dateStore.currentDate
+          : new Date().toISOString(),
     },
     method: 'POST',
     onResponse({ response }) {

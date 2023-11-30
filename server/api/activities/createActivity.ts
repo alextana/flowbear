@@ -23,6 +23,23 @@ export default defineEventHandler(async (event) => {
 
   let activity = null
 
+  const submitCheck = () => {
+    // cannot submit in the future
+    const t = new Date()
+    const d = new Date(body.date)
+
+    return !(d >= t)
+  }
+
+  const can_submit = submitCheck()
+
+  if (!can_submit) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Cannot add activity in the future',
+    })
+  }
+
   try {
     activity = await db
       .insert(activities)
@@ -30,6 +47,7 @@ export default defineEventHandler(async (event) => {
         userId: session.id,
         content: body.content,
         type: body.type,
+        created_at: body.date || new Date().toISOString(),
       })
       .returning()
   } catch (error) {

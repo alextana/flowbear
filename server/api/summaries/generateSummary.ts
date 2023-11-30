@@ -75,21 +75,15 @@ export default defineEventHandler(async (event) => {
   // get activities and (completed) tasks between two dates
   const data = await db.execute(sql`
     SELECT ${activities.content} as title,
-    CASE WHEN ${
-      activities.type
-    } = 'activity' THEN 'activity' ELSE 'feedback' END as type
+    CASE WHEN ${activities.type} = 'activity' THEN 'activity' ELSE 'feedback' END as type
       FROM ${activities}
       WHERE ${session.id} = ${activities.userId}
-      AND (${activities.created_at} >= ${startDate} AND ${
-        activities.created_at
-      } <= ${endDate})
+      AND (${activities.created_at} >= ${startDate} AND ${activities.created_at} <= ${endDate})
     UNION
       SELECT ${tasks.title}, ${'task'}
       FROM ${tasks}
       WHERE ${session.id} = ${tasks.userId}
-      AND (${tasks.created_at} >= ${startDate} AND ${
-        tasks.created_at
-      } <= ${endDate})
+      AND (${tasks.created_at} >= ${startDate} AND ${tasks.created_at} <= ${endDate})
       AND ${tasks.completed} = TRUE
   `)
 

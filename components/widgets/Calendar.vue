@@ -148,6 +148,8 @@ const setDatesFromQuery = async () => {
   } else {
     date.value = new Date(dates)
   }
+
+  updateDateStore(date.value)
 }
 
 onMounted(async () => {
